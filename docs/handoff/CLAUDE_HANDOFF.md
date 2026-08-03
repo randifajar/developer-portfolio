@@ -60,19 +60,19 @@ If file creation is not yet permitted, provide the complete plan in chat and wai
 
 Read these files before planning, in this priority order:
 
-1. `approved-documents/PORTFOLIO_Decision_Ledger_v1.0.md`
-2. `approved-documents/PORTFOLIO_PRD_v0.1.md`
-3. `approved-documents/PORTFOLIO_FAC_v0.1.md`
-4. `approved-documents/PORTFOLIO_NFAC_v0.1.md`
-5. `approved-documents/PORTFOLIO_UX_UI_SPEC_v0.1.md`
-6. `approved-documents/PORTFOLIO_TECHNICAL_DESIGN_v0.1.md`
-7. `approved-documents/PORTFOLIO_Product_Model_v1.0.md`
+1. `docs/product/PORTFOLIO_Decision_Ledger_v1.0.md`
+2. `docs/product/PORTFOLIO_PRD_v0.1.md`
+3. `docs/product/PORTFOLIO_FAC_v0.1.md`
+4. `docs/product/PORTFOLIO_NFAC_v0.1.md`
+5. `docs/product/PORTFOLIO_UX_UI_SPEC_v0.1.md`
+6. `docs/product/PORTFOLIO_TECHNICAL_DESIGN_v0.1.md`
+7. `docs/product/PORTFOLIO_Product_Model_v1.0.md`
 
 Supporting references:
 
-- `reference-documents/PORTFOLIO_5_THINGS.md`
-- `reference-documents/PORTFOLIO_Open_Decisions.md`
-- `reference-documents/portfolio-development-plan.md`
+- `docs/reference/PORTFOLIO_5_THINGS.md`
+- `docs/reference/PORTFOLIO_Open_Decisions.md`
+- `docs/reference/portfolio-development-plan.md`
 
 ## Source precedence
 
@@ -117,7 +117,7 @@ Treat these as fixed unless the Product Owner explicitly changes them:
 - Version 1 has no live LinkedIn or GitHub synchronization.
 - Public contact uses email, LinkedIn, GitHub, and Resume.
 - Content is maintained through source-controlled files.
-- The Portfolio Owner publishing workflow uses branches, pull requests, CI checks, managed previews, merge to `main`, automatic deployment, and production verification.
+- The Portfolio Owner publishing workflow uses branches, pull requests, CI checks, managed previews, merge to `production`, automatic deployment, and production verification.
 - Version 1 may launch with two strong published projects.
 - The Personal Developer Portfolio is a launch project.
 - Jury Process Management Integration is a launch case study.
@@ -150,7 +150,7 @@ The approved technical direction is:
 - **Testing:** Vitest, Testing Library, Playwright, and automated accessibility checks
 - **CI:** GitHub Actions
 - **Preview and Production hosting:** Vercel Git integration
-- **Production branch:** `main`
+- **Production branch:** `production`
 - **Docker:** Post-launch enhancement
 
 Next.js does not replace React. The implementation uses React through Next.js.

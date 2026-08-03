@@ -263,7 +263,7 @@ GitHub Actions
     ├── Run tests
     └── Build
     ↓
-Merge to main
+Merge to production
     ↓
 Automatic production deployment
 ```
@@ -764,7 +764,7 @@ The first release is complete when:
 - LinkedIn, GitHub, and email links work.
 - The website works on mobile and desktop.
 - CI checks run automatically.
-- Production deployment is automatic after approved changes reach `main`.
+- Production deployment is automatic after approved changes reach `production`.
 - No confidential company information is exposed.
 - The repository includes clear setup and architecture documentation.
 
