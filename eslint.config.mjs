@@ -29,6 +29,38 @@ const eslintConfig = defineConfig([
     },
   },
 
+  /*
+   * The content-flow boundary, enforced rather than remembered.
+   *
+   * Pages and components must read content through the selector layer, which
+   * applies publication and confidentiality filtering in one place. A
+   * component importing src/content directly would bypass that filter and
+   * could render Draft, Private, or Restricted material
+   * (FAC-PUBLISH-001/002, NFAC-SEC-006).
+   *
+   * Only the domain layer may touch raw content; it is where the filtering
+   * lives. Overriding this rule in a component is almost always the wrong fix
+   * — the right one is to add or extend a selector.
+   */
+  {
+    files: ["src/app/**/*.{ts,tsx}", "src/components/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/content/*", "@/content", "**/content/projects", "../content/*"],
+              message:
+                "Read content through @/domain/content/selectors. Importing src/content " +
+                "directly bypasses publication and confidentiality filtering.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",

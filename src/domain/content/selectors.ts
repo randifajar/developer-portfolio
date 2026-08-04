@@ -5,6 +5,7 @@ import { mediaAssets } from "@/content/media";
 import { profile } from "@/content/profile";
 import { projects } from "@/content/projects";
 import { resume } from "@/content/resume";
+import { siteConfig } from "@/content/site";
 import { skills } from "@/content/skills";
 import type {
   AIPractice,
@@ -14,6 +15,7 @@ import type {
   ProfessionalProfile,
   ProjectCaseStudy,
   Resume,
+  SiteConfig,
   TechnicalSkill,
   WorkExperience,
 } from "@/domain/content/schemas";
@@ -57,6 +59,19 @@ function compareProjects(a: ProjectCaseStudy, b: ProjectCaseStudy): number {
   //    registration order. A stable order matters because it drives static
   //    route generation and the sitemap.
   return a.title.localeCompare(b.title);
+}
+
+/**
+ * Site-wide configuration.
+ *
+ * Site config has no publication status — it is settings, not publishable
+ * content — so this is a pass-through rather than a filter. It lives here
+ * anyway so the selector layer remains the single sanctioned reader of
+ * src/content, and the lint rule enforcing that boundary needs no exceptions.
+ * A rule with carve-outs is a rule people learn to route around.
+ */
+export function getSiteConfig(): SiteConfig {
+  return siteConfig;
 }
 
 /** The active public Professional Profile, or null when none is publishable. */

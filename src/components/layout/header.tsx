@@ -5,9 +5,9 @@ import {
   getActiveResume,
   getPublishedExternalProfiles,
   getPublishedProfile,
+  getSiteConfig,
 } from "@/domain/content/selectors";
 import { ROUTES } from "@/lib/constants";
-import { siteConfig } from "@/content/site";
 
 /**
  * The site header.
@@ -24,6 +24,7 @@ export function Header() {
   const profile = getPublishedProfile();
   const resume = getActiveResume();
   const externalProfiles = getPublishedExternalProfiles();
+  const siteConfig = getSiteConfig();
 
   // Falls back to the site owner name so the header still identifies the site
   // while the profile is Draft.

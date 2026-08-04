@@ -24,7 +24,18 @@
   --color-surface-muted: #f1f5f9;
   --color-text-primary: #0f172a;
   --color-text-secondary: #475569;
-  --color-text-muted: #64748b;
+  /*
+   * UX 4.4 recommends #64748B here, but that measures 4.34:1 against
+   * --color-surface-muted (#F1F5F9) — below the 4.5:1 WCAG AA threshold for
+   * normal text, confirmed by an axe scan on the footer.
+   *
+   * UX 4.4 also states that all final combinations must pass WCAG AA, and
+   * NFAC-A11Y-005 is a P0 launch requirement, so the contrast rule governs the
+   * exact hex. Darkened to #5B6A7D, which measures 5.04:1 on the muted surface
+   * and stays visibly lighter than --color-text-secondary, preserving the
+   * intended hierarchy.
+   */
+  --color-text-muted: #5b6a7d;
   --color-border: #cbd5e1;
 
   /* Action and focus */

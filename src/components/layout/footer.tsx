@@ -1,8 +1,9 @@
 import { ExternalLink } from "@/components/ui/external-link";
-import { siteConfig } from "@/content/site";
+
 import {
   getPublishedContactChannels,
   getPublishedExternalProfiles,
+  getSiteConfig,
 } from "@/domain/content/selectors";
 import { MAIN_CONTENT_ID } from "@/lib/constants";
 
@@ -25,6 +26,7 @@ interface FooterProps {
 export function Footer({ year = new Date().getFullYear() }: FooterProps) {
   const contactChannels = getPublishedContactChannels();
   const externalProfiles = getPublishedExternalProfiles();
+  const siteConfig = getSiteConfig();
 
   return (
     <footer className="mt-24 border-t border-border bg-surface-muted">

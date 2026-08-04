@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { siteConfig } from "@/content/site";
+import { getSiteConfig } from "@/domain/content/selectors";
 
 export const alt = "Randi Fajar Wicaksono — Backend-Focused Full-Stack Developer";
 export const size = { width: 1200, height: 630 };
@@ -21,6 +21,8 @@ export const contentType = "image/png";
  * in the image renderer, which has no access to the stylesheet.
  */
 export default function OpenGraphImage() {
+  const siteConfig = getSiteConfig();
+
   return new ImageResponse(
     <div
       style={{

@@ -59,13 +59,13 @@ describe("root metadata", () => {
   it("identifies Randi and the positioning (NFAC-SEO-003)", () => {
     const metadata = buildRootMetadata();
 
-    expect(
-      String(
-        metadata.title && typeof metadata.title === "object"
-          ? metadata.title.default
-          : metadata.title,
-      ),
-    ).toContain("Randi Fajar Wicaksono");
+    // Next's Metadata["title"] is a union of template shapes, so the object is
+    // narrowed rather than indexed directly.
+    const title = metadata.title;
+    const defaultTitle =
+      title && typeof title === "object" && "default" in title ? title.default : String(title);
+
+    expect(defaultTitle).toContain("Randi Fajar Wicaksono");
     expect(metadata.description).toContain("Backend-focused");
   });
 
@@ -78,7 +78,10 @@ describe("root metadata", () => {
 
     expect(metadata.openGraph?.title).toBeTruthy();
     expect(metadata.openGraph?.description).toBeTruthy();
-    expect(metadata.twitter?.card).toBe("summary_large_image");
+
+    // Metadata["twitter"] is a union whose members differ by card type, so the
+    // emitted value is asserted through the serialised form.
+    expect(JSON.stringify(metadata.twitter)).toContain("summary_large_image");
   });
 });
 
