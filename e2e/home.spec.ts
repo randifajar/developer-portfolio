@@ -34,14 +34,61 @@ test.describe("homepage structure", () => {
 });
 
 test.describe("keyboard access (NFAC-A11Y-002)", () => {
-  test("the skip link is the first focusable element and reaches main content", async ({
+  /**
+   * Structural assertions, verified on every engine.
+   *
+   * These check the site's own implementation: the skip link exists, targets
+   * main content, is the first focusable element in DOM order, and becomes
+   * visible when focused.
+   */
+  test("the skip link exists, targets main content, and is first in the document", async ({
     page,
   }) => {
+    const skipLink = page.getByRole("link", { name: /skip to main content/i });
+
+    await expect(skipLink).toHaveAttribute("href", "#main-content");
+
+    const isFirstFocusable = await page.evaluate(() => {
+      const focusable = document.querySelectorAll<HTMLElement>(
+        'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+      return focusable[0]?.getAttribute("href") === "#main-content";
+    });
+
+    expect(isFirstFocusable).toBe(true);
+  });
+
+  test("the skip link becomes visible when focused", async ({ page }) => {
+    const skipLink = page.getByRole("link", { name: /skip to main content/i });
+
+    await skipLink.focus();
+
+    await expect(skipLink).toBeFocused();
+    await expect(skipLink).toBeVisible();
+  });
+
+  /**
+   * Tab-order assertion, restricted to engines that place links in the tab
+   * order by default.
+   *
+   * WebKit does not: Safari's "Press Tab to highlight each item on a webpage"
+   * is off by default, so Tab cycles only form controls until a user enables
+   * full keyboard access. Playwright's WebKit mirrors that default.
+   *
+   * This is a platform default rather than a defect in the markup — the skip
+   * link is a plain anchor, not a browser-specific API, so NFAC-COMPAT-002 is
+   * not at risk. The structural tests above still run on WebKit, and a Safari
+   * user who navigates by keyboard will have enabled full keyboard access.
+   */
+  test("Tab moves focus to the skip link first", async ({ page }, testInfo) => {
+    test.skip(
+      testInfo.project.name === "webkit",
+      "WebKit excludes links from the tab order until full keyboard access is enabled.",
+    );
+
     await page.keyboard.press("Tab");
 
-    const skipLink = page.getByRole("link", { name: /skip to main content/i });
-    await expect(skipLink).toBeFocused();
-    await expect(skipLink).toHaveAttribute("href", "#main-content");
+    await expect(page.getByRole("link", { name: /skip to main content/i })).toBeFocused();
   });
 
   test("focus is visible on the focused element", async ({ page }) => {
