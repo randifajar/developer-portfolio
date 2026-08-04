@@ -1,0 +1,30 @@
+# Line-ending normalization.
+#
+# Without this, a Windows checkout with core.autocrlf=true produces CRLF working
+# files while Linux CI produces LF. Prettier is configured with endOfLine: "lf",
+# so the same commit can pass `format:check` on one machine and fail on the
+# other — which is exactly what happened, and it makes local verification
+# untrustworthy.
+#
+# `text=auto eol=lf` stores everything as LF in Git and checks it out as LF
+# everywhere, so every machine and CI see identical bytes (NFAC-REL-004).
+* text=auto eol=lf
+
+# Binary files must never be line-ending converted; doing so corrupts them.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.avif binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.zip binary
+
+# Generated lock file — collapse it in diffs, it is reviewed by version bump
+# rather than line by line.
+package-lock.json linguist-generated=true

@@ -18,3 +18,12 @@ public/
 # cosmetic diffs against approved content for no benefit. They are excluded so
 # `npm run format` never rewrites them.
 docs/
+
+# Agent instructions and evaluation scenarios are the same category of document
+# as docs/ — authored policy, not source. Prettier wants to pad the Markdown
+# tables in evaluations.md, which is the same cosmetic churn for no benefit.
+#
+# This was missed originally because .claude/ and the Prettier config arrived on
+# two different branches, so neither branch alone contained both and the check
+# passed on each. It only failed once they met on production.
+.claude/
