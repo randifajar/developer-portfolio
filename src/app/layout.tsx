@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import { Footer } from "@/components/layout/footer";
+import { Header } from "@/components/layout/header";
 import { MAIN_CONTENT_ID } from "@/lib/constants";
 import "./globals.css";
 
@@ -36,11 +38,11 @@ export default function RootLayout({
           Skip to main content
         </a>
 
-        {/* Header lands in P13. */}
+        <Header />
 
         <main id={MAIN_CONTENT_ID}>{children}</main>
 
-        {/* Footer lands in P13. */}
+        <Footer />
       </body>
     </html>
   );
