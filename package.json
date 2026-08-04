@@ -1,0 +1,45 @@
+{
+  "name": "developer-portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Personal developer portfolio of Randi Fajar Wicaksono, a backend-focused full-stack developer.",
+  "author": "Randi Fajar Wicaksono",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "validate:content": "tsx scripts/validate-content.ts",
+    "validate:release": "tsx scripts/validate-release.ts",
+    "check:links": "tsx scripts/check-links.ts",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "audit:prod": "npm audit --omit=dev --audit-level=high",
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm run validate:content && npm run test:run && npm run build",
+    "release:check": "npm run check && npm run validate:release && npm run check:links && npm run test:e2e && npm run audit:prod"
+  },
+  "dependencies": {
+    "next": "16.2.12",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "24.13.3",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.2.12",
+    "tailwindcss": "4.3.3",
+    "typescript": "6.0.3"
+  }
+}
