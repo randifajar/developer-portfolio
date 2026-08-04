@@ -79,6 +79,26 @@ export function getPublishedProfile(): ProfessionalProfile | null {
   return isPubliclyEligible(profile) ? profile : null;
 }
 
+/**
+ * Whether the site has enough approved content to be worth discovering.
+ *
+ * Search engines are kept out until this is true. An incomplete portfolio
+ * getting indexed and cached actively works against the product goal — a
+ * recruiter finding a near-empty page is worse than finding nothing — and
+ * NFAC-SEO-002 only asks that pages *intended for discovery* be crawlable.
+ *
+ * Deliberately derived from content state rather than an environment flag or a
+ * hardcoded boolean: it flips itself the moment the launch content is
+ * published, so nobody has to remember to turn indexing on, and nobody can
+ * turn it on early by accident.
+ *
+ * The threshold mirrors the launch rule in DEC-030 and FAC-HOME-004: a
+ * Published profile and at least two Published projects.
+ */
+export function isPubliclyLaunchReady(): boolean {
+  return getPublishedProfile() !== null && getPublishedProjects().length >= 2;
+}
+
 /** Published Work Experience, most recent first (UX 7.6). */
 export function getPublishedExperience(): readonly WorkExperience[] {
   return experience

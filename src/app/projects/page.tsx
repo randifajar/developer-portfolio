@@ -29,8 +29,10 @@ export default function ProjectsPage() {
       <div className="flex flex-col gap-10">
         <SectionHeader
           heading="Projects"
-          level={2}
-          headingClassName="text-4xl sm:text-5xl"
+          // The page's primary heading, so structurally an h1 (NFAC-A11Y-003).
+          // This previously rendered as an h2 sized like an h1, which left the
+          // route with no h1 at all.
+          level={1}
           description={
             <>
               <p>
@@ -54,6 +56,7 @@ export default function ProjectsPage() {
                 <ProjectCard
                   project={project}
                   technologyNames={getTechnologyNames(project.technologyIds)}
+                  headingLevel={2}
                 />
               </li>
             ))}
@@ -67,9 +70,9 @@ export default function ProjectsPage() {
            */
           <div className="flex flex-col items-start gap-6 rounded-(--radius-card) border border-border bg-surface p-8 sm:p-12">
             <div className="flex flex-col gap-3">
-              <h3 className="text-2xl font-semibold text-text-primary">
+              <h2 className="text-2xl font-semibold text-text-primary">
                 Case studies are being prepared
-              </h3>
+              </h2>
               <p className="max-w-(--spacing-prose) text-text-secondary">
                 Published project case studies will appear here. In the meantime, my resume and
                 contact details are available.

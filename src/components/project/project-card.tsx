@@ -10,6 +10,15 @@ interface ProjectCardProps {
   readonly project: ProjectCaseStudy;
   /** Canonical technology names, resolved by the caller. */
   readonly technologyNames: readonly string[];
+  /**
+   * Heading level for the card title.
+   *
+   * The card appears under an h1 on the Projects Index and under an h2 section
+   * heading on the homepage, so its own level depends on where it sits. A
+   * hardcoded level skips a heading level in one of the two places, which
+   * axe's heading-order rule flags and screen-reader users navigate by.
+   */
+  readonly headingLevel?: 2 | 3;
 }
 
 const PROJECT_TYPE_LABEL: Record<ProjectCaseStudy["projectType"], string> = {
@@ -27,9 +36,10 @@ const PROJECT_TYPE_LABEL: Record<ProjectCaseStudy["projectType"], string> = {
  * card clickable, which keeps the accessible name to the project title while
  * preserving the large click target.
  */
-export function ProjectCard({ project, technologyNames }: ProjectCardProps) {
+export function ProjectCard({ project, technologyNames, headingLevel = 3 }: ProjectCardProps) {
   const [firstMediaId] = project.mediaAssetIds ?? [];
   const visual = getPublishedMediaAsset(firstMediaId);
+  const Heading = `h${headingLevel}` as const;
 
   return (
     <article className="group relative flex flex-col gap-4 rounded-(--radius-card) border border-border bg-surface p-6 transition-colors hover:border-accent">
@@ -49,14 +59,14 @@ export function ProjectCard({ project, technologyNames }: ProjectCardProps) {
         <StatusBadge status={project.deliveryStatus} />
       </div>
 
-      <h3 className="text-xl font-semibold text-text-primary">
+      <Heading className="text-xl font-semibold text-text-primary">
         <Link
           href={ROUTES.projectDetail(project.slug)}
           className="after:absolute after:inset-0 after:content-[''] group-hover:text-accent"
         >
           {project.title}
         </Link>
-      </h3>
+      </Heading>
 
       <p className="text-text-secondary">{project.summary}</p>
 

@@ -4,12 +4,17 @@ import type { ReactNode } from "react";
  * Heading levels this component may render.
  *
  * Configurable because NFAC-A11Y-003 requires a logical heading hierarchy with
- * one h1 per page. A section header inside the homepage is an h2; the same
- * component inside a case study subsection is an h3. Choosing a level for
- * visual size instead of structure is exactly what UX 15.2 forbids, so size is
+ * one h1 per page. A page's primary heading is an h1; a section within it is an
+ * h2; a subsection inside a case study is an h3. Choosing a level for visual
+ * size instead of structure is exactly what UX 15.2 forbids, so size is
  * controlled separately through className.
+ *
+ * Level 1 was originally omitted here, which forced the Projects Index to
+ * render its primary heading as an h2 styled at h1 size — the same
+ * structure-for-appearance mistake, just inverted. The type now permits h1 so
+ * a page-level heading can be structurally correct.
  */
-export type HeadingLevel = 2 | 3 | 4;
+export type HeadingLevel = 1 | 2 | 3 | 4;
 
 interface SectionHeaderProps {
   readonly heading: string;
@@ -24,6 +29,7 @@ interface SectionHeaderProps {
 }
 
 const DEFAULT_HEADING_SIZE: Record<HeadingLevel, string> = {
+  1: "text-4xl sm:text-5xl",
   2: "text-3xl sm:text-4xl",
   3: "text-2xl sm:text-3xl",
   4: "text-xl sm:text-2xl",

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { siteConfig } from "@/content/site";
+import { getSiteConfig, isPubliclyLaunchReady } from "@/domain/content/selectors";
 import type { ProjectCaseStudy } from "@/domain/content/schemas";
 import { absoluteUrl, getSiteUrl } from "@/lib/environment";
 import { ROUTES } from "@/lib/constants";
@@ -18,10 +18,27 @@ import { ROUTES } from "@/lib/constants";
 
 /** Metadata shared by every route. */
 export function buildRootMetadata(): Metadata {
+  const siteConfig = getSiteConfig();
   const siteUrl = getSiteUrl();
 
   return {
     metadataBase: new URL(siteUrl),
+
+    /*
+     * Pre-launch, every page carries noindex in addition to the robots.txt
+     * disallow.
+     *
+     * The two are not redundant. robots.txt asks a crawler not to *fetch* a
+     * page; a URL linked from somewhere else can still be indexed without ever
+     * being fetched, showing up as a bare result. The meta directive is what
+     * actually keeps it out of the index.
+     *
+     * Flips automatically once the launch content is published.
+     */
+    robots: isPubliclyLaunchReady()
+      ? { index: true, follow: true }
+      : { index: false, follow: false, nocache: true },
+
     title: {
       default: siteConfig.defaultTitle,
       template: siteConfig.titleTemplate,
@@ -51,6 +68,7 @@ export function buildRootMetadata(): Metadata {
 
 /** Metadata for the Projects Index. */
 export function buildProjectsIndexMetadata(): Metadata {
+  const siteConfig = getSiteConfig();
   const description =
     "Selected project case studies covering the problem, my responsibility, the technical " +
     "approach, and how each result was verified.";
@@ -75,6 +93,7 @@ export function buildProjectsIndexMetadata(): Metadata {
  * unpublished project can never reach this function.
  */
 export function buildProjectMetadata(project: ProjectCaseStudy): Metadata {
+  const siteConfig = getSiteConfig();
   const canonical = ROUTES.projectDetail(project.slug);
 
   return {
