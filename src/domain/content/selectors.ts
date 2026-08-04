@@ -169,6 +169,29 @@ export function getPublishedExternalProfiles(): readonly ExternalProfile[] {
 }
 
 /**
+ * Resolve technology ids to their canonical public names.
+ *
+ * Unknown ids are dropped rather than rendered raw. Cross-record validation
+ * already rejects them at build time (rule: valid-technology-references), so
+ * reaching this branch means validation was bypassed — and showing a visitor
+ * "skill-typescript" would be worse than showing nothing.
+ *
+ * Draft skills are excluded, so a technology tag cannot leak an unpublished
+ * skill onto a card.
+ */
+export function getTechnologyNames(ids: readonly string[] | undefined): readonly string[] {
+  if (!ids || ids.length === 0) {
+    return [];
+  }
+
+  const published = skills.filter(isPubliclyEligible);
+
+  return ids
+    .map((id) => published.find((skill) => skill.id === id)?.name)
+    .filter((name): name is string => name !== undefined);
+}
+
+/**
  * A publicly eligible media asset by id, or null.
  *
  * FAC-PUBLISH-003: a Restricted asset is never returned, so its path is never
