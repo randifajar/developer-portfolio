@@ -31,13 +31,34 @@ async function waitUntilRendered(page: Page): Promise<void> {
   await page.waitForLoadState("networkidle");
 }
 
+/**
+ * Rules that block regardless of the impact axe assigns them.
+ *
+ * `page-has-heading-one` is rated *moderate*, so an impact-only filter let a
+ * live page ship with no h1 at all — a direct NFAC-A11Y-003 failure, which is
+ * P0. Impact reflects how badly a rule breaks a page in general; it does not
+ * know which requirements this project treats as launch-blocking.
+ */
+const ALWAYS_BLOCKING_RULES = new Set([
+  "page-has-heading-one",
+  "heading-order",
+  "landmark-one-main",
+  "html-has-lang",
+  "region",
+]);
+
 async function blockingViolations(page: Page): Promise<string[]> {
   const results = await new AxeBuilder({ page })
-    .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+    .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa", "best-practice"])
     .analyze();
 
   return results.violations
-    .filter((violation) => violation.impact === "critical" || violation.impact === "serious")
+    .filter(
+      (violation) =>
+        violation.impact === "critical" ||
+        violation.impact === "serious" ||
+        ALWAYS_BLOCKING_RULES.has(violation.id),
+    )
     .map(
       (violation) =>
         `${violation.id} (${violation.impact}): ${violation.help} — ` +

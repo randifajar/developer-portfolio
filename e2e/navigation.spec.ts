@@ -85,3 +85,39 @@ test.describe("security headers (NFAC-SEC-005)", () => {
     expect(headers["permissions-policy"]).toContain("camera=()");
   });
 });
+
+/**
+ * Heading structure and indexing posture.
+ *
+ * Both regressions this guards against reached production: two routes shipped
+ * with no h1, and the site was crawlable while it was an empty shell.
+ */
+test.describe("every public page has exactly one h1 (NFAC-A11Y-003)", () => {
+  const routes = ["/", "/projects", "/this-route-does-not-exist"];
+
+  for (const route of routes) {
+    test(`${route} has exactly one h1`, async ({ page }) => {
+      await page.goto(route);
+
+      await expect(page.locator("h1")).toHaveCount(1);
+    });
+  }
+});
+
+test.describe("pre-launch indexing posture", () => {
+  test("robots.txt disallows crawling while content is Draft", async ({ request }) => {
+    const body = await (await request.get("/robots.txt")).text();
+
+    expect(body).toMatch(/Disallow:\s*\/\s*$/m);
+  });
+
+  test("pages carry noindex, because robots.txt alone does not prevent indexing", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    const robots = await page.locator('meta[name="robots"]').getAttribute("content");
+
+    expect(robots).toContain("noindex");
+  });
+});

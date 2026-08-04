@@ -5,6 +5,7 @@ import { ExperienceSection } from "@/components/sections/experience-section";
 import { HeroSection } from "@/components/sections/hero-section";
 import { ProjectsSection } from "@/components/sections/projects-section";
 import { SkillsSection } from "@/components/sections/skills-section";
+import { getPublishedProfile, getSiteConfig } from "@/domain/content/selectors";
 
 /**
  * Home.
@@ -20,8 +21,19 @@ import { SkillsSection } from "@/components/sections/skills-section";
  * release validation reports as launch-blocking.
  */
 export default function Home() {
+  // The Hero owns the page's h1, but it renders nothing while the profile is
+  // Draft — which left the live homepage with no h1 at all, breaking the
+  // one-primary-heading requirement in NFAC-A11Y-003.
+  //
+  // A visually hidden fallback keeps the document outline valid without
+  // inventing visible content on an otherwise empty page. It uses the owner
+  // name, which is a Confirmed decision (DEC-012), not placeholder text.
+  const hasHeroHeading = getPublishedProfile() !== null;
+
   return (
     <>
+      {hasHeroHeading ? null : <h1 className="sr-only">{getSiteConfig().ownerName}</h1>}
+
       <HeroSection />
       <AboutSection />
       <ProjectsSection />
