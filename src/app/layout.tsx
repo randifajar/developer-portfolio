@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { buildRootMetadata } from "@/domain/metadata/build-metadata";
 import { MAIN_CONTENT_ID } from "@/lib/constants";
 import "./globals.css";
 
@@ -11,11 +12,7 @@ const geistSans = Geist({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "Randi Fajar Wicaksono — Backend-Focused Full-Stack Developer",
-  description:
-    "Portfolio of Randi Fajar Wicaksono, a backend-focused full-stack developer based in Yogyakarta, Indonesia.",
-};
+export const metadata: Metadata = buildRootMetadata();
 
 export default function RootLayout({
   children,
