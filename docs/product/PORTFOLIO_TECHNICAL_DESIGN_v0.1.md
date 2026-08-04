@@ -57,7 +57,7 @@ Version 1 must:
 6. Prevent Draft, Private, and Restricted content from appearing publicly.
 7. Generate project routes at build time.
 8. Provide automated quality checks.
-9. Deploy automatically after approved changes reach `main`.
+9. Deploy automatically after approved changes reach `production`.
 10. Remain easy to expand without building a premature CMS.
 
 ---
@@ -417,8 +417,8 @@ There is no API authentication, API hosting, API monitoring, or runtime database
 Connect the public GitHub repository to Vercel.
 
 - Pull requests receive Preview Deployments.
-- The production branch is `main`.
-- Merges to `main` trigger Production Deployments.
+- The production branch is `production`.
+- Merges to `production` trigger Production Deployments.
 
 ### Reason
 
@@ -1512,8 +1512,8 @@ Workflow: `.github/workflows/ci.yml`
 
 Triggers:
 
-- Pull request to `main`
-- Push to `main`
+- Pull request to `production`
+- Push to `production`
 
 Jobs:
 
@@ -1541,7 +1541,7 @@ Depends on Quality.
 
 ## 23.3 Branch protection
 
-Protect `main`.
+Protect `production`.
 
 Require:
 
@@ -1550,7 +1550,7 @@ Require:
 - Required E2E check
 - Branch up to date before merge
 
-For a one-person repository, self-approval may be permitted, but direct pushes to `main` should still be avoided.
+For a one-person repository, self-approval may be permitted, but direct pushes to `production` should still be avoided.
 
 ## 23.4 Release audit
 
@@ -1589,7 +1589,7 @@ Created for pull requests and non-production branches.
 
 ### Production
 
-Created from `main`.
+Created from `production`.
 
 ## 24.3 Deployment flow
 
@@ -1599,7 +1599,7 @@ Feature branch
 → GitHub Actions validation
 → Vercel Preview Deployment
 → Owner review
-→ Merge to main
+→ Merge to production
 → Vercel Production Deployment
 → Production verification
 ```
@@ -1610,7 +1610,7 @@ Feature branch
 - Node.js version: 24
 - Install command: `npm ci`
 - Build command: `npm run build`
-- Production branch: `main`
+- Production branch: `production`
 - Production environment variable: `SITE_URL`
 - Preview environment must not contain private or restricted content
 
@@ -1869,7 +1869,7 @@ The Technical Design is correctly implemented when:
 
 - [ ] Pull requests receive CI checks.
 - [ ] Pull requests receive Preview Deployments.
-- [ ] `main` triggers Production Deployment.
+- [ ] `production` triggers Production Deployment.
 - [ ] Production is manually verified.
 - [ ] Rollback is documented.
 

@@ -1,0 +1,20 @@
+# Dependencies and generated output
+node_modules/
+.next/
+out/
+build/
+coverage/
+playwright-report/
+test-results/
+.vercel/
+next-env.d.ts
+package-lock.json
+
+# Static assets
+public/
+
+# Approved specifications, governance, handoff, and plans are documents of
+# record. Prettier reformats Markdown tables and wrapping, which produces large
+# cosmetic diffs against approved content for no benefit. They are excluded so
+# `npm run format` never rewrites them.
+docs/

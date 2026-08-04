@@ -1,0 +1,75 @@
+name: Release Audit
+
+# Manual only (TD 23.4). This gate is expected to FAIL for the whole of
+# development, because release validation refuses Draft placeholder content —
+# that refusal is the mechanism keeping placeholders out of production, not a
+# defect. Running it on every push would train everyone to ignore a red check.
+on:
+  workflow_dispatch:
+    inputs:
+      site_url:
+        description: "Production site URL (absolute HTTPS)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  release-audit:
+    name: release-audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Each step runs even if an earlier one failed, so a single dispatch
+      # reports every launch blocker at once instead of surfacing them one run
+      # at a time.
+      - name: Release content validation
+        id: release_validation
+        if: always()
+        env:
+          SITE_URL: ${{ inputs.site_url }}
+        run: npm run validate:release
+
+      - name: Production dependency audit
+        if: always()
+        run: npm run audit:prod
+
+      - name: Install Playwright browsers
+        if: always()
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: End-to-end and accessibility tests
+        if: always()
+        run: npm run test:e2e
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-playwright-report
+          path: playwright-report/
+          retention-days: 30
+          if-no-files-found: ignore
+
+      # Lighthouse and production smoke checks are run against the deployed URL
+      # during P29 and P31. They are not automated here yet because there is no
+      # deployment to point them at until Vercel is connected (P28).
+      - name: Release audit summary
+        if: always()
+        run: |
+          echo "Release content validation: ${{ steps.release_validation.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Lighthouse and production smoke checks are performed manually" >> "$GITHUB_STEP_SUMMARY"
+          echo "against the deployed URL until Vercel is connected." >> "$GITHUB_STEP_SUMMARY"

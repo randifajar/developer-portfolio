@@ -1,0 +1,94 @@
+name: CI
+
+# `production` is the only long-lived branch (CLAUDE.md, git-workflow.md).
+# There is deliberately no `main` trigger — no such branch exists.
+on:
+  pull_request:
+    branches: [production]
+  push:
+    branches: [production]
+
+# Least privilege by default. A job needing more declares it itself.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Job names are contractual: docs/governance/github-configuration.md section 4
+  # lists `quality` and `e2e` as the required status checks, matched by exact
+  # string. Renaming a job here silently detaches the branch ruleset.
+  quality:
+    name: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      # `npm ci` installs strictly from the lock file, which is what makes the
+      # build reproducible (NFAC-REL-004). `npm install` would silently resolve
+      # newer versions and defeat that.
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Formatting
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Content validation
+        run: npm run validate:content
+
+      - name: Unit and component tests
+        run: npm run test:run
+
+      - name: Production build
+        run: npm run build
+
+  e2e:
+    name: e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: quality
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # --with-deps installs the system libraries WebKit and Firefox need on
+      # Ubuntu. Without it WebKit fails to launch and the cross-browser
+      # requirement in NFAC-COMPAT-001 goes silently unverified.
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      # Playwright's webServer config builds and starts the production server,
+      # so the suite runs against what actually deploys rather than a dev build.
+      - name: End-to-end and accessibility tests
+        run: npm run test:e2e
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

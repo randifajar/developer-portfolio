@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens — "Quiet Engineering" (UX/UI Specification section 4).
+ *
+ * Tailwind v4 is configured through CSS, not a JavaScript config file. Values
+ * declared in @theme become both CSS custom properties and Tailwind utilities,
+ * so `--color-accent` also generates `text-accent`, `bg-accent`, and so on.
+ * There is deliberately no tailwind.config.js.
+ *
+ * Version 1 ships one light theme. A dark-mode switcher is out of scope
+ * (UX 4.3, Product Model section 8).
+ *
+ * `static` emits every token whether or not a utility references it. Without
+ * it Tailwind tree-shakes unused values, so a token read directly through
+ * var() — for example a status colour used before any component consumes the
+ * matching utility — would silently resolve to nothing. The design token set
+ * is a documented contract (TD 14.2), so it is emitted in full.
+ */
+@theme static {
+  /* Surfaces and text — UX 4.4 */
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f1f5f9;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  /*
+   * UX 4.4 recommends #64748B here, but that measures 4.34:1 against
+   * --color-surface-muted (#F1F5F9) — below the 4.5:1 WCAG AA threshold for
+   * normal text, confirmed by an axe scan on the footer.
+   *
+   * UX 4.4 also states that all final combinations must pass WCAG AA, and
+   * NFAC-A11Y-005 is a P0 launch requirement, so the contrast rule governs the
+   * exact hex. Darkened to #5B6A7D, which measures 5.04:1 on the muted surface
+   * and stays visibly lighter than --color-text-secondary, preserving the
+   * intended hierarchy.
+   */
+  --color-text-muted: #5b6a7d;
+  --color-border: #cbd5e1;
+
+  /* Action and focus */
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+  --color-focus: #3b82f6;
+
+  /* Delivery status — never the sole carrier of meaning (UX 4.5) */
+  --color-status-success: #166534;
+  --color-status-warning: #92400e;
+  --color-status-neutral: #334155;
+  --color-status-error: #b91c1c;
+
+  /* Typography scale — UX 4.6 */
+  --font-sans:
+    var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Layout — UX 5.1 */
+  --spacing-content: 75rem; /* 1200px main layout width */
+  --spacing-prose: 48rem; /* 768px long-form reading width */
+  --spacing-header: 4rem; /* sticky header height */
+
+  /* Radius — UX 4.8 */
+  --radius-button: 0.5rem;
+  --radius-card: 0.875rem;
+  --radius-badge: 9999px;
+}
+
+/*
+ * Base styles.
+ */
+@layer base {
+  html {
+    /* Anchor targets must not sit behind the sticky header (UX 6.3). */
+    scroll-padding-top: calc(var(--spacing-header) + 1rem);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /*
+   * A visible, high-contrast focus indicator on every interactive element.
+   * NFAC-A11Y-002 requires focus to remain visible; NFAC-A11Y-005 requires
+   * the indicator itself to meet contrast requirements.
+   */
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Long-form content must not stretch to full viewport width (UX 5.1). */
+  ::selection {
+    background-color: color-mix(in srgb, var(--color-accent) 20%, transparent);
+  }
+}
+
+/*
+ * Reduced motion.
+ *
+ * NFAC-A11Y-006 requires every animation to be non-essential and to respect
+ * the user's preference. Content access is never delayed by a transition, so
+ * removing them entirely is safe.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -162,7 +162,7 @@ Edit local source-controlled content
 → Review the changes
 → Open a pull request
 → Run automated CI validation
-→ Merge approved changes into main
+→ Merge approved changes into production
 → Trigger automatic production deployment
 ```
 

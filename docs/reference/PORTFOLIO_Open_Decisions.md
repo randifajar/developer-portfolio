@@ -7,6 +7,17 @@
 - **Version:** 0.1
 - **Owner:** Randi Fajar Wicaksono
 - **Last Updated:** 2026-08-03
+- **Status:** Superseded by `docs/product/PORTFOLIO_Decision_Ledger_v1.0.md`
+
+> **Identifier precedence.** This register and the Decision Ledger both use
+> `OPEN-` identifiers, but they number different items. Where the same
+> identifier appears in both, the Decision Ledger is authoritative. For example,
+> `OPEN-001` is "Final professional headline" in the Decision Ledger and "MVP
+> Structure Changes" in this register, where the headline is `OPEN-005`.
+>
+> Cite Decision Ledger identifiers in requirements, plans, and traceability
+> matrices. This document is retained as a record of the questions raised before
+> Product Model approval.
 
 ---
 
