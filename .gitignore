@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.*
+
+# Next.js build output
+.next/
+out/
+build/
+next-env.d.ts
+
+# Testing
+coverage/
+playwright-report/
+test-results/
+blob-report/
+.playwright/
+
+# Environment
+# Every .env file is ignored except the committed example.
+.env
+.env.*
+!.env.example
+
+# Deployment
+.vercel/
+
+# TypeScript
+*.tsbuildinfo
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Editors
+.idea/
+*.swp
+*.swo
+
+# Operating system
+.DS_Store
+Thumbs.db
+desktop.ini
