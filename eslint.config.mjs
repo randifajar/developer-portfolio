@@ -12,6 +12,23 @@ const eslintConfig = defineConfig([
   // correctly overridden rather than producing conflicting fixes.
   prettier,
 
+  {
+    rules: {
+      // Tests omit a required field by destructuring it into a discarded
+      // binding, which is the clearest way to build an "invalid" fixture.
+      // Underscore-prefixed names are intentional discards, not oversights.
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+          ignoreRestSiblings: true,
+        },
+      ],
+    },
+  },
+
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
