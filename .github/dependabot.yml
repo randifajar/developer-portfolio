@@ -15,6 +15,35 @@ updates:
       prefix: chore
       include: scope
 
+    # Three packages are held back deliberately. Without these rules Dependabot
+    # reopens the same pull requests every Monday, each failing CI for a known
+    # reason — and a recurring red check trains everyone to stop reading them.
+    #
+    # These are version ceilings, not permanent exclusions. Patch and minor
+    # updates within the allowed range, including security fixes, still come
+    # through. Revisit when the upstream blocker in each note is resolved.
+    ignore:
+      # TypeScript 7 is the ground-up native compiler rewrite. tsc itself passes
+      # cleanly; it is the lint integration that breaks. typescript-eslint
+      # refuses to load against it — "typescript-eslint does not support TS 7.0"
+      # — and tracks support for TS >= 7.1 in typescript-eslint issue 10940.
+      - dependency-name: typescript
+        versions: [">=7.0.0"]
+
+      # ESLint 10 removed context.getFilename(). eslint-config-next bundles
+      # eslint-plugin-react, which still calls it, so every lint run crashes
+      # with "contextOrFilename.getFilename is not a function". ESLint 9 is also
+      # what the create-next-app template selects for this Next.js version.
+      - dependency-name: eslint
+        versions: [">=10.0.0"]
+
+      # @types/node must track the pinned runtime rather than lead it. Node is
+      # fixed at 24 LTS via .nvmrc, .node-version, and the package.json engines
+      # range, so types describing Node 26 APIs would describe a runtime this
+      # project does not have. Lift this together with the Node major.
+      - dependency-name: "@types/node"
+        versions: [">=25.0.0"]
+
   - package-ecosystem: github-actions
     directory: /
     schedule:
