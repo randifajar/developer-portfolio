@@ -114,7 +114,10 @@ export const juryProcessManagement = defineProject({
     "are intentionally excluded.",
 
   confidentialityClass: "sanitized",
-  featured: true,
+
+  // See the note in personal-developer-portfolio.ts: featured stays false
+  // until this is Published (Technical Design 9.4).
+  featured: false,
   featuredPriority: 2,
   publicationStatus: "draft",
   updatedAt: "2026-08-04",

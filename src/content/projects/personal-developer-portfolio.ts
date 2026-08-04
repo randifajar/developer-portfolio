@@ -153,7 +153,12 @@ export const personalDeveloperPortfolio = defineProject({
   ],
 
   confidentialityClass: "public",
-  featured: true,
+
+  // featured stays false while this is Draft. Technical Design 9.4 requires
+  // every featured project to be Published, because featuring one puts it on
+  // the homepage. featuredPriority records the intended order so P30 only has
+  // to flip publicationStatus and featured together.
+  featured: false,
   featuredPriority: 1,
   publicationStatus: "draft",
   updatedAt: "2026-08-04",
