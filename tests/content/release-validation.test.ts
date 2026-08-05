@@ -269,3 +269,53 @@ describe("release validation still enforces every structural rule", () => {
     ).toContain("unique-slugs");
   });
 });
+
+/**
+ * Prose about placeholders is not a placeholder.
+ *
+ * The scan originally matched case-insensitively and rejected the Personal
+ * Developer Portfolio case study, whose text explains that development ran
+ * against placeholder content behind a stricter release gate. That is an
+ * accurate description of this project's architecture, and deleting it to
+ * satisfy the checker would have been the wrong repair.
+ */
+describe("placeholder scan distinguishes markers from prose", () => {
+  function withOutcome(text: string): ContentSet {
+    const content = releaseReadyContent();
+    const [first, second] = content.projects;
+    return { ...content, projects: [{ ...first!, outcome: text }, second!] };
+  }
+
+  const legitimateProse = [
+    "Development ran against placeholder content behind a stricter release gate.",
+    "A separate validation refuses to launch while any placeholder remains.",
+    "The build used structurally valid Draft placeholders throughout.",
+    "Each todo was tracked in the plan rather than in the code.",
+  ];
+
+  for (const text of legitimateProse) {
+    it(`accepts prose: "${text.slice(0, 45)}..."`, () => {
+      expect(rulesFor(withOutcome(text))).not.toContain("no-published-placeholders");
+    });
+  }
+
+  const realMarkers = [
+    "DRAFT PLACEHOLDER: outcome pending.",
+    "PLACEHOLDER",
+    "TODO: write the outcome.",
+    "TBD",
+    "FIXME before launch.",
+    "XXX revisit this.",
+    "Lorem ipsum dolor sit amet.",
+  ];
+
+  for (const text of realMarkers) {
+    it(`rejects marker: "${text.slice(0, 45)}"`, () => {
+      expect(rulesFor(withOutcome(text))).toContain("no-published-placeholders");
+    });
+  }
+
+  it("still rejects lowercase lorem ipsum, which is never legitimate prose", () => {
+    expect(rulesFor(withOutcome("lorem ipsum dolor"))).toContain("no-published-placeholders");
+  });
+});

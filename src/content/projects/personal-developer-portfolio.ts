@@ -1,36 +1,28 @@
 import { defineProject } from "@/domain/content/define";
 
 /**
- * Personal Developer Portfolio — DRAFT.
+ * Personal Developer Portfolio — PUBLISHED.
  *
  * A confirmed launch project (Handoff section 4). This one is unusual: it is a
- * case study about the very repository it lives in, so most of its content can
- * be written truthfully from observable facts rather than requiring Randi to
- * recall private context.
- *
- * It is still Draft. deliveryStatus is "in-development" because that is
- * literally true today — the site has not launched. FAC-PROJECT-004 forbids
- * claiming a status the work has not reached, and "production" additionally
- * requires an explicit verified confirmation (TD 9.5).
- *
- * Every section is now written from observable facts about this repository —
- * decisions visible in the code, defects the checks actually caught, and
+ * case study about the very repository it lives in, so its content is written
+ * from observable facts rather than requiring Randi to recall private context.
+ * Decisions visible in the code, defects the checks actually caught, and
  * behaviour verified against the live deployment. Nothing here is an invented
  * achievement.
  *
- * REVIEW BEFORE PUBLISHING. Two things are Randi's call, not Claude's:
+ * Approved for publication by Randi on 2026-08-05, including the "Sole
+ * developer" role wording — the work was AI-accelerated under his direction,
+ * and `aiUsage` discloses that explicitly rather than leaving it implied.
  *
- *   1. `role` says "Sole developer". The work was AI-accelerated under Randi's
- *      direction, and `aiUsage` discloses that explicitly. The framing is
- *      consistent with the site's positioning, but the wording is a claim
- *      about Randi and only he can approve it.
+ * deliveryStatus remains "in-development" and that is deliberate. The
+ * application is deployed and verified running, but the portfolio itself has
+ * not launched: most content is still Draft and indexing is disabled.
+ * FAC-PROJECT-004 forbids claiming a status the work has not reached, and
+ * "production" would additionally require a verified productionConfirmation
+ * (TD 9.5). Revisit this at launch, not before.
  *
- *   2. `deliveryStatus` stays "in-development". The application is deployed
- *      and verified running, but the portfolio has not launched — content is
- *      still Draft and indexing is disabled. Moving to "production" would
- *      additionally require a verified productionConfirmation (TD 9.5).
- *
- * publicationStatus stays "draft" until Randi has read every sentence.
+ * Editing any claim here means re-checking it against the repository. The
+ * value of this case study is that every statement in it is verifiable.
  */
 export const personalDeveloperPortfolio = defineProject({
   id: "project-personal-developer-portfolio",
@@ -204,12 +196,11 @@ export const personalDeveloperPortfolio = defineProject({
 
   confidentialityClass: "public",
 
-  // featured stays false while this is Draft. Technical Design 9.4 requires
-  // every featured project to be Published, because featuring one puts it on
-  // the homepage. featuredPriority records the intended order so P30 only has
-  // to flip publicationStatus and featured together.
-  featured: false,
+  // Published and featured together: Technical Design 9.4 requires every
+  // featured project to be Published, because featuring one puts it on the
+  // homepage. featuredPriority 1 places it first in the approved ordering.
+  featured: true,
   featuredPriority: 1,
-  publicationStatus: "draft",
+  publicationStatus: "published",
   updatedAt: "2026-08-04",
 });
