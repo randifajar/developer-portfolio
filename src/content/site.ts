@@ -20,5 +20,9 @@ export const siteConfig = defineSiteConfig({
   email: "randifajar2307@gmail.com",
   linkedInUrl: "https://www.linkedin.com/in/randifajar",
   gitHubUrl: "https://github.com/randifajar",
-  defaultSocialImagePath: "/images/social/portfolio-social-card.png",
+  // The social card is generated at request time by src/app/opengraph-image.tsx
+  // rather than shipped as a static file, so it cannot drift out of sync with
+  // the name and positioning above. This is the public path Next.js serves it
+  // from — the earlier value pointed at a static PNG that was never created.
+  defaultSocialImagePath: "/opengraph-image",
 });
