@@ -96,6 +96,39 @@ Default squash message recommendation:
 
 ## 4. Protect `production`
 
+> **Plan limitation — not configurable while the repository is private.**
+>
+> Branch rulesets and branch protection are unavailable for private
+> repositories on the GitHub Free plan. Both the rulesets API and the legacy
+> branch-protection API return:
+>
+> ```text
+> 403: Upgrade to GitHub Pro or make this repository public
+>      to enable this feature.
+> ```
+>
+> This section was written assuming the feature was available. It is not, so
+> the checklist item moves to the public-visibility step in section 9 rather
+> than being treated as an outstanding configuration mistake.
+>
+> **Until then, nothing technically prevents a direct push to `production`.**
+> The prohibition in `git-workflow.md` section 8 is policy, not enforcement.
+> The practical risk is limited — there is a single contributor, and CI still
+> runs on every pull request — but the gap is real and should not be
+> misremembered as protection that exists.
+>
+> Three ways to resolve it:
+>
+> 1. **Wait for public visibility.** Protection becomes available at no cost
+>    the moment the repository is made public, which section 1 already plans
+>    before job applications. Recommended.
+> 2. **Upgrade to GitHub Pro.** Protection immediately, and it persists after
+>    the repository becomes public.
+> 3. Making the repository public early is **not** an acceptable workaround.
+>    It would bypass the confidentiality gate in section 9.
+>
+> Configure the ruleset below as soon as the feature becomes available.
+
 Create a branch ruleset:
 
 ```text
@@ -185,6 +218,18 @@ Enable every feature available under the current GitHub plan:
 - Push protection
 - Code scanning
 - Private vulnerability reporting after the repository becomes public
+
+> **Several of these are also plan-restricted on a private repository.**
+>
+> Secret scanning, push protection, and code scanning are GitHub Advanced
+> Security features and are generally unavailable on a private repository on
+> the Free plan. Dependabot version updates work regardless — the configuration
+> in `.github/dependabot.yml` is already opening pull requests — but Dependabot
+> *alerts* are a separate toggle.
+>
+> Enable whatever the plan currently offers, and re-check this list when the
+> repository becomes public, at which point the remainder become available at
+> no cost. Do not record an unavailable feature as enabled.
 
 ### Dependabot
 
@@ -283,6 +328,23 @@ Before switching the repository from Private to Public:
 
 Once a repository becomes public, hiding a file from the current branch does
 not remove it from previous Git history.
+
+### Immediately after switching to Public
+
+These become available at no cost the moment visibility changes, and are easy
+to forget precisely because the switch feels like the finish line:
+
+- [ ] Create the `Protect production` ruleset from section 4 — this is the item
+      deferred by the plan limitation, and the repository has been running
+      without enforced branch protection until now
+- [ ] Add `quality` and `e2e` as required status checks
+- [ ] Enable secret scanning and push protection
+- [ ] Enable code scanning
+- [ ] Enable private vulnerability reporting
+
+Enabling protection *after* going public leaves a window where the repository
+is both public and unprotected. Do this first, before announcing the URL or
+sending it with any job application.
 
 ---
 
