@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   getActiveResume,
+  getAdjacentPublishedProjects,
   getFeaturedProjects,
   getPublishedAIPractices,
   getPublishedContactChannels,
@@ -10,29 +11,72 @@ import {
   getPublishedProjectBySlug,
   getPublishedProjects,
   getPublishedSkillGroups,
+  isPubliclyLaunchReady,
 } from "@/domain/content/selectors";
 
 /**
  * Selectors against the real, unmocked content modules.
  *
- * Everything substantive is Draft today, so these assert the current truthful
- * state: the public site would render empty. That is correct until P30 and is
- * exactly what release validation reports as launch-blocking.
+ * These assert what the live site actually exposes right now. They are meant
+ * to fail whenever publication state changes, so that going from "not public"
+ * to "public" is always a reviewed diff rather than something that happens
+ * quietly.
  *
- * These will need updating when Randi publishes real content — deliberately.
- * A change from "nothing is public" to "content is public" should be a visible,
- * reviewed diff rather than something that happens silently.
+ * Current state: the Personal Developer Portfolio case study is Published.
+ * Everything else remains Draft pending Randi's content.
  */
-describe("real content is not yet publicly visible", () => {
-  it("exposes no projects", () => {
-    expect(getPublishedProjects()).toEqual([]);
+describe("exactly one project is public", () => {
+  it("exposes the Personal Developer Portfolio case study", () => {
+    const slugs = getPublishedProjects().map((project) => project.slug);
+
+    expect(slugs).toEqual(["personal-developer-portfolio"]);
   });
 
-  it("exposes no featured projects, so the homepage shows no cards", () => {
-    expect(getFeaturedProjects()).toEqual([]);
+  it("features it on the homepage", () => {
+    expect(getFeaturedProjects().map((project) => project.slug)).toEqual([
+      "personal-developer-portfolio",
+    ]);
   });
 
-  it("exposes no profile", () => {
+  it("resolves its slug", () => {
+    expect(getPublishedProjectBySlug("personal-developer-portfolio")?.title).toBe(
+      "Personal Developer Portfolio",
+    );
+  });
+
+  it("offers no adjacent neighbours while it is the only public project", () => {
+    const { previous, next } = getAdjacentPublishedProjects("personal-developer-portfolio");
+
+    // Critically, `next` must not be the Draft professional case study.
+    expect(previous).toBeNull();
+    expect(next).toBeNull();
+  });
+});
+
+/**
+ * The confidentiality-critical assertion in this file.
+ *
+ * The Jury Process Management case study describes professional work and is
+ * still Draft placeholder text. It must stay invisible until Randi has written
+ * and reviewed it. If this ever passes, unreviewed content about an employer
+ * has reached the public site.
+ */
+describe("the professional case study remains invisible", () => {
+  it("does not appear in the published project list", () => {
+    const slugs = getPublishedProjects().map((project) => project.slug);
+
+    expect(slugs).not.toContain("jury-process-management-integration");
+  });
+
+  it("resolves to null, identically to an unknown slug", () => {
+    expect(getPublishedProjectBySlug("jury-process-management-integration")).toBe(
+      getPublishedProjectBySlug("no-such-project-exists"),
+    );
+  });
+});
+
+describe("remaining content is still Draft", () => {
+  it("exposes no profile, so the Hero does not render", () => {
     expect(getPublishedProfile()).toBeNull();
   });
 
@@ -51,16 +95,18 @@ describe("real content is not yet publicly visible", () => {
   it("exposes no active resume, so Resume actions render their unavailable state", () => {
     expect(getActiveResume()).toBeNull();
   });
+});
 
-  it("resolves both real launch slugs to null while they are Draft", () => {
-    expect(getPublishedProjectBySlug("personal-developer-portfolio")).toBeNull();
-    expect(getPublishedProjectBySlug("jury-process-management-integration")).toBeNull();
+describe("the site is not yet launch-ready, so indexing stays disabled", () => {
+  it("reports not launch-ready with only one published project", () => {
+    // DEC-030 requires a Published profile and at least two Published
+    // projects. Until both hold, robots.txt disallows and pages carry noindex.
+    expect(isPubliclyLaunchReady()).toBe(false);
   });
 });
 
 describe("confirmed contact decisions are already public", () => {
-  // DEC-014, DEC-015, DEC-016 are Confirmed rather than placeholders, so these
-  // are the one category legitimately Published before content finalization.
+  // DEC-014, DEC-015, DEC-016 are Confirmed rather than placeholders.
   it("exposes the email channel", () => {
     expect(getPublishedContactChannels()).toHaveLength(1);
   });

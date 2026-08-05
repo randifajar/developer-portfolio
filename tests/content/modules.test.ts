@@ -130,10 +130,21 @@ describe("confidentiality invariants for a public repository", () => {
 });
 
 describe("draft state before content finalization", () => {
-  it("keeps every project Draft until Randi publishes real content", () => {
-    for (const project of projects) {
-      expect(project.publicationStatus).toBe("draft");
-    }
+  it("publishes only the case study written from verifiable facts", () => {
+    // The Personal Developer Portfolio case study describes this repository,
+    // so every claim in it is checkable against the code and the deployment.
+    const published = projects.filter((project) => project.publicationStatus === "published");
+
+    expect(published.map((project) => project.slug)).toEqual(["personal-developer-portfolio"]);
+  });
+
+  it("keeps the professional case study Draft until Randi writes it", () => {
+    // This one describes work under an employer and is still placeholder text.
+    // Publishing it before Randi authors and reviews it would put unreviewed
+    // claims about a former workplace on a public site.
+    const jury = projects.find((project) => project.slug === "jury-process-management-integration");
+
+    expect(jury?.publicationStatus).toBe("draft");
   });
 
   it("keeps the profile Draft while the headline and summary are placeholders", () => {

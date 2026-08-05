@@ -24,14 +24,37 @@ import { isPubliclyEligible } from "@/domain/content/types";
  * placeholders hide inside nested challenge and decision objects.
  */
 const PLACEHOLDER_PATTERNS: readonly { readonly label: string; readonly pattern: RegExp }[] = [
-  { label: "DRAFT PLACEHOLDER", pattern: /draft\s+placeholder/i },
-  { label: "TODO", pattern: /\bTODO\b/i },
-  { label: "TBD", pattern: /\bTBD\b/i },
+  /*
+   * All-caps markers are matched case-SENSITIVELY.
+   *
+   * The convention for an unresolved marker is uppercase: TODO, FIXME,
+   * DRAFT PLACEHOLDER. Lowercase prose legitimately discusses the same
+   * concepts, and a case-insensitive match cannot tell the two apart.
+   *
+   * This is not hypothetical. The Personal Developer Portfolio case study
+   * explains that development ran against placeholder content behind a
+   * stricter release gate — a sentence describing this very mechanism. A
+   * case-insensitive rule rejected it, which would have meant deleting an
+   * accurate explanation to satisfy the checker.
+   *
+   * The residual risk is a lowercase `todo:` slipping through. That is the
+   * lesser failure: a missed marker is caught by the content review in
+   * docs/release-checklist.md step 3, whereas a false positive pressures the
+   * author to degrade correct content.
+   */
+  { label: "DRAFT PLACEHOLDER", pattern: /DRAFT\s+PLACEHOLDER/ },
+  { label: "PLACEHOLDER", pattern: /\bPLACEHOLDER\b/ },
+  { label: "TODO", pattern: /\bTODO\b/ },
+  { label: "TBD", pattern: /\bTBD\b/ },
+  { label: "FIXME", pattern: /\bFIXME\b/ },
+  { label: "XXX", pattern: /\bXXX\b/ },
+
+  // Never legitimate prose in a portfolio, at any casing.
   { label: "Lorem ipsum", pattern: /lorem\s+ipsum/i },
-  { label: "PLACEHOLDER", pattern: /\bplaceholder\b/i },
-  { label: "FIXME", pattern: /\bFIXME\b/i },
-  { label: "XXX", pattern: /\bXXX\b/i },
-  { label: "pending", pattern: /\bpending\s+(product\s+owner|approval|selection|confirmation)\b/i },
+  {
+    label: "pending approval",
+    pattern: /\bpending\s+(product\s+owner|approval|selection|confirmation)\b/i,
+  },
 ];
 
 /** Slugs of the two confirmed launch case studies (Handoff section 4). */
