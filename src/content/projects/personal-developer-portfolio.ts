@@ -13,9 +13,24 @@ import { defineProject } from "@/domain/content/define";
  * claiming a status the work has not reached, and "production" additionally
  * requires an explicit verified confirmation (TD 9.5).
  *
- * Sections marked DRAFT PLACEHOLDER need Randi's judgement or post-launch
- * facts. The rest describe decisions already made and visible in this
- * repository.
+ * Every section is now written from observable facts about this repository —
+ * decisions visible in the code, defects the checks actually caught, and
+ * behaviour verified against the live deployment. Nothing here is an invented
+ * achievement.
+ *
+ * REVIEW BEFORE PUBLISHING. Two things are Randi's call, not Claude's:
+ *
+ *   1. `role` says "Sole developer". The work was AI-accelerated under Randi's
+ *      direction, and `aiUsage` discloses that explicitly. The framing is
+ *      consistent with the site's positioning, but the wording is a claim
+ *      about Randi and only he can approve it.
+ *
+ *   2. `deliveryStatus` stays "in-development". The application is deployed
+ *      and verified running, but the portfolio has not launched — content is
+ *      still Draft and indexing is disabled. Moving to "production" would
+ *      additionally require a verified productionConfirmation (TD 9.5).
+ *
+ * publicationStatus stays "draft" until Randi has read every sentence.
  */
 export const personalDeveloperPortfolio = defineProject({
   id: "project-personal-developer-portfolio",
@@ -117,8 +132,16 @@ export const personalDeveloperPortfolio = defineProject({
   ],
 
   implementationSummary:
-    "DRAFT PLACEHOLDER: final implementation summary pending completion of the build. It will " +
-    "describe what was implemented and what was deliberately left out of Version 1.",
+    "Version 1 is a statically generated Next.js App Router site with no database, no runtime " +
+    "API, and no CMS. Content lives in typed TypeScript modules parsed by Zod at import, so a " +
+    "malformed record fails the build rather than reaching a page. Fifteen cross-record rules " +
+    "cover what no single schema can see — unique slugs, valid references, exactly one active " +
+    "resume, no published private content. A selector layer is the only path from content to " +
+    "pages, enforced by a lint rule rather than by convention.\n\n" +
+    "Everything else is deliberately absent: no authentication, admin dashboard, CMS, database, " +
+    "backend API, contact form, state-management library, UI component library, or analytics. " +
+    "Each was excluded by an explicit decision rather than left undone. Docker was scoped as a " +
+    "post-launch enhancement so it could not delay the launch.",
 
   testingAndVerification:
     "Domain logic is test-driven: schema rules, publication and confidentiality filtering, " +
@@ -128,8 +151,18 @@ export const personalDeveloperPortfolio = defineProject({
     "serious findings fail the run.",
 
   outcome:
-    "DRAFT PLACEHOLDER: outcome pending launch. It will describe the verified public result " +
-    "without invented metrics (FAC-PUBLISH-005).",
+    "The site is deployed and running on managed hosting, with the automated quality gate green " +
+    "on every merge: formatting, linting, strict type checking, content validation, unit and " +
+    "component tests, a production build, and end-to-end plus accessibility tests across three " +
+    "browser engines.\n\n" +
+    "The confidentiality behaviour is verified against the live deployment rather than assumed. " +
+    "An unknown project URL and an unpublished one return byte-identical responses, so the site " +
+    "cannot reveal that unpublished work exists. Unpublished projects are absent from the sitemap " +
+    "and carry no metadata, because their routes are never generated in the first place.\n\n" +
+    "Several defects were caught by the checks rather than by review: a colour pairing that " +
+    "failed the WCAG AA contrast threshold, two routes that shipped with no primary heading, and " +
+    "a build that passed locally but failed in CI because line endings differed between the two " +
+    "environments. Each was fixed at the cause and covered by a regression test.",
 
   aiUsage:
     "AI accelerated repository analysis, implementation planning, scoped code generation, and " +
@@ -139,8 +172,25 @@ export const personalDeveloperPortfolio = defineProject({
     "silently.",
 
   lessonsLearned:
-    "DRAFT PLACEHOLDER: lessons pending completion. Early observation: encoding a confidentiality " +
-    "rule as a validation failure is far more reliable than remembering to apply it.",
+    "**Encoding a rule beats remembering it.** The confidentiality requirements could have been a " +
+    "checklist. Making them validation failures meant that publishing restricted content, or " +
+    "labelling work as production without verified deployment, became impossible rather than " +
+    "merely discouraged.\n\n" +
+    "**Verifying each part is not the same as verifying the whole.** Two branches each passed " +
+    "their own checks and broke CI the moment they merged, because neither contained both the " +
+    "linter configuration and the file it needed to cover. The lesson was not to test more, but " +
+    "to test the combination that actually ships.\n\n" +
+    "**A local check that does not reproduce CI is worse than no local check.** The same commit " +
+    "passed locally and failed in CI because a Windows checkout and a Linux runner disagreed on " +
+    "line endings. Until that was normalised, every local 'verified' was quietly meaningless.\n\n" +
+    "**A quality threshold encodes a judgement, and mine was wrong.** The accessibility scan " +
+    "blocked on critical and serious findings only. Missing page headings are rated moderate, so " +
+    "two routes reached production with no primary heading at all. Tool severity describes how " +
+    "badly a rule breaks a page in general; it does not know which requirements a given project " +
+    "treats as launch-blocking.\n\n" +
+    "**Splitting the launch gate from the development gate was the decision that made the rest " +
+    "workable.** Development ran for the entire build against placeholder content, with a second " +
+    "validator that refused to let any of it reach production.",
 
   technologyIds: [
     "skill-typescript",

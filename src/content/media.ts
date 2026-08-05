@@ -31,16 +31,30 @@ export const mediaAssets = [
     confidentialityClass: "public",
     publicationStatus: "draft",
   }),
+  /*
+   * The social sharing card.
+   *
+   * Unlike the other assets here, this one is not a file waiting to be
+   * supplied. It is generated at request time by src/app/opengraph-image.tsx
+   * from the site configuration, so it cannot drift out of sync with the name
+   * and positioning shown on the site itself, and it needs no design work
+   * before launch.
+   *
+   * It is therefore Published now rather than Draft: the asset genuinely
+   * exists and is verified serving 200 image/png at 1200x630. The record
+   * previously pointed at a static PNG that was never created, which would
+   * have left the release gate asking for a file nobody should produce.
+   */
   defineMediaAsset({
     id: "media-social-card",
     type: "social-sharing-image",
-    filePath: "/images/social/portfolio-social-card.png",
+    filePath: "/opengraph-image",
     altText: "Randi Fajar Wicaksono — Backend-Focused Full-Stack Developer.",
     width: 1200,
     height: 630,
     ownerType: "metadata",
     ownerId: "profile-randi-fajar-wicaksono",
     confidentialityClass: "public",
-    publicationStatus: "draft",
+    publicationStatus: "published",
   }),
 ];
