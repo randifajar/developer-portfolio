@@ -28,7 +28,7 @@
     "release:check": "npm run check && npm run validate:release && npm run check:links && npm run test:e2e && npm run audit:prod"
   },
   "dependencies": {
-    "next": "16.2.12",
+    "next": "16.3.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-markdown": "10.1.0",
@@ -48,7 +48,7 @@
     "@vitejs/plugin-react": "6.0.5",
     "@vitest/coverage-v8": "4.1.10",
     "eslint": "9.39.5",
-    "eslint-config-next": "16.2.12",
+    "eslint-config-next": "16.3.0",
     "eslint-config-prettier": "10.1.8",
     "jsdom": "30.0.1",
     "prettier": "3.9.6",
