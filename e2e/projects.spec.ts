@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { projects } from "@/content/projects";
 
 test.describe("Projects Index (FAC-PROJECTS-001, 004)", () => {
   test.beforeEach(async ({ page }) => {
@@ -16,20 +17,37 @@ test.describe("Projects Index (FAC-PROJECTS-001, 004)", () => {
   });
 
   /**
-   * No project is Published today, so the truthful empty state is what should
-   * appear. This is a valid page state but not a launch-ready product state —
-   * release validation is what refuses the launch.
+   * Driven by what the server actually serves rather than by a hardcoded count,
+   * so publishing the second case study does not require editing these.
+   *
+   * The empty state these replaced is no longer reachable now that a project is
+   * Published. It remains covered by release validation, which is what refuses
+   * a launch with too few case studies (FAC-PROJECTS-004).
    */
-  test("shows the truthful empty state while nothing is Published", async ({ page }) => {
-    await expect(page.getByText(/case studies are being prepared/i)).toBeVisible();
+  test("renders a card for every publicly reachable project", async ({ page, request }) => {
+    const reachable: string[] = [];
+
+    for (const project of projects) {
+      if ((await request.get(`/projects/${project.slug}`)).status() === 200) {
+        reachable.push(project.title);
+      }
+    }
+
+    await expect(page.getByRole("article")).toHaveCount(reachable.length);
+
+    for (const title of reachable) {
+      await expect(page.getByRole("link", { name: title })).toBeVisible();
+    }
   });
 
-  test("offers recovery actions from the empty state", async ({ page }) => {
-    await expect(page.getByRole("link", { name: /return home/i })).toBeVisible();
-  });
+  test("names no hidden project anywhere on the page", async ({ page, request }) => {
+    const body = (await page.textContent("body")) ?? "";
 
-  test("shows no Draft project card", async ({ page }) => {
-    await expect(page.getByRole("article")).toHaveCount(0);
+    for (const project of projects) {
+      if ((await request.get(`/projects/${project.slug}`)).status() === 200) continue;
+
+      expect(body, project.slug).not.toContain(project.title);
+    }
   });
 
   test("invents no placeholder or Coming Soon card (FAC-HOME-004)", async ({ page }) => {

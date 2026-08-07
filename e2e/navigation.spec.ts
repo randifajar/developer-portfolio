@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { projects } from "@/content/projects";
 
 test.describe("public routes (NFAC-REL-001)", () => {
   const publicRoutes = ["/", "/projects"];
@@ -38,40 +39,65 @@ test.describe("invalid routes (FAC-NAV-005)", () => {
 /**
  * The privacy guarantee, verified end to end (DEC-047, FAC-NAV-006).
  *
- * An unknown slug and a Draft slug must be indistinguishable to a visitor.
- * Asserting equal bodies rather than merely equal status codes is what makes
- * this meaningful — two 404s with different copy would still leak.
+ * Every registered project is either publicly reachable or byte-identical to a
+ * slug that was never registered at all. The absence of any third state is the
+ * guarantee — two 404s with different copy would still leak.
+ *
+ * This block used to hardcode personal-developer-portfolio as "the Draft slug".
+ * Publishing that project pointed the whole block at a public page. It failed
+ * loudly rather than passing silently, but a single content change should not
+ * be able to retire the guarantee, so the slugs now come from the registry.
+ *
+ * The raw registry is deliberately the source rather than a selector. Asking
+ * the selector which projects are hidden and then asserting those are hidden
+ * would be circular: a selector that wrongly exposed a private project would
+ * also report it as public, and this test would still pass. The registry states
+ * what exists; the running server is checked independently.
  */
-test.describe("unpublished projects are indistinguishable from unknown ones", () => {
-  const unknownSlug = "/projects/definitely-not-a-real-project";
-  const draftSlug = "/projects/personal-developer-portfolio";
+test.describe("registered projects are either public or indistinguishable from unknown", () => {
+  const unknownRoute = "/projects/definitely-not-a-real-project";
+  const registeredRoutes = projects.map((project) => `/projects/${project.slug}`);
 
-  test("both return 404", async ({ request }) => {
-    expect((await request.get(unknownSlug)).status()).toBe(404);
-    expect((await request.get(draftSlug)).status()).toBe(404);
+  test("an unregistered slug returns 404", async ({ request }) => {
+    expect((await request.get(unknownRoute)).status()).toBe(404);
   });
 
-  test("both return identical response bodies", async ({ request }) => {
-    const unknownBody = await (await request.get(unknownSlug)).text();
-    const draftBody = await (await request.get(draftSlug)).text();
+  test("a hidden project returns a body identical to an unregistered one", async ({ request }) => {
+    const unknownBody = await (await request.get(unknownRoute)).text();
 
-    expect(draftBody).toBe(unknownBody);
-  });
+    for (const route of registeredRoutes) {
+      const response = await request.get(route);
 
-  test("the Not Found page never hints that hidden content exists", async ({ page }) => {
-    await page.goto(draftSlug);
-    const body = (await page.textContent("body")) ?? "";
+      // 200 means Published and publicly eligible, which is a valid state.
+      // Anything else must be indistinguishable from a slug that never existed.
+      if (response.status() === 200) continue;
 
-    for (const phrase of [/not yet published/i, /draft/i, /private/i, /restricted/i]) {
-      expect(body).not.toMatch(phrase);
+      expect(response.status(), route).toBe(404);
+      expect(await response.text(), route).toBe(unknownBody);
     }
   });
 
-  test("no unpublished slug appears in the sitemap (NFAC-SEO-002)", async ({ request }) => {
+  test("the Not Found page never hints that hidden content exists", async ({ page, request }) => {
+    for (const route of registeredRoutes) {
+      if ((await request.get(route)).status() === 200) continue;
+
+      await page.goto(route);
+      const body = (await page.textContent("body")) ?? "";
+
+      for (const phrase of [/not yet published/i, /draft/i, /private/i, /restricted/i]) {
+        expect(body, route).not.toMatch(phrase);
+      }
+    }
+  });
+
+  test("the sitemap lists exactly the reachable projects (NFAC-SEO-002)", async ({ request }) => {
     const sitemap = await (await request.get("/sitemap.xml")).text();
 
-    expect(sitemap).not.toContain("personal-developer-portfolio");
-    expect(sitemap).not.toContain("jury-process-management-integration");
+    for (const route of registeredRoutes) {
+      const isReachable = (await request.get(route)).status() === 200;
+
+      expect(sitemap.includes(route), route).toBe(isReachable);
+    }
   });
 });
 
