@@ -46,6 +46,18 @@ jobs:
         if: always()
         run: npm run audit:prod
 
+      # Added after the first dispatch of this workflow, which revealed it had
+      # never run check:links at all. The script itself did not exist either
+      # until the same audit — release:check referenced a file nobody had
+      # written, so the gate contained a step that could only ever crash.
+      #
+      # Needs network access, which is why it belongs here rather than in the
+      # per-pull-request CI workflow.
+      - name: Link validation
+        id: link_validation
+        if: always()
+        run: npm run check:links
+
       - name: Install Playwright browsers
         if: always()
         run: npx playwright install --with-deps chromium firefox webkit
@@ -63,13 +75,25 @@ jobs:
           retention-days: 30
           if-no-files-found: ignore
 
-      # Lighthouse and production smoke checks are run against the deployed URL
-      # during P29 and P31. They are not automated here yet because there is no
-      # deployment to point them at until Vercel is connected (P28).
+      # Lighthouse remains manual. Vercel is connected now, so the earlier note
+      # here — that there was no deployment to point it at — is no longer the
+      # reason. Automating it would mean adopting a third-party action to drive
+      # Chrome, and github-configuration.md section 5 prefers pinned first-party
+      # actions, so that is a decision to take deliberately rather than as a
+      # side effect of this workflow. The procedure and the recorded scores are
+      # in docs/release-audit.md.
       - name: Release audit summary
         if: always()
         run: |
-          echo "Release content validation: ${{ steps.release_validation.outcome }}" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "Lighthouse and production smoke checks are performed manually" >> "$GITHUB_STEP_SUMMARY"
-          echo "against the deployed URL until Vercel is connected." >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "| Step | Outcome |"
+            echo "| --- | --- |"
+            echo "| Release content validation | ${{ steps.release_validation.outcome }} |"
+            echo "| Link validation | ${{ steps.link_validation.outcome }} |"
+            echo ""
+            echo "Release content validation is EXPECTED to fail until launch content"
+            echo "is complete. It failing is the gate working, not a defect."
+            echo ""
+            echo "Lighthouse and production smoke checks are performed manually"
+            echo "against the deployed URL. See docs/release-audit.md."
+          } >> "$GITHUB_STEP_SUMMARY"
