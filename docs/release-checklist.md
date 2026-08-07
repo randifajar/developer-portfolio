@@ -97,8 +97,23 @@ from previous history.
 npm run check:links
 ```
 
-Plus manual confirmation that LinkedIn, GitHub, and the email action resolve to
-the approved destinations.
+Requires network access. Each destination is reported as one of four outcomes:
+
+| Outcome | Meaning |
+|---|---|
+| `ok` | Requested and answered, or the file resolves in `public/` or an App Router route |
+| `manual` | An automated request cannot answer this — see below |
+| `pending` | Authored only in non-public content, so an absent target is expected |
+| `BROKEN` | Publicly visible and unreachable. Exits non-zero |
+
+`manual` is not a pass. LinkedIn answers automated requests with HTTP 999
+regardless of whether the profile exists, and email deliverability cannot be
+checked without sending mail. Both need a human.
+
+- [ ] `npm run check:links` reports no `BROKEN` link
+- [ ] Every `pending` link is intentional, not a file that was forgotten
+- [ ] LinkedIn, GitHub, and the email action opened by hand and confirmed to
+      resolve to the approved destinations
 
 ## 6. Resume validation
 
