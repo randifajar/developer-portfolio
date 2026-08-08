@@ -19,12 +19,12 @@ import { SkillsSection } from "@/components/sections/skills-section";
  * content, so each transition is a reviewed diff.
  */
 describe("sections with no eligible content omit themselves entirely", () => {
+  // Technical Skills and AI-Assisted Engineering left this list when Randi
+  // confirmed their content on 2026-08-08. They are asserted positively below.
   const emptySections = [
     ["Hero", HeroSection],
     ["About", AboutSection],
     ["Work Experience", ExperienceSection],
-    ["Technical Skills", SkillsSection],
-    ["AI-Assisted Engineering", AIWorkflowSection],
   ] as const;
 
   for (const [name, Section] of emptySections) {
@@ -76,5 +76,74 @@ describe("Selected Projects renders the one published project", () => {
 
     expect(container.textContent).not.toMatch(/coming soon/i);
     expect(screen.getAllByRole("article")).toHaveLength(1);
+  });
+});
+
+describe("Technical Skills renders the confirmed classifications", () => {
+  it("renders the section with its heading", () => {
+    render(<SkillsSection />);
+
+    expect(screen.getByRole("heading", { name: /technical skills/i })).toBeVisible();
+  });
+
+  it("renders skills as readable names, grouped", () => {
+    render(<SkillsSection />);
+
+    expect(screen.getByText("TypeScript")).toBeVisible();
+    expect(screen.getByText("Docker")).toBeVisible();
+  });
+
+  /**
+   * FAC-SKILL-003. A self-assigned percentage implies a precision nobody can
+   * defend in an interview, so the model has no field for one — this asserts
+   * none appears by any other route either.
+   */
+  it("shows no percentage, progress bar, or star rating", () => {
+    const { container } = render(<SkillsSection />);
+
+    expect(container.textContent).not.toMatch(/\d+\s*%/);
+    expect(container.textContent).not.toMatch(/[★☆]/);
+    expect(container.querySelector("progress, meter, [role='progressbar']")).toBeNull();
+  });
+});
+
+describe("AI-Assisted Engineering renders the four-step workflow", () => {
+  it("renders all four steps in the approved order", () => {
+    render(<AIWorkflowSection />);
+
+    for (const activity of [
+      /repository and requirement analysis/i,
+      /implementation planning/i,
+      /scoped implementation/i,
+      /verification and debugging/i,
+    ]) {
+      expect(screen.getByText(activity)).toBeVisible();
+    }
+  });
+
+  /**
+   * FAC-AI-002, and the reason this section exists at all. Presenting AI as
+   * the owner of final technical decisions is the failure mode; every step must
+   * therefore state a human responsibility and a verification method.
+   */
+  it("states a human responsibility for every step", () => {
+    const { container } = render(<AIWorkflowSection />);
+
+    expect(container.textContent).toMatch(/Randi confirms the analysis/);
+    expect(container.textContent).toMatch(/Randi owns the architecture/);
+    expect(container.textContent).toMatch(/Randi reviews every change/);
+    expect(container.textContent).toMatch(/Randi decides whether a fix is correct/);
+  });
+
+  it("records a corrected assumption rather than only successes", () => {
+    const { container } = render(<AIWorkflowSection />);
+
+    expect(container.textContent).toMatch(/accessibility gate/i);
+  });
+
+  it("leaves no draft marker in the published section", () => {
+    const { container } = render(<AIWorkflowSection />);
+
+    expect(container.textContent).not.toMatch(/DRAFT\s+PLACEHOLDER/);
   });
 });

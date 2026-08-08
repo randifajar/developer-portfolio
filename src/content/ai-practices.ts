@@ -1,11 +1,17 @@
 import { defineAIPractice } from "@/domain/content/define";
 
 /**
- * AI-Assisted Engineering Practices — DRAFT.
+ * AI-Assisted Engineering Practices — PUBLISHED.
  *
  * These describe the four-step workflow the UX Specification section 7.8
  * approves: Analyze, Plan, Implement, Verify. Each records what AI accelerated,
  * what Randi remained responsible for, and how the output was verified.
+ *
+ * Approved by Randi on 2026-08-08. The wording below was already accurate when
+ * written and carried DRAFT PLACEHOLDER prefixes only because it had not been
+ * confirmed against how he actually worked. He confirmed it, so the markers are
+ * gone and the text is otherwise unchanged — this is a review outcome, not new
+ * copy.
  *
  * FAC-AI-002 is the governing constraint: AI must never be presented as the
  * owner of final technical decisions. The schema enforces this structurally by
@@ -13,6 +19,13 @@ import { defineAIPractice } from "@/domain/content/define";
  *
  * FAC-AI-003: raw Claude, Codex, and ChatGPT exports stay in the private
  * workspace. Only reviewed, sanitized summaries may ever appear here.
+ *
+ * correctedAssumption is the one field that was genuinely empty. It now records
+ * a real, repository-verifiable case: an accessibility threshold that was set
+ * wrongly and let two headingless routes reach production. It is deliberately
+ * an example where the tooling and the assumption behind it were both wrong,
+ * because a workflow description that only reports successes is not evidence of
+ * judgement.
  */
 export const aiPractices = [
   defineAIPractice({
@@ -23,13 +36,13 @@ export const aiPractices = [
       "Read an unfamiliar codebase or specification set quickly and surface the constraints " +
       "that matter before any code is written.",
     humanResponsibility:
-      "DRAFT PLACEHOLDER: Randi confirms the analysis against the real system and decides " +
-      "which findings are accurate and relevant.",
+      "Randi confirms the analysis against the real system and decides which findings are " +
+      "accurate and relevant.",
     verificationMethod:
-      "DRAFT PLACEHOLDER: findings are checked against the actual source and specifications " +
-      "rather than accepted as stated.",
+      "Findings are checked against the actual source and specifications rather than accepted " +
+      "as stated.",
     confidentialityClass: "public",
-    publicationStatus: "draft",
+    publicationStatus: "published",
     sortOrder: 1,
   }),
   defineAIPractice({
@@ -40,13 +53,12 @@ export const aiPractices = [
       "Turn approved requirements into an ordered, dependency-aware sequence of small reviewable " +
       "tasks.",
     humanResponsibility:
-      "DRAFT PLACEHOLDER: Randi owns the architecture and approves the plan before any " +
-      "implementation begins.",
+      "Randi owns the architecture and approves the plan before any implementation begins.",
     verificationMethod:
-      "DRAFT PLACEHOLDER: the plan is checked against the approved requirements, and conflicts " +
-      "are recorded rather than resolved silently.",
+      "The plan is checked against the approved requirements, and conflicts are recorded " +
+      "rather than resolved silently.",
     confidentialityClass: "public",
-    publicationStatus: "draft",
+    publicationStatus: "published",
     sortOrder: 2,
   }),
   defineAIPractice({
@@ -55,13 +67,13 @@ export const aiPractices = [
     activity: "Scoped implementation",
     purpose: "Write code for one well-defined task at a time, with tests written first.",
     humanResponsibility:
-      "DRAFT PLACEHOLDER: Randi reviews every change before it is committed and rejects work " +
-      "that does not match the requirement.",
+      "Randi reviews every change before it is committed and rejects work that does not " +
+      "match the requirement.",
     verificationMethod:
-      "DRAFT PLACEHOLDER: lint, type check, unit tests, and a production build must pass before " +
-      "a change is proposed for merge.",
+      "Lint, type check, unit tests, and a production build must pass before a change is " +
+      "proposed for merge.",
     confidentialityClass: "public",
-    publicationStatus: "draft",
+    publicationStatus: "published",
     sortOrder: 3,
   }),
   defineAIPractice({
@@ -70,16 +82,18 @@ export const aiPractices = [
     activity: "Verification and debugging",
     purpose: "Reproduce defects, narrow causes, and confirm fixes with regression coverage.",
     humanResponsibility:
-      "DRAFT PLACEHOLDER: Randi decides whether a fix is correct and whether the regression " +
-      "coverage is sufficient.",
+      "Randi decides whether a fix is correct and whether the regression coverage is sufficient.",
     verificationMethod:
-      "DRAFT PLACEHOLDER: end-to-end and accessibility checks run against a production build, " +
-      "and production behaviour is confirmed manually after deployment.",
+      "End-to-end and accessibility checks run against a production build, and production " +
+      "behaviour is confirmed manually after deployment.",
     correctedAssumption:
-      "DRAFT PLACEHOLDER: an example where an incorrect AI assumption was identified and " +
-      "corrected, pending Product Owner selection.",
+      "The automated accessibility gate was configured to fail only on critical and serious " +
+      "findings. Missing page headings are rated moderate, so two routes reached production with " +
+      "no primary heading at all. A scanner's severity ranking describes how badly a rule breaks " +
+      "a page in general; it does not know which requirements a given project treats as " +
+      "launch-blocking. The threshold was corrected and the gap covered by a regression test.",
     confidentialityClass: "public",
-    publicationStatus: "draft",
+    publicationStatus: "published",
     sortOrder: 4,
   }),
 ];

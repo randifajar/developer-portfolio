@@ -1,18 +1,25 @@
 import { defineSkill } from "@/domain/content/define";
 
 /**
- * Technical Skills — DRAFT.
+ * Technical Skills — PUBLISHED.
  *
- * The skill names below are drawn from the technology stack the approved
- * documents already reference, so they are structurally real rather than
- * invented. Their *classification* is the open question (OPEN-004): whether
- * each is a strong working skill, professional experience, or currently
- * learning is Randi's judgement to make in P30, and FAC-SKILL-002 requires it
- * to be evidence-backed.
+ * The skill names are drawn from the technology stack the approved documents
+ * already reference, so they are structurally real rather than invented. The
+ * open question was always the *classification* (OPEN-004) — whether each is a
+ * strong working skill, professional experience, or currently learning is
+ * Randi's judgement, and FAC-SKILL-002 requires it to be evidence-backed.
  *
- * Everything is Draft, so nothing renders until that classification is
- * confirmed. There are no percentages, progress bars, or star ratings anywhere
- * in the model (FAC-SKILL-003).
+ * He confirmed every classification as assigned on 2026-08-08, which resolves
+ * OPEN-004. No classification changed; the review is what was missing, not the
+ * values.
+ *
+ * Docker stays "currently-learning" deliberately. Containerisation is a
+ * post-launch phase that has not been built yet, so any stronger claim would be
+ * one this repository cannot support.
+ *
+ * There are no percentages, progress bars, or star ratings anywhere in the
+ * model (FAC-SKILL-003) — a self-assigned number implies a precision nobody
+ * can defend in an interview.
  */
 export const skills = [
   defineSkill({
@@ -20,7 +27,7 @@ export const skills = [
     name: "TypeScript",
     group: "languages",
     classification: "strong-working-skill",
-    publicationStatus: "draft",
+    publicationStatus: "published",
     sortOrder: 1,
   }),
   defineSkill({
@@ -28,7 +35,7 @@ export const skills = [
     name: "Node.js",
     group: "backend",
     classification: "strong-working-skill",
-    publicationStatus: "draft",
+    publicationStatus: "published",
     sortOrder: 2,
   }),
   defineSkill({
@@ -36,7 +43,7 @@ export const skills = [
     name: "React",
     group: "frontend",
     classification: "professional-experience",
-    publicationStatus: "draft",
+    publicationStatus: "published",
     sortOrder: 3,
   }),
   defineSkill({
@@ -44,7 +51,7 @@ export const skills = [
     name: "Next.js",
     group: "frontend",
     classification: "professional-experience",
-    publicationStatus: "draft",
+    publicationStatus: "published",
     sortOrder: 4,
   }),
   defineSkill({
@@ -52,7 +59,7 @@ export const skills = [
     name: "MongoDB",
     group: "databases",
     classification: "professional-experience",
-    publicationStatus: "draft",
+    publicationStatus: "published",
     sortOrder: 5,
   }),
   defineSkill({
@@ -60,7 +67,7 @@ export const skills = [
     name: "GraphQL",
     group: "apis-and-integration",
     classification: "professional-experience",
-    publicationStatus: "draft",
+    publicationStatus: "published",
     sortOrder: 6,
   }),
   defineSkill({
@@ -68,7 +75,7 @@ export const skills = [
     name: "REST APIs",
     group: "apis-and-integration",
     classification: "strong-working-skill",
-    publicationStatus: "draft",
+    publicationStatus: "published",
     sortOrder: 7,
   }),
   defineSkill({
@@ -76,7 +83,7 @@ export const skills = [
     name: "Docker",
     group: "infrastructure-and-deployment",
     classification: "currently-learning",
-    publicationStatus: "draft",
+    publicationStatus: "published",
     sortOrder: 8,
   }),
   defineSkill({
@@ -84,7 +91,7 @@ export const skills = [
     name: "Vitest",
     group: "testing-and-quality",
     classification: "professional-experience",
-    publicationStatus: "draft",
+    publicationStatus: "published",
     sortOrder: 9,
   }),
   defineSkill({
@@ -92,7 +99,7 @@ export const skills = [
     name: "Playwright",
     group: "testing-and-quality",
     classification: "professional-experience",
-    publicationStatus: "draft",
+    publicationStatus: "published",
     sortOrder: 10,
   }),
   defineSkill({
@@ -100,7 +107,7 @@ export const skills = [
     name: "Git",
     group: "developer-tools",
     classification: "strong-working-skill",
-    publicationStatus: "draft",
+    publicationStatus: "published",
     sortOrder: 11,
   }),
   defineSkill({
@@ -108,7 +115,7 @@ export const skills = [
     name: "AI-Assisted Engineering",
     group: "ai-assisted-engineering",
     classification: "strong-working-skill",
-    publicationStatus: "draft",
+    publicationStatus: "published",
     sortOrder: 12,
   }),
 ];

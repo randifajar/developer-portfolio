@@ -84,16 +84,46 @@ describe("remaining content is still Draft", () => {
     expect(getPublishedExperience()).toEqual([]);
   });
 
-  it("exposes no skill groups", () => {
-    expect(getPublishedSkillGroups()).toEqual([]);
-  });
-
-  it("exposes no AI practices", () => {
-    expect(getPublishedAIPractices()).toEqual([]);
-  });
-
   it("exposes no active resume, so Resume actions render their unavailable state", () => {
     expect(getActiveResume()).toBeNull();
+  });
+});
+
+/**
+ * Skills and AI practices went public on 2026-08-08, when Randi confirmed the
+ * classifications and the workflow wording. Neither required new copy — the
+ * review was what was missing, not the content.
+ */
+describe("skills and AI practices are public", () => {
+  it("exposes every skill, grouped", () => {
+    const groups = getPublishedSkillGroups();
+
+    expect(groups.length).toBeGreaterThan(0);
+    expect(groups.flatMap((group) => group.skills)).toHaveLength(12);
+  });
+
+  it("omits no group it returns", () => {
+    // FAC-HOME-005: an announced-but-empty group is worse than an absent one.
+    for (const group of getPublishedSkillGroups()) {
+      expect(group.skills.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("exposes the four workflow steps in order", () => {
+    expect(getPublishedAIPractices().map((practice) => practice.sortOrder)).toEqual([1, 2, 3, 4]);
+  });
+
+  /**
+   * FAC-AI-002. The schema makes these required, so this guards the stronger
+   * claim: that no published practice leaves either one blank or unreviewed.
+   */
+  it("gives every practice a human responsibility and a verification method", () => {
+    for (const practice of getPublishedAIPractices()) {
+      expect(practice.humanResponsibility.trim().length, practice.id).toBeGreaterThan(0);
+      expect(practice.verificationMethod.trim().length, practice.id).toBeGreaterThan(0);
+      expect(practice.humanResponsibility, practice.id).not.toMatch(/DRAFT\s+PLACEHOLDER/);
+      expect(practice.verificationMethod, practice.id).not.toMatch(/DRAFT\s+PLACEHOLDER/);
+    }
   });
 });
 
