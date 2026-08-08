@@ -19,13 +19,10 @@ import { SkillsSection } from "@/components/sections/skills-section";
  * content, so each transition is a reviewed diff.
  */
 describe("sections with no eligible content omit themselves entirely", () => {
-  // Technical Skills and AI-Assisted Engineering left this list when Randi
-  // confirmed their content on 2026-08-08. They are asserted positively below.
-  const emptySections = [
-    ["Hero", HeroSection],
-    ["About", AboutSection],
-    ["Work Experience", ExperienceSection],
-  ] as const;
+  // Skills and AI-Assisted Engineering left this list on 2026-08-08, then Hero
+  // and About followed when the Professional Profile was published. Only Work
+  // Experience is still Draft. Each is asserted positively below as it lands.
+  const emptySections = [["Work Experience", ExperienceSection]] as const;
 
   for (const [name, Section] of emptySections) {
     it(`${name} renders nothing`, () => {
@@ -76,6 +73,73 @@ describe("Selected Projects renders the one published project", () => {
 
     expect(container.textContent).not.toMatch(/coming soon/i);
     expect(screen.getAllByRole("article")).toHaveLength(1);
+  });
+});
+
+describe("Hero presents the professional identity", () => {
+  it("renders the name as the page heading", () => {
+    render(<HeroSection />);
+
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toContain(
+      "Randi Fajar Wicaksono",
+    );
+  });
+
+  it("states the professional title and headline", () => {
+    const { container } = render(<HeroSection />);
+
+    expect(container.textContent).toContain("Backend-Focused Full-Stack Developer");
+    expect(container.textContent).toMatch(/seeking remote backend/i);
+  });
+
+  it("states location and remote availability (FAC-PROFILE-002)", () => {
+    const { container } = render(<HeroSection />);
+
+    expect(container.textContent).toContain("Yogyakarta, Indonesia");
+    expect(container.textContent).toMatch(/remote/i);
+  });
+
+  it("renders the photograph with descriptive alternative text", () => {
+    render(<HeroSection />);
+
+    const image = screen.getByRole("img");
+
+    // NFAC-A11Y-004: alt text describes what the image conveys. "photo of
+    // Randi" would pass a linter and tell a screen-reader user nothing.
+    expect(image.getAttribute("alt")).toMatch(/pale blue sky/i);
+    expect(image.getAttribute("alt")).not.toMatch(/^(image|photo|picture)\b/i);
+  });
+
+  it("offers the primary action into the work", () => {
+    render(<HeroSection />);
+
+    expect(screen.getByRole("link", { name: /view projects/i })).toBeVisible();
+  });
+
+  it("leaks no draft marker", () => {
+    const { container } = render(<HeroSection />);
+
+    expect(container.textContent).not.toMatch(/DRAFT\s+PLACEHOLDER/);
+  });
+});
+
+describe("About presents the professional summary", () => {
+  it("renders the summary Randi wrote", () => {
+    const { container } = render(<AboutSection />);
+
+    expect(container.textContent).toMatch(/more than two years of hands-on experience/i);
+  });
+
+  /**
+   * FAC-AI-002 and NFAC-CONTENT-002. The summary discloses AI use and states
+   * what stays his responsibility. Losing the second half would leave the
+   * disclosure reading as though the tools own the outcome.
+   */
+  it("keeps the AI disclosure paired with the responsibility it retains", () => {
+    const { container } = render(<AboutSection />);
+
+    expect(container.textContent).toMatch(/Codex, Claude Code, and ChatGPT/);
+    expect(container.textContent).toMatch(/while keeping responsibility for/i);
   });
 });
 

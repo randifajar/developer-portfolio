@@ -75,11 +75,27 @@ describe("the professional case study remains invisible", () => {
   });
 });
 
-describe("remaining content is still Draft", () => {
-  it("exposes no profile, so the Hero does not render", () => {
-    expect(getPublishedProfile()).toBeNull();
+describe("the professional identity is public", () => {
+  it("exposes the profile, so the Hero renders", () => {
+    expect(getPublishedProfile()?.fullName).toBe("Randi Fajar Wicaksono");
   });
 
+  it("carries a headline and summary with no draft marker left", () => {
+    const published = getPublishedProfile();
+
+    expect(published?.headline).toBeTruthy();
+    expect(published?.summary).toBeTruthy();
+    expect(`${published?.headline} ${published?.summary}`).not.toMatch(/DRAFT\s+PLACEHOLDER/);
+  });
+
+  it("still reports not launch-ready, because one project is not two (DEC-030)", () => {
+    // Publishing the profile satisfies half of the launch rule. Asserting the
+    // half that is still unmet is what keeps indexing disabled honestly.
+    expect(isPubliclyLaunchReady()).toBe(false);
+  });
+});
+
+describe("remaining content is still Draft", () => {
   it("exposes no experience", () => {
     expect(getPublishedExperience()).toEqual([]);
   });

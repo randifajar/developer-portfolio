@@ -133,8 +133,21 @@ describe("release validation refuses the current Draft content", () => {
     expect(rulesFor(draftContent())).toContain("exactly-one-active-resume");
   });
 
-  it("reports the Professional Profile as unpublished (FAC-PROFILE-001)", () => {
-    expect(rulesFor(draftContent())).toContain("published-profile-required");
+  /**
+   * The Professional Profile was published on 2026-08-08, so this rule no
+   * longer fires against real content. It is still asserted — against a set
+   * where the profile is forced back to Draft — because the rule going quiet
+   * for the right reason and the rule going quiet because it broke look
+   * identical from the outside.
+   */
+  it("reports an unpublished Professional Profile (FAC-PROFILE-001)", () => {
+    const withDraftProfile = {
+      ...draftContent(),
+      profile: { ...draftContent().profile, publicationStatus: "draft" as const },
+    };
+
+    expect(rulesFor(withDraftProfile)).toContain("published-profile-required");
+    expect(rulesFor(draftContent())).not.toContain("published-profile-required");
   });
 });
 

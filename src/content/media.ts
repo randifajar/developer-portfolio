@@ -17,19 +17,32 @@ import { defineMediaAsset } from "@/domain/content/define";
  * first.
  */
 export const mediaAssets = [
+  /*
+   * The profile photograph, supplied on 2026-08-08 and converted from JPEG to
+   * WebP at quality 85. That setting was chosen by measurement rather than by
+   * habit: the source was already a compressed JPEG, so re-encoding at 90 or
+   * above produced a *larger* file than the original. 85 lands under it.
+   *
+   * Dimensions are the source's real 400x400. The record previously claimed
+   * 800x800, and stating a size the file does not have would make Next.js
+   * reserve the wrong space and reintroduce the layout shift that the
+   * width/height pair exists to prevent (NFAC-PERF-001).
+   */
   defineMediaAsset({
     id: "media-profile-photograph",
     type: "professional-photograph",
     filePath: "/images/profile/randi-fajar-wicaksono.webp",
+    // Describes what the image conveys, not that it is an image
+    // (NFAC-A11Y-004).
     altText:
-      "DRAFT PLACEHOLDER: descriptive alternative text for the professional photograph, pending " +
-      "final image selection (OPEN-005).",
-    width: 800,
-    height: 800,
+      "Randi Fajar Wicaksono outdoors against a pale blue sky, wearing sunglasses and a dark " +
+      "hooded jacket.",
+    width: 400,
+    height: 400,
     ownerType: "profile",
     ownerId: "profile-randi-fajar-wicaksono",
     confidentialityClass: "public",
-    publicationStatus: "draft",
+    publicationStatus: "published",
   }),
   /*
    * The social sharing card.
