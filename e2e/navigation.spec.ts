@@ -101,6 +101,74 @@ test.describe("registered projects are either public or indistinguishable from u
   });
 });
 
+/**
+ * No public page may log a browser error or 404 a subresource.
+ *
+ * Prompted by the P29 release audit, which found /favicon.ico returning 404 on
+ * every route — one missing asset that logged a console error on every page and
+ * cost four points of Lighthouse Best Practices.
+ *
+ * Read the division of labour here carefully, because it is not what it looks
+ * like. The console assertions do NOT catch that defect, and this was checked
+ * rather than assumed: removing icon.tsx and re-running leaves all three of
+ * them green. Headless Chromium under automation never requests /favicon.ico at
+ * all, so there is no error for them to observe. A real browser does, which is
+ * why Lighthouse saw it and Playwright cannot.
+ *
+ * The tab icon test below is therefore the actual regression test for the
+ * favicon, and it does fail when icon.tsx is removed.
+ *
+ * The console assertions still earn their place, but for a different class:
+ * uncaught exceptions, and subresources the page genuinely requests and gets a
+ * 4xx or 5xx for. A 404 is a successful HTTP exchange, so it fires neither
+ * requestfailed nor a console error under automation — hence the explicit
+ * response listener.
+ */
+test.describe("public pages log no browser errors", () => {
+  const routes = ["/", "/projects", "/projects/personal-developer-portfolio"];
+
+  for (const route of routes) {
+    test(`${route} logs nothing to the console`, async ({ page }) => {
+      const errors: string[] = [];
+
+      page.on("console", (message) => {
+        if (message.type() === "error") errors.push(message.text());
+      });
+      page.on("pageerror", (error) => errors.push(error.message));
+      page.on("requestfailed", (request) => {
+        errors.push(`request failed: ${request.url()}`);
+      });
+      // A 404 is a successful HTTP exchange, so it fires neither requestfailed
+      // nor, under automation, a console error. Without this listener a page
+      // could quietly 404 on a subresource and still pass.
+      page.on("response", (response) => {
+        if (response.status() >= 400) {
+          errors.push(`HTTP ${response.status()} ${response.url()}`);
+        }
+      });
+
+      await page.goto(route, { waitUntil: "networkidle" });
+
+      expect(errors, `${route} logged: ${errors.join(" | ")}`).toEqual([]);
+    });
+  }
+
+  test("the tab icon is declared and served", async ({ page, request }) => {
+    await page.goto("/");
+
+    // A declared icon is what stops the browser requesting /favicon.ico, so
+    // asserting the link element is asserting the actual fix.
+    const href = await page.locator('link[rel="icon"]').first().getAttribute("href");
+
+    expect(href).toBeTruthy();
+
+    const response = await request.get(href ?? "");
+
+    expect(response.status()).toBe(200);
+    expect(response.headers()["content-type"]).toContain("image/");
+  });
+});
+
 test.describe("security headers (NFAC-SEC-005)", () => {
   test("are present on a page response", async ({ request }) => {
     const headers = (await request.get("/")).headers();
