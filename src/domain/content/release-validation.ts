@@ -55,6 +55,36 @@ const PLACEHOLDER_PATTERNS: readonly { readonly label: string; readonly pattern:
     label: "pending approval",
     pattern: /\bpending\s+(product\s+owner|approval|selection|confirmation)\b/i,
   },
+
+  /*
+   * Bracketed editorial notes.
+   *
+   * The all-caps markers above are matched case-sensitively because lowercase
+   * prose legitimately discusses them. Inside square brackets that concern
+   * disappears: bracketed text carrying a request is an instruction to the
+   * author, whatever its casing. So this rule catches a lowercase
+   * "[placeholder]" that the case-sensitive PLACEHOLDER rule deliberately
+   * lets through.
+   *
+   * This gap was live, not theoretical. The content brief handed to an
+   * external assistant asked it to emit "[NEED FROM RANDI: ...]" wherever it
+   * could not verify a fact, and thirty of those came back. Not one of the
+   * patterns above would have caught a single one. A convention invented to
+   * make unverified content *visible* had quietly created a class of
+   * placeholder the gate could not see — the safety mechanism and the hole
+   * were the same decision.
+   *
+   * Markdown links are the false-positive risk, since content uses them. The
+   * rule therefore requires a request keyword inside the brackets:
+   * "[GitHub](https://…)" and "[the docs](/docs)" are untouched. Verified
+   * against all 284 strings in the current content set with zero false
+   * positives.
+   */
+  {
+    label: "bracketed editorial note",
+    pattern:
+      /\[[^\]]*\b(needs? from|to be (written|supplied|added|confirmed|decided)|placeholder|pending|fill in)\b[^\]]*\]/i,
+  },
 ];
 
 /** Slugs of the two confirmed launch case studies (Handoff section 4). */

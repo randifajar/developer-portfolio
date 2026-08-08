@@ -354,4 +354,50 @@ describe("placeholder scan distinguishes markers from prose", () => {
   it("still rejects lowercase lorem ipsum, which is never legitimate prose", () => {
     expect(rulesFor(withOutcome("lorem ipsum dolor"))).toContain("no-published-placeholders");
   });
+
+  /**
+   * Bracketed editorial notes.
+   *
+   * These escaped every rule above until 2026-08-08. The content brief given
+   * to an external assistant asked it to emit "[NEED FROM RANDI: ...]" for any
+   * fact it could not verify; thirty came back and none would have been
+   * caught. The convention meant to make unverified content visible was itself
+   * invisible to the gate.
+   */
+  const bracketedNotes = [
+    "[NEED FROM RANDI: what was the verified outcome?]",
+    "[needs from randi: the exact date]",
+    "[placeholder]",
+    "[to be written]",
+    "[to be confirmed with the team]",
+    "[pending the final numbers]",
+    "[Fill in once QA signs off]",
+  ];
+
+  for (const text of bracketedNotes) {
+    it(`rejects bracketed note: "${text.slice(0, 45)}"`, () => {
+      expect(rulesFor(withOutcome(`The result was good. ${text}`))).toContain(
+        "no-published-placeholders",
+      );
+    });
+  }
+
+  /**
+   * The false-positive risk. Long-form fields are Markdown and use links, so a
+   * rule that matched any square brackets would reject correct content — the
+   * failure mode that made the all-caps markers case-sensitive in the first
+   * place.
+   */
+  const legitimateBrackets = [
+    "I used [Node.js](https://nodejs.org) and [GraphQL](https://graphql.org) throughout.",
+    "See [the release checklist](docs/release-checklist.md) for the full gate.",
+    "The pipeline returns an array such as [1, 2, 3] for each grouped result.",
+    "Aggregation stages are configured as [match, group, sort] in that order.",
+  ];
+
+  for (const text of legitimateBrackets) {
+    it(`accepts brackets in prose: "${text.slice(0, 45)}..."`, () => {
+      expect(rulesFor(withOutcome(text))).not.toContain("no-published-placeholders");
+    });
+  }
 });
