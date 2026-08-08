@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ProjectCard } from "@/components/project/project-card";
-import { ButtonLink } from "@/components/ui/button-link";
+import { ProjectsEmptyState } from "@/components/project/projects-empty-state";
 import { SectionHeader } from "@/components/ui/section-header";
 import {
   getActiveResume,
@@ -9,7 +9,6 @@ import {
   getTechnologyNames,
 } from "@/domain/content/selectors";
 import { buildProjectsIndexMetadata } from "@/domain/metadata/build-metadata";
-import { ROUTES, SECTION_IDS } from "@/lib/constants";
 
 export const metadata: Metadata = buildProjectsIndexMetadata();
 
@@ -62,43 +61,12 @@ export default function ProjectsPage() {
             ))}
           </ul>
         ) : (
-          /*
-           * FAC-PROJECTS-004: a truthful empty state, not an apology and not a
-           * fabricated placeholder card. This is a valid page state but not a
-           * launch-ready product state — release validation is what refuses
-           * the launch, not this component.
-           */
-          <div className="flex flex-col items-start gap-6 rounded-(--radius-card) border border-border bg-surface p-8 sm:p-12">
-            <div className="flex flex-col gap-3">
-              <h2 className="text-2xl font-semibold text-text-primary">
-                Case studies are being prepared
-              </h2>
-              <p className="max-w-(--spacing-prose) text-text-secondary">
-                Published project case studies will appear here. In the meantime, my resume and
-                contact details are available.
-              </p>
-            </div>
-
-            <div className="flex flex-wrap gap-3">
-              <ButtonLink href={ROUTES.home}>Return home</ButtonLink>
-
-              {resume ? (
-                <ButtonLink href={resume.publicPath} variant="secondary" external>
-                  View Resume
-                </ButtonLink>
-              ) : null}
-
-              {contact ? (
-                <ButtonLink href={contact.publicLink} variant="secondary">
-                  {contact.label}
-                </ButtonLink>
-              ) : (
-                <ButtonLink href={`${ROUTES.home}#${SECTION_IDS.contact}`} variant="secondary">
-                  Contact
-                </ButtonLink>
-              )}
-            </div>
-          </div>
+          // This page decides when the empty state appears; the component owns
+          // what it says (FAC-PROJECTS-004).
+          <ProjectsEmptyState
+            resumePath={resume?.publicPath}
+            contact={contact ? { label: contact.label, href: contact.publicLink } : undefined}
+          />
         )}
       </div>
     </div>
