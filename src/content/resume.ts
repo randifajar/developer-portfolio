@@ -2,26 +2,30 @@ import { defineResume } from "@/domain/content/define";
 import { RESUME_PATH } from "@/lib/constants";
 
 /**
- * Resume — DRAFT.
+ * Resume — PUBLISHED.
  *
- * The real PDF is supplied in P30. Until then this record is Draft, so
- * FAC-RESUME-001's "exactly one active Published Resume" rule is not yet
- * satisfied — which is correct, and release validation reports it as a reason
- * the site is not launch-ready.
+ * The PDF was supplied on 2026-08-08 and Randi confirmed it carries no home
+ * address, phone number, date of birth, or identity number. That confirmation
+ * mattered before committing rather than before publishing: anything under
+ * public/ is served by the static host regardless of this record's
+ * publicationStatus, so the file becomes downloadable the moment it is
+ * committed, not the moment it is Published.
  *
- * isActive is true because this is the record that becomes active once the
- * real file lands; the Draft publication status is what keeps it non-public.
- * Cross-record validation in P09 checks that exactly one Resume is both active
- * and Published (FAC-RESUME-004).
+ * The file arrived named resume.pdf.pdf. Left alone it would have 404'd, since
+ * RESUME_PATH and every Resume action point at /resume.pdf.
+ *
+ * FAC-RESUME-004: exactly one Resume may be both active and Published, and
+ * cross-record validation enforces it. Replacing this file later means
+ * replacing it in place rather than adding a second active record.
  */
 export const resume = defineResume({
   id: "resume-current",
   fileName: "randi-fajar-wicaksono-resume.pdf",
   fileFormat: "pdf",
-  version: "DRAFT PLACEHOLDER",
-  publicationDate: "2026-08-04",
+  version: "2026-08",
+  publicationDate: "2026-08-08",
   publicPath: RESUME_PATH,
   isActive: true,
   confidentialityClass: "public",
-  publicationStatus: "draft",
+  publicationStatus: "published",
 });

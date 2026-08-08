@@ -68,12 +68,32 @@ test.describe("Projects Index (FAC-PROJECTS-001, 004)", () => {
   });
 });
 
-test.describe("Resume (FAC-RESUME-003)", () => {
-  test("no Resume action is offered while no Resume is active", async ({ page }) => {
+test.describe("Resume (FAC-RESUME-002)", () => {
+  test("the Resume action resolves to a real PDF", async ({ page, request }) => {
     await page.goto("/");
 
-    // The Resume is Draft, so the site must not advertise an action it cannot
-    // fulfil. It must never claim a download succeeded either.
-    await expect(page.getByRole("link", { name: /view resume/i })).toHaveCount(0);
+    const action = page.getByRole("link", { name: /view resume/i }).first();
+
+    await expect(action).toBeVisible();
+
+    const href = await action.getAttribute("href");
+    const response = await request.get(href ?? "");
+
+    // FAC-RESUME-003 and NFAC-REL-002: the site must never advertise a Resume
+    // it cannot deliver. Asserting the link exists proves nothing on its own —
+    // a 404 behind it would still be a broken promise to a recruiter.
+    expect(response.status()).toBe(200);
+    expect(response.headers()["content-type"]).toContain("pdf");
+  });
+
+  test("opens in a new tab without handing the opener away", async ({ page }) => {
+    await page.goto("/");
+
+    const action = page.getByRole("link", { name: /view resume/i }).first();
+    const rel = (await action.getAttribute("rel")) ?? "";
+
+    expect(await action.getAttribute("target")).toBe("_blank");
+    expect(rel).toContain("noopener");
+    expect(rel).toContain("noreferrer");
   });
 });

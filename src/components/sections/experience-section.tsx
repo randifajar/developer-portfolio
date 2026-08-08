@@ -73,7 +73,19 @@ export function ExperienceSection() {
                       {role.isCurrent ? "Present" : formatMonthYear(role.endDate ?? "")}
                     </p>
                     {role.isCurrent ? (
-                      <span className="inline-flex w-fit rounded-(--radius-badge) bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent">
+                      /*
+                       * The label uses the darker accent, not the base one.
+                       * Base accent on a 10% accent tint measures 4.31:1,
+                       * under the 4.5:1 that WCAG AA requires at this size —
+                       * caught by the axe scan the moment a current role was
+                       * first published. The darker accent measures 5.59:1.
+                       *
+                       * This is the second time a tinted-background pairing
+                       * has landed just under the threshold. Anything pairing
+                       * a colour with a 10% tint of itself is worth measuring
+                       * rather than eyeballing.
+                       */
+                      <span className="inline-flex w-fit rounded-(--radius-badge) bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent-hover">
                         Current
                       </span>
                     ) : null}

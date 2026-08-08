@@ -95,13 +95,30 @@ describe("the professional identity is public", () => {
   });
 });
 
-describe("remaining content is still Draft", () => {
-  it("exposes no experience", () => {
-    expect(getPublishedExperience()).toEqual([]);
+describe("employment history and resume are public", () => {
+  it("exposes all three roles, current first (FAC-EXP-001)", () => {
+    const roles = getPublishedExperience();
+
+    expect(roles).toHaveLength(3);
+    expect(roles[0]?.isCurrent).toBe(true);
   });
 
-  it("exposes no active resume, so Resume actions render their unavailable state", () => {
-    expect(getActiveResume()).toBeNull();
+  it("gives every non-current role an end date that does not precede its start", () => {
+    for (const role of getPublishedExperience()) {
+      if (role.isCurrent) {
+        expect(role.endDate, role.id).toBeUndefined();
+        continue;
+      }
+
+      expect(role.endDate, role.id).toBeDefined();
+      expect(role.endDate! >= role.startDate, role.id).toBe(true);
+    }
+  });
+
+  it("exposes exactly one active resume, at the stable public path", () => {
+    // FAC-RESUME-004. Every Resume action across the site points at this one
+    // path, so a second active record would make which file loads ambiguous.
+    expect(getActiveResume()?.publicPath).toBe("/resume.pdf");
   });
 });
 

@@ -193,11 +193,13 @@ describe("Header", () => {
     expect(screen.getByRole("navigation", { name: /main navigation/i })).toBeInTheDocument();
   });
 
-  it("omits the Resume action while no Resume is active", () => {
-    // The real content has a Draft Resume, so getActiveResume() returns null.
+  it("offers the Resume action now that one is active and Published", () => {
     render(<Header />);
 
-    expect(screen.queryByRole("link", { name: /view resume/i })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /view resume/i })).toHaveAttribute(
+      "href",
+      "/resume.pdf",
+    );
   });
 });
 
