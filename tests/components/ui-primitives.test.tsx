@@ -204,4 +204,80 @@ describe("MarkdownContent", () => {
     expect(screen.queryByRole("heading", { level: 1 })).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 3 })).toBeInTheDocument();
   });
+
+  it("keeps the rest of the heading scale below the section heading", () => {
+    // Only `#` was covered. A `##` or `###` in content must not outrank the
+    // section either, and each maps to a different level.
+    const { unmount } = render(<MarkdownContent>{"## Second level"}</MarkdownContent>);
+
+    expect(screen.getByRole("heading", { level: 3, name: "Second level" })).toBeInTheDocument();
+    unmount();
+
+    render(<MarkdownContent>{"### Third level"}</MarkdownContent>);
+
+    expect(screen.getByRole("heading", { level: 4, name: "Third level" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { level: 2 })).not.toBeInTheDocument();
+  });
+
+  /**
+   * URL scheme handling.
+   *
+   * react-markdown neutralises dangerous schemes by default, so these pass
+   * today without any code of ours. That is exactly why they are worth
+   * asserting: the protection is a library default, and a future
+   * `urlTransform` override or a `rehype-raw` addition would remove it with
+   * nothing to object.
+   */
+  it("neutralises a javascript: url in a content link", () => {
+    const { container } = render(
+      <MarkdownContent>{"[click](javascript:alert(1))"}</MarkdownContent>,
+    );
+
+    expect(container.querySelector("a")?.getAttribute("href")).toBe("");
+  });
+
+  it("neutralises a data: url in a content link", () => {
+    const { container } = render(<MarkdownContent>{"[click](data:text/html,hi)"}</MarkdownContent>);
+
+    expect(container.querySelector("a")?.getAttribute("href")).toBe("");
+  });
+
+  it("leaves a relative link internal, with no new tab", () => {
+    // The branch opposite the external-link case: an in-site link must not be
+    // torn out into a new tab, and must not carry rel tokens it does not need.
+    const { container } = render(<MarkdownContent>{"[Projects](/projects)"}</MarkdownContent>);
+    const link = container.querySelector("a");
+
+    expect(link?.getAttribute("href")).toBe("/projects");
+    expect(link?.getAttribute("target")).toBeNull();
+  });
+
+  it("announces that an external content link opens a new tab", () => {
+    render(<MarkdownContent>{"[GitHub](https://github.com/randifajar)"}</MarkdownContent>);
+
+    // NFAC-A11Y-004: the icon is never the only indicator, so the accessible
+    // name has to carry it.
+    expect(screen.getByRole("link", { name: /opens in a new tab/i })).toBeInTheDocument();
+  });
+
+  it("lets a wide table scroll inside itself rather than the page (NFAC-RESP-001)", () => {
+    const { container } = render(
+      <MarkdownContent>{"| A | B |\n| --- | --- |\n| 1 | 2 |"}</MarkdownContent>,
+    );
+
+    const table = container.querySelector("table");
+
+    expect(table).not.toBeNull();
+    expect(table?.parentElement?.className).toContain("overflow-x-auto");
+  });
+
+  it("renders ordered lists, inline code, and blockquotes", () => {
+    const { container } = render(
+      <MarkdownContent>{"1. first\n2. second\n\n`npm run check`\n\n> Quoted."}</MarkdownContent>,
+    );
+
+    expect(container.querySelector("ol")?.querySelectorAll("li")).toHaveLength(2);
+    expect(screen.getByText("npm run check").tagName).toBe("CODE");
+    expect(container.querySelector("blockquote")?.textContent).toContain("Quoted.");
+  });
 });
