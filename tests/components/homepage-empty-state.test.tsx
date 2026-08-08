@@ -8,40 +8,93 @@ import { ProjectsSection } from "@/components/sections/projects-section";
 import { SkillsSection } from "@/components/sections/skills-section";
 
 /**
- * Sections against the real, unmocked selectors.
+ * Homepage sections against the real, unmocked selectors.
  *
- * A section with nothing publicly eligible must render nothing at all, rather
- * than a heading with an empty body. FAC-HOME-005 and UX 17 require empty
- * sections to be omitted, not shown hollow — an announced-but-empty section is
- * worse for a screen-reader user than an absent one.
+ * This file began as the omission suite: every section was Draft, and each
+ * asserted it rendered nothing rather than a heading with an empty body
+ * (FAC-HOME-005, UX 17 — an announced-but-empty section is worse for a
+ * screen-reader user than an absent one).
  *
- * These assert the live state and are expected to change as Randi publishes
- * content, so each transition is a reviewed diff.
+ * As of 2026-08-08 every homepage section has published content, so that
+ * assertion has no subject left. The omission path still exists in each
+ * component and is now unreachable against real content — the same situation
+ * that led ProjectsEmptyState to be extracted so it could be tested from
+ * props. These sections have not been given that treatment, so the omission
+ * behaviour is currently uncovered. It is recorded here rather than papered
+ * over with a section mocked into emptiness, which would assert the mock.
+ *
+ * What follows asserts what each section actually renders.
  */
-describe("sections with no eligible content omit themselves entirely", () => {
-  // Technical Skills and AI-Assisted Engineering left this list when Randi
-  // confirmed their content on 2026-08-08. They are asserted positively below.
-  const emptySections = [
+describe("every homepage section has content", () => {
+  const sections = [
     ["Hero", HeroSection],
     ["About", AboutSection],
     ["Work Experience", ExperienceSection],
+    ["Selected Projects", ProjectsSection],
+    ["Technical Skills", SkillsSection],
+    ["AI-Assisted Engineering", AIWorkflowSection],
   ] as const;
 
-  for (const [name, Section] of emptySections) {
-    it(`${name} renders nothing`, () => {
+  for (const [name, Section] of sections) {
+    it(`${name} renders`, () => {
       const { container } = render(<Section />);
 
-      expect(container).toBeEmptyDOMElement();
+      expect(container).not.toBeEmptyDOMElement();
     });
   }
 
-  it("announces no heading for any omitted section", () => {
-    for (const [, Section] of emptySections) {
+  it("leaks no draft marker anywhere on the homepage", () => {
+    for (const [name, Section] of sections) {
       const { container, unmount } = render(<Section />);
 
-      expect(container.querySelector("h1, h2, h3, h4")).toBeNull();
+      expect(container.textContent, name).not.toMatch(/DRAFT\s+PLACEHOLDER/);
       unmount();
     }
+  });
+});
+
+describe("Work Experience presents the real employment history", () => {
+  it("renders all three roles", () => {
+    render(<ExperienceSection />);
+
+    expect(screen.getByText("Backend Developer")).toBeVisible();
+    expect(screen.getByText("Backend Developer, Contract")).toBeVisible();
+    expect(screen.getByText("Backend Developer Intern")).toBeVisible();
+  });
+
+  it("puts the current role first and marks it current (FAC-EXP-001)", () => {
+    const { container } = render(<ExperienceSection />);
+    const text = container.textContent ?? "";
+
+    expect(text.indexOf("Backend Developer Intern")).toBeGreaterThan(
+      text.indexOf("Backend Developer,"),
+    );
+    expect(screen.getByText("Current")).toBeVisible();
+  });
+
+  /**
+   * DEC-020 and FAC-EXP-002. Dates are stored with a day but the section
+   * renders month and year, so this asserts the reader never sees a
+   * day-precision date the CV might contradict.
+   */
+  it("displays dates at month precision, never a day", () => {
+    const { container } = render(<ExperienceSection />);
+    const text = container.textContent ?? "";
+
+    expect(text).toMatch(/Apr 2025/);
+    expect(text).toMatch(/Present/);
+    expect(text).not.toMatch(/\d{4}-\d{2}-\d{2}/);
+    expect(text).not.toMatch(/\b\d{1,2}\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)/);
+  });
+
+  it("names no internal system, project code, or customer (NFAC-SEC-002)", () => {
+    const { container } = render(<ExperienceSection />);
+    const text = container.textContent ?? "";
+
+    // Uppercase-letters + underscore + digits is the shape of the internal
+    // codes that must never reach content.
+    expect(text).not.toMatch(/\b[A-Z]{2,}_\d/);
+    expect(text).not.toMatch(/https?:\/\/(localhost|10\.|192\.168\.)/);
   });
 });
 
@@ -76,6 +129,73 @@ describe("Selected Projects renders the one published project", () => {
 
     expect(container.textContent).not.toMatch(/coming soon/i);
     expect(screen.getAllByRole("article")).toHaveLength(1);
+  });
+});
+
+describe("Hero presents the professional identity", () => {
+  it("renders the name as the page heading", () => {
+    render(<HeroSection />);
+
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toContain(
+      "Randi Fajar Wicaksono",
+    );
+  });
+
+  it("states the professional title and headline", () => {
+    const { container } = render(<HeroSection />);
+
+    expect(container.textContent).toContain("Backend-Focused Full-Stack Developer");
+    expect(container.textContent).toMatch(/seeking remote backend/i);
+  });
+
+  it("states location and remote availability (FAC-PROFILE-002)", () => {
+    const { container } = render(<HeroSection />);
+
+    expect(container.textContent).toContain("Yogyakarta, Indonesia");
+    expect(container.textContent).toMatch(/remote/i);
+  });
+
+  it("renders the photograph with descriptive alternative text", () => {
+    render(<HeroSection />);
+
+    const image = screen.getByRole("img");
+
+    // NFAC-A11Y-004: alt text describes what the image conveys. "photo of
+    // Randi" would pass a linter and tell a screen-reader user nothing.
+    expect(image.getAttribute("alt")).toMatch(/pale blue sky/i);
+    expect(image.getAttribute("alt")).not.toMatch(/^(image|photo|picture)\b/i);
+  });
+
+  it("offers the primary action into the work", () => {
+    render(<HeroSection />);
+
+    expect(screen.getByRole("link", { name: /view projects/i })).toBeVisible();
+  });
+
+  it("leaks no draft marker", () => {
+    const { container } = render(<HeroSection />);
+
+    expect(container.textContent).not.toMatch(/DRAFT\s+PLACEHOLDER/);
+  });
+});
+
+describe("About presents the professional summary", () => {
+  it("renders the summary Randi wrote", () => {
+    const { container } = render(<AboutSection />);
+
+    expect(container.textContent).toMatch(/more than two years of hands-on experience/i);
+  });
+
+  /**
+   * FAC-AI-002 and NFAC-CONTENT-002. The summary discloses AI use and states
+   * what stays his responsibility. Losing the second half would leave the
+   * disclosure reading as though the tools own the outcome.
+   */
+  it("keeps the AI disclosure paired with the responsibility it retains", () => {
+    const { container } = render(<AboutSection />);
+
+    expect(container.textContent).toMatch(/Codex, Claude Code, and ChatGPT/);
+    expect(container.textContent).toMatch(/while keeping responsibility for/i);
   });
 });
 

@@ -1,17 +1,17 @@
 import { defineProfile } from "@/domain/content/define";
 
 /**
- * Professional Profile — DRAFT.
+ * Professional Profile — PUBLISHED.
  *
- * Confirmed values (name, location, target roles, positioning) are real.
- * The headline and summary are marked DRAFT placeholders: OPEN-001 and
- * OPEN-002 in the Decision Ledger are unresolved, and Randi authors the final
- * copy in P30.
+ * Headline and summary supplied by Randi on 2026-08-08, resolving OPEN-001 and
+ * OPEN-002. Every claim below is his own: the roles, the technologies, the
+ * two-year progression from internship to full-time, and the disclosure of how
+ * he uses AI tooling. Nothing here was written or embellished on his behalf.
  *
- * publicationStatus stays "draft" so nothing here renders publicly
- * (FAC-OWNER-001). Release validation rejects the DRAFT markers below, which
- * is what prevents this file from reaching production unedited
- * (NFAC-CONTENT-004).
+ * The AI paragraph is deliberately kept. NFAC-CONTENT-002 requires ownership
+ * language to be accurate, and stating plainly which tools accelerate the work
+ * and which decisions stay his is more credible to an interviewer than leaving
+ * it implied — particularly on a portfolio that documents the practice.
  */
 export const profile = defineProfile({
   id: "profile-randi-fajar-wicaksono",
@@ -23,15 +23,24 @@ export const profile = defineProfile({
   // Confirmed positioning: DEC-003.
   professionalTitle: "Backend-Focused Full-Stack Developer",
 
-  // DRAFT placeholder — final headline pending (OPEN-001).
   headline:
-    "DRAFT PLACEHOLDER: final professional headline pending Product Owner approval (OPEN-001).",
+    "Backend-focused full-stack developer building Node.js, GraphQL, and MongoDB systems, " +
+    "seeking remote backend and software engineering roles.",
 
-  // DRAFT placeholder — final summary pending (OPEN-002).
   summary:
-    "DRAFT PLACEHOLDER: final professional summary pending Product Owner approval (OPEN-002). " +
-    "The published version will describe backend-focused full-stack experience, the kinds of " +
-    "systems worked on, engineering strengths, and current career direction.",
+    "I'm a backend-focused full-stack developer with more than two years of hands-on experience " +
+    "progressing from internship to contract and full-time backend roles. My work is centered on " +
+    "Node.js, GraphQL, MongoDB, APIs, data processing, background jobs, and integrations used in " +
+    "academic and administrative workflows.\n\n" +
+    "I regularly work on problems that cross application and environment boundaries: designing " +
+    "aggregation pipelines, integrating supporting services, tracing database and CORS issues, " +
+    "investigating memory and background-job failures, and validating changes across " +
+    "development, staging, pre-production, and production environments.\n\n" +
+    "I use Codex, Claude Code, and ChatGPT to accelerate analysis, planning, implementation, " +
+    "debugging, testing, and documentation, while keeping responsibility for requirement " +
+    "validation, technical decisions, code review, regression checking, security, and final " +
+    "verification. I'm currently looking for remote Backend Developer, Full-Stack Developer, or " +
+    "Software Engineer opportunities.",
 
   // Confirmed: DEC-013.
   location: "Yogyakarta, Indonesia",
@@ -40,10 +49,10 @@ export const profile = defineProfile({
   // Confirmed: DEC-004.
   targetRoles: ["Backend Developer", "Full-Stack Developer", "Software Engineer"],
 
-  // Confirmed the photograph is included (DEC-019); the actual image is
-  // pending (OPEN-005), so the asset is referenced but itself Draft.
+  // DEC-019. The image was supplied on 2026-08-08, so the asset it points at
+  // is Published too and the Hero renders with a photograph.
   photoAssetId: "media-profile-photograph",
 
-  publicationStatus: "draft",
-  updatedAt: "2026-08-04",
+  publicationStatus: "published",
+  updatedAt: "2026-08-08",
 });

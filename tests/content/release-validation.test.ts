@@ -129,12 +129,48 @@ describe("release validation refuses the current Draft content", () => {
     expect(rulesFor(draftContent())).toContain("required-launch-projects");
   });
 
-  it("reports no active Published Resume (FAC-RESUME-001)", () => {
-    expect(rulesFor(draftContent())).toContain("exactly-one-active-resume");
+  /**
+   * Satisfied on 2026-08-08. Still asserted against a forced-Draft copy, for
+   * the same reason as the profile rule below: a rule that stops firing
+   * because the condition was met is indistinguishable from a rule that
+   * stopped firing because it broke.
+   *
+   * The two-active case is asserted too. FAC-RESUME-004 allows exactly one,
+   * and "at least one" is the easy mistake to make when the rule is rewritten.
+   */
+  it("reports a missing or duplicated active Published Resume (FAC-RESUME-001)", () => {
+    const base = draftContent();
+    const [activeResume] = base.resumes;
+
+    const withDraftResume = {
+      ...base,
+      resumes: [{ ...activeResume!, publicationStatus: "draft" as const }],
+    };
+    const withTwoActive = {
+      ...base,
+      resumes: [activeResume!, { ...activeResume!, id: "resume-second" }],
+    };
+
+    expect(rulesFor(withDraftResume)).toContain("exactly-one-active-resume");
+    expect(rulesFor(withTwoActive)).toContain("exactly-one-active-resume");
+    expect(rulesFor(base)).not.toContain("exactly-one-active-resume");
   });
 
-  it("reports the Professional Profile as unpublished (FAC-PROFILE-001)", () => {
-    expect(rulesFor(draftContent())).toContain("published-profile-required");
+  /**
+   * The Professional Profile was published on 2026-08-08, so this rule no
+   * longer fires against real content. It is still asserted — against a set
+   * where the profile is forced back to Draft — because the rule going quiet
+   * for the right reason and the rule going quiet because it broke look
+   * identical from the outside.
+   */
+  it("reports an unpublished Professional Profile (FAC-PROFILE-001)", () => {
+    const withDraftProfile = {
+      ...draftContent(),
+      profile: { ...draftContent().profile, publicationStatus: "draft" as const },
+    };
+
+    expect(rulesFor(withDraftProfile)).toContain("published-profile-required");
+    expect(rulesFor(draftContent())).not.toContain("published-profile-required");
   });
 });
 

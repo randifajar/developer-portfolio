@@ -147,8 +147,10 @@ describe("draft state before content finalization", () => {
     expect(jury?.publicationStatus).toBe("draft");
   });
 
-  it("keeps the profile Draft while the headline and summary are placeholders", () => {
-    expect(profile.publicationStatus).toBe("draft");
+  it("publishes the profile now that Randi has written the headline and summary", () => {
+    expect(profile.publicationStatus).toBe("published");
+    expect(profile.headline).not.toMatch(/DRAFT\s+PLACEHOLDER/);
+    expect(profile.summary).not.toMatch(/DRAFT\s+PLACEHOLDER/);
   });
 
   it("publishes only the confirmed contact decisions", () => {

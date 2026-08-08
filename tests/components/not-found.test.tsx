@@ -55,10 +55,15 @@ describe("Not Found reveals nothing about private content", () => {
     expect(screen.getByText(/this page does not exist/i)).toBeInTheDocument();
   });
 
-  it("omits the Resume action while no Resume is active (FAC-RESUME-003)", () => {
-    // Real content has a Draft Resume, so no Resume action should be offered.
+  it("offers the Resume action now that one is active (FAC-RESUME-002)", () => {
     render(<NotFound />);
 
-    expect(screen.queryByRole("link", { name: /view resume/i })).not.toBeInTheDocument();
+    // The Resume is a legitimate recovery action from a dead end. What must
+    // never appear here is anything hinting that hidden content exists — that
+    // is asserted separately above.
+    expect(screen.getByRole("link", { name: /view resume/i })).toHaveAttribute(
+      "href",
+      "/resume.pdf",
+    );
   });
 });

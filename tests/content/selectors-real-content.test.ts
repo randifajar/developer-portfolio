@@ -75,17 +75,50 @@ describe("the professional case study remains invisible", () => {
   });
 });
 
-describe("remaining content is still Draft", () => {
-  it("exposes no profile, so the Hero does not render", () => {
-    expect(getPublishedProfile()).toBeNull();
+describe("the professional identity is public", () => {
+  it("exposes the profile, so the Hero renders", () => {
+    expect(getPublishedProfile()?.fullName).toBe("Randi Fajar Wicaksono");
   });
 
-  it("exposes no experience", () => {
-    expect(getPublishedExperience()).toEqual([]);
+  it("carries a headline and summary with no draft marker left", () => {
+    const published = getPublishedProfile();
+
+    expect(published?.headline).toBeTruthy();
+    expect(published?.summary).toBeTruthy();
+    expect(`${published?.headline} ${published?.summary}`).not.toMatch(/DRAFT\s+PLACEHOLDER/);
   });
 
-  it("exposes no active resume, so Resume actions render their unavailable state", () => {
-    expect(getActiveResume()).toBeNull();
+  it("still reports not launch-ready, because one project is not two (DEC-030)", () => {
+    // Publishing the profile satisfies half of the launch rule. Asserting the
+    // half that is still unmet is what keeps indexing disabled honestly.
+    expect(isPubliclyLaunchReady()).toBe(false);
+  });
+});
+
+describe("employment history and resume are public", () => {
+  it("exposes all three roles, current first (FAC-EXP-001)", () => {
+    const roles = getPublishedExperience();
+
+    expect(roles).toHaveLength(3);
+    expect(roles[0]?.isCurrent).toBe(true);
+  });
+
+  it("gives every non-current role an end date that does not precede its start", () => {
+    for (const role of getPublishedExperience()) {
+      if (role.isCurrent) {
+        expect(role.endDate, role.id).toBeUndefined();
+        continue;
+      }
+
+      expect(role.endDate, role.id).toBeDefined();
+      expect(role.endDate! >= role.startDate, role.id).toBe(true);
+    }
+  });
+
+  it("exposes exactly one active resume, at the stable public path", () => {
+    // FAC-RESUME-004. Every Resume action across the site points at this one
+    // path, so a second active record would make which file loads ambiguous.
+    expect(getActiveResume()?.publicPath).toBe("/resume.pdf");
   });
 });
 
