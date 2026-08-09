@@ -152,3 +152,103 @@ from release validation.
 
 Re-run this audit at P31 against the launched site, when SEO becomes meaningful
 and the photograph makes performance worth re-measuring.
+
+---
+
+## 2026-08-09 — P31 production verification, post-launch
+
+| | |
+|---|---|
+| Commit audited | `847deda` on `production` |
+| Deployment | `https://developer-portfolio-delta-three.vercel.app` |
+| Content state | **Launch complete.** Profile, three Work Experience records, both case studies, twelve skills, four AI practices, and the active Resume all Published |
+| Purpose | Verify the launched site rather than infer it from a green deployment (NFAC-CICD-004) |
+
+### The gate that had never passed
+
+```text
+npm run release:check → exit 0
+```
+
+`release:check` failed for the entire build, and that failing was the mechanism
+that made developing against placeholder content acceptable (ADR-006). This is
+the first time every stage has passed end to end.
+
+| Stage | Result |
+|---|---|
+| `format:check`, `lint`, `typecheck` | pass |
+| `validate:content` | pass |
+| `test:run` | pass, 397 tests |
+| `build` | pass, both project routes emitted |
+| `validate:release` | **pass — first time** |
+| `check:links` | pass, no broken link |
+| `test:e2e` | pass, 149 tests on three engines |
+| `audit:prod` | pass, 0 vulnerabilities |
+
+### Indexing reversed itself, as designed
+
+`isPubliclyLaunchReady()` is derived from content — a Published profile and at
+least two Published projects (DEC-030). Publishing the second case study
+flipped it with no configuration change, which is what the design was for:
+nobody had to remember to enable indexing at launch, and nobody could enable it
+early by hand.
+
+Verified live:
+
+| | Before launch | After |
+|---|---|---|
+| `robots` meta | `noindex, nofollow, nocache` | `index, follow` |
+| `robots.txt` | `Disallow: /` | `Allow: /` plus a `Sitemap:` line |
+| Sitemap entries | 3 | 4 — both case studies present |
+
+### Lighthouse, launched site
+
+| Page | Performance | Accessibility | Best Practices | SEO |
+|---|---|---|---|---|
+| Home | 97 | 100 | 100 | **100** |
+| Projects Index | 98 | 100 | 100 | **100** |
+| Project Detail (professional) | 97 | 100 | 100 | **100** |
+
+Core Web Vitals, Home: LCP **1.6 s**, CLS **0.005**, TBT **180 ms** — inside
+NFAC-PERF-001. No failing SEO audit.
+
+**A prediction that did not hold.** Implementation plan risk R-04 anticipated
+that a large hero photograph would threaten the ≥ 90 Lighthouse requirement,
+and a reading taken immediately after the photograph deployed showed
+performance 92 and LCP 2.5 s, exactly at the threshold. That was recorded as
+having no headroom left.
+
+Re-measured on a warm deployment the same page scores 97 with LCP 1.6 s. The
+earlier figure was a cold-deployment artefact, not a content cost. The useful
+correction is about method rather than about the photograph: **a single
+measurement taken immediately after a deploy is not a baseline**, and treating
+one as such produced a risk assessment that was wrong in the pessimistic
+direction.
+
+### Production smoke checks (TD 24.5)
+
+| Check | Result |
+|---|---|
+| `/`, `/projects`, both case studies, `/resume.pdf` | all 200 |
+| `/resume.pdf` content type | `application/pdf` |
+| Open Graph title, url, image, type | present; image 200 `image/png` |
+| GitHub profile link | 200 |
+| LinkedIn profile link | 999 — anti-bot challenge, **requires manual confirmation** |
+| Unknown route | 404, and no word suggesting hidden content exists (DEC-047) |
+| Security headers | `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` all present |
+| Draft markers in rendered HTML | 0 |
+
+### Still outstanding after launch
+
+| Item | Owner | Note |
+|---|---|---|
+| Manual confirmation of the LinkedIn and email actions | Randi | No automated request can settle either; release-checklist step 5 |
+| Repository visibility switch to Public | Randi | The repository is **still private**. The live site is public; its source is not |
+| `Protect production` ruleset, secret scanning, push protection, code scanning | Randi | All 403 on GitHub Free while private. They unlock the moment visibility changes, and `github-configuration.md` section 9 requires enabling them **first**, before the URL is sent anywhere |
+| P32 rollback drill | Randi | Vercel rollback is interface-only |
+| P33 Docker portability | Post-launch | Cannot be verified in the current environment; Docker is not installed |
+
+The gap worth naming: the site is launched and indexable while the repository
+that produces it has no enforced branch protection. Nothing prevents a direct
+push to `production` today. That has been true for the whole build and was
+acceptable while the site was invisible; it is less acceptable now.
