@@ -98,37 +98,43 @@ describe("Work Experience presents the real employment history", () => {
   });
 });
 
-/**
- * Selected Projects is the one section with eligible content: the Personal
- * Developer Portfolio case study is Published and featured.
- */
-describe("Selected Projects renders the one published project", () => {
-  it("renders exactly one card", () => {
+describe("Selected Projects renders both launch case studies", () => {
+  it("renders two cards (FAC-HOME-004)", () => {
     render(<ProjectsSection />);
 
-    expect(screen.getAllByRole("article")).toHaveLength(1);
+    expect(screen.getAllByRole("article")).toHaveLength(2);
   });
 
-  it("renders the published case study and links to it", () => {
+  it("links each card to its case study", () => {
     render(<ProjectsSection />);
 
     expect(screen.getByRole("link", { name: "Personal Developer Portfolio" })).toHaveAttribute(
       "href",
       "/projects/personal-developer-portfolio",
     );
+    expect(
+      screen.getByRole("link", { name: "Jury Process Management Integration" }),
+    ).toHaveAttribute("href", "/projects/jury-process-management-integration");
   });
 
-  it("does not render the Draft professional case study", () => {
-    render(<ProjectsSection />);
-
-    expect(screen.queryByText(/Jury Process Management/i)).not.toBeInTheDocument();
-  });
-
-  it("pads nothing — one project means one card, no filler (FAC-HOME-004)", () => {
+  it("pads nothing — two projects means two cards, no filler (FAC-HOME-004)", () => {
     const { container } = render(<ProjectsSection />);
 
     expect(container.textContent).not.toMatch(/coming soon/i);
-    expect(screen.getAllByRole("article")).toHaveLength(1);
+    expect(screen.getAllByRole("article")).toHaveLength(2);
+  });
+
+  /**
+   * FAC-PROJECT-004. "Completed" is displayed for the professional work
+   * because the evidence does not support a production claim. A card that
+   * silently upgraded that label would misrepresent the work on the first
+   * screen a recruiter sees.
+   */
+  it("shows the honest delivery status on the professional card", () => {
+    const { container } = render(<ProjectsSection />);
+
+    expect(container.textContent).toContain("Completed");
+    expect(container.textContent).not.toMatch(/\bProduction\b/);
   });
 });
 

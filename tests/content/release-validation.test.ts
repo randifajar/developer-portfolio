@@ -110,23 +110,51 @@ function releaseReadyContent(): ContentSet {
 }
 
 /**
- * The central assertion of this phase.
+ * Release validation against the real content set.
  *
- * Release validation is the only thing standing between Draft placeholders and
- * a recruiter. If it ever passes on the current content, the safety property
- * that makes Draft-based development acceptable has been lost.
+ * For the whole of development this block asserted that the gate *failed* —
+ * that was the safety property making Draft-based development acceptable. On
+ * 2026-08-09 the launch content was completed and the gate passed for the
+ * first time.
+ *
+ * The rules did not stop mattering; their subject changed. Each is now
+ * asserted in both directions: it fires against a content set that violates
+ * it, and it does not fire against real content. Asserting only the second
+ * would leave a broken rule and a satisfied rule looking identical, which is
+ * exactly how a gate quietly stops being a gate.
  */
-describe("release validation refuses the current Draft content", () => {
-  it("fails", () => {
-    expect(validateRelease(draftContent(), { siteUrl: SITE_URL }).length).toBeGreaterThan(0);
+describe("release validation accepts the real content set", () => {
+  it("passes", () => {
+    expect(validateRelease(draftContent(), { siteUrl: SITE_URL })).toEqual([]);
   });
 
-  it("reports that fewer than two projects are Published (FAC-HOME-004)", () => {
-    expect(rulesFor(draftContent())).toContain("minimum-published-projects");
+  it("reports fewer than two Published projects (FAC-HOME-004)", () => {
+    const base = draftContent();
+    const [first] = base.projects;
+
+    expect(rulesFor({ ...base, projects: [first!] })).toContain("minimum-published-projects");
+    expect(rulesFor(base)).not.toContain("minimum-published-projects");
   });
 
-  it("reports both required launch case studies as unpublished", () => {
-    expect(rulesFor(draftContent())).toContain("required-launch-projects");
+  it("reports a required launch case study that is not publicly eligible", () => {
+    const base = draftContent();
+    const [first, second] = base.projects;
+
+    // Draft is one way to fail this; a Restricted classification is the other,
+    // and it is the one that would actually leak if the rule broke.
+    expect(
+      rulesFor({
+        ...base,
+        projects: [first!, { ...second!, publicationStatus: "draft" as const }],
+      }),
+    ).toContain("required-launch-projects");
+    expect(
+      rulesFor({
+        ...base,
+        projects: [first!, { ...second!, confidentialityClass: "restricted" as const }],
+      }),
+    ).toContain("required-launch-projects");
+    expect(rulesFor(base)).not.toContain("required-launch-projects");
   });
 
   /**
