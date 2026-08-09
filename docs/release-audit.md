@@ -331,3 +331,67 @@ ruleset was enough.
 
 The prohibition on direct pushes to `production` has been policy since the
 first governance commit. As of today it is enforcement.
+
+---
+
+## 2026-08-10 — P32 rollback drill and post-launch closure
+
+### Hosting rollback: verified
+
+Randi promoted the previous deployment in Vercel, confirmed the site served
+it, and rolled forward again. Straightforward, with nothing behaving
+unexpectedly.
+
+Confirmed independently after the drill: all six public routes return 200,
+`index, follow` is intact, the Hero and Work Experience render, the sitemap
+holds four entries, and no draft marker appears. The roll-forward restored the
+site completely rather than partially, which is the failure mode worth checking
+and the reason it was checked rather than assumed.
+
+### Source rollback: not exercised
+
+`docs/release-checklist.md` section 10 defines two paths. Only the hosting one
+was run.
+
+That is worth stating plainly rather than recording P32 as complete. TD 25.2 is
+explicit: a hosting rollback alone leaves source and production inconsistent.
+Vercel would be serving an older build while `production` still contains the
+change that caused the problem, so the next merge silently reintroduces it. The
+hosting rollback buys time; the source correction is what actually resolves an
+incident.
+
+Two things about that path are now different from when the checklist was
+written, and both make it *more* important to have rehearsed:
+
+- The `Protect production` ruleset requires a pull request with `quality` and
+  `e2e` green. A revert can no longer be pushed directly, so recovery takes at
+  least one full CI cycle.
+- Amending or force-pushing is no longer available as a shortcut. The
+  repository is public, so rewriting a pushed commit would permanently publish
+  the pre-rewrite SHA. Reverting forward is the only correct move.
+
+The practical consequence: **the fastest possible source correction is a revert
+pull request through CI.** That is a known, bounded cost, but it is not
+instant, and discovering it during an incident would be the wrong time.
+
+### Post-launch checklist closed
+
+| Item | State |
+|---|---|
+| Private vulnerability reporting | **Enabled** — it was still off after the section 9 pass and was caught here |
+| Dependabot opening pull requests | Confirmed: five raised, two merged, three closed by the deliberate version ceilings in `dependabot.yml` |
+| Repository description and topics | Set; eleven topics |
+| LinkedIn and email actions | Confirmed manually by Randi. Neither can be settled automatically — LinkedIn answers any non-browser client with HTTP 999 |
+
+### Standing state
+
+Open pull requests: none. Dependabot, CodeQL, and secret-scanning alerts: zero
+each. `validate:release`, `audit:prod`, and `check:links` all pass. CI green on
+`production`.
+
+### Outstanding, deliberately
+
+| Item | Status |
+|---|---|
+| Source rollback rehearsal | Not done. The one gap in P32 |
+| P33 Docker portability | Deferred by decision. Vercel does not accept container images, so Docker here would demonstrate portability rather than deliver anything. `architecture.md` already scopes it as a post-launch enhancement and the Handoff lists mandatory Docker as a non-goal |
