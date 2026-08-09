@@ -129,22 +129,46 @@ describe("confidentiality invariants for a public repository", () => {
   });
 });
 
-describe("draft state before content finalization", () => {
-  it("publishes only the case study written from verifiable facts", () => {
-    // The Personal Developer Portfolio case study describes this repository,
-    // so every claim in it is checkable against the code and the deployment.
+describe("content state at launch", () => {
+  it("publishes both launch case studies", () => {
     const published = projects.filter((project) => project.publicationStatus === "published");
 
-    expect(published.map((project) => project.slug)).toEqual(["personal-developer-portfolio"]);
+    expect(published.map((project) => project.slug).sort()).toEqual([
+      "jury-process-management-integration",
+      "personal-developer-portfolio",
+    ]);
   });
 
-  it("keeps the professional case study Draft until Randi writes it", () => {
-    // This one describes work under an employer and is still placeholder text.
-    // Publishing it before Randi authors and reviews it would put unreviewed
-    // claims about a former workplace on a public site.
+  /**
+   * The professional case study describes work under an employer, published on
+   * a public site with a public repository. These assert the properties that
+   * make that safe, rather than assuming the review that approved it will be
+   * repeated on every future edit.
+   */
+  it("keeps the professional case study sanitized and claim-free", () => {
     const jury = projects.find((project) => project.slug === "jury-process-management-integration");
 
-    expect(jury?.publicationStatus).toBe("draft");
+    expect(jury?.confidentialityClass).toBe("sanitized");
+    expect(jury?.confidentialityNote).toBeTruthy();
+
+    // FAC-PROJECT-003: team work is stated separately, so nothing shared is
+    // read as solely his.
+    expect(jury?.teamResponsibilities?.length).toBeGreaterThan(0);
+
+    // FAC-PROJECT-004: "production" would require verified confirmation, and
+    // the evidence for this work does not support that claim.
+    expect(jury?.deliveryStatus).not.toBe("production");
+    expect(jury?.productionConfirmation).toBeUndefined();
+  });
+
+  it("claims no invented metric in the professional case study", () => {
+    const jury = projects.find((project) => project.slug === "jury-process-management-integration");
+    const prose = `${jury?.outcome} ${jury?.implementationSummary} ${jury?.testingAndVerification}`;
+
+    // No percentage, and no "Nx" multiplier. A measured number would be fine;
+    // none was measured, so none may appear.
+    expect(prose).not.toMatch(/\d+\s*%/);
+    expect(prose).not.toMatch(/\b\d+x\b/i);
   });
 
   it("publishes the profile now that Randi has written the headline and summary", () => {
@@ -164,10 +188,11 @@ describe("draft state before content finalization", () => {
     }
   });
 
-  it("does not yet satisfy the launch rule of two Published projects", () => {
-    // Asserted deliberately: this is why release validation must fail today.
+  it("satisfies the launch rule of at least two Published projects", () => {
+    // This assertion was inverted for the whole of development. It is why
+    // release validation failed, and flipping it is what let the site launch.
     const published = projects.filter((project) => project.publicationStatus === "published");
 
-    expect(published.length).toBeLessThan(2);
+    expect(published.length).toBeGreaterThanOrEqual(2);
   });
 });

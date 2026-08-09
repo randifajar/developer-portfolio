@@ -64,7 +64,7 @@ describe("isPubliclyLaunchReady", () => {
     expect(isPubliclyLaunchReady()).toBe(true);
   });
 
-  it("is false for the real content set today", async () => {
+  it("is true for the real content set", async () => {
     // doMock registrations survive resetModules, so the mocks from the tests
     // above must be explicitly removed or this reads mocked content and
     // silently passes for the wrong reason.
@@ -74,8 +74,9 @@ describe("isPubliclyLaunchReady", () => {
 
     const { isPubliclyLaunchReady } = await import("@/domain/content/selectors");
 
-    // Everything is Draft, so the site must not be indexable. This flips on its
-    // own at P30 — deliberately, so nobody has to remember to enable indexing.
-    expect(isPubliclyLaunchReady()).toBe(false);
+    // Flipped on 2026-08-09 when the second case study was published. It
+    // flipped on its own — deliberately, so nobody had to remember to enable
+    // indexing, and so nobody could enable it early by hand.
+    expect(isPubliclyLaunchReady()).toBe(true);
   });
 });

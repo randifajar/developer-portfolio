@@ -198,20 +198,62 @@ test.describe("every public page has exactly one h1 (NFAC-A11Y-003)", () => {
   }
 });
 
-test.describe("pre-launch indexing posture", () => {
-  test("robots.txt disallows crawling while content is Draft", async ({ request }) => {
+/**
+ * Indexing posture after launch.
+ *
+ * These asserted the opposite for the whole of development: robots.txt
+ * disallowed everything and every page carried noindex, because a half-built
+ * portfolio being indexed and cached is worse for the product goal than not
+ * being found at all.
+ *
+ * The switch is derived from content — a Published profile and at least two
+ * Published projects (DEC-030) — so it flipped on its own when the second case
+ * study was published. Nobody had to remember to enable indexing, and nobody
+ * could enable it early by hand. These now assert the other side of that
+ * switch, end to end against a production build.
+ */
+test.describe("post-launch indexing posture", () => {
+  test("robots.txt allows crawling", async ({ request }) => {
     const body = await (await request.get("/robots.txt")).text();
 
-    expect(body).toMatch(/Disallow:\s*\/\s*$/m);
+    expect(body).toMatch(/Allow:\s*\/\s*$/m);
+    expect(body).not.toMatch(/Disallow:\s*\/\s*$/m);
   });
 
-  test("pages carry noindex, because robots.txt alone does not prevent indexing", async ({
-    page,
-  }) => {
+  test("robots.txt advertises the sitemap", async ({ request }) => {
+    const body = await (await request.get("/robots.txt")).text();
+
+    expect(body).toMatch(/Sitemap:\s*https?:\/\/\S+\/sitemap\.xml/i);
+  });
+
+  test("pages no longer carry noindex", async ({ page }) => {
     await page.goto("/");
 
     const robots = await page.locator('meta[name="robots"]').getAttribute("content");
 
-    expect(robots).toContain("noindex");
+    // Absent is fine — the default is indexable. Present but saying noindex is
+    // not, and would silently undo the launch.
+    expect(robots ?? "").not.toContain("noindex");
+  });
+
+  test("no public page carries noindex", async ({ page }) => {
+    for (const route of ["/", "/projects", "/projects/personal-developer-portfolio"]) {
+      await page.goto(route);
+
+      const robots = await page.locator('meta[name="robots"]').getAttribute("content");
+
+      // robots.txt asks a crawler not to fetch; the meta directive is what
+      // keeps a page out of the index. One route still carrying it would drop
+      // that page from results while the rest of the site was discoverable.
+      expect(robots ?? "", route).not.toContain("noindex");
+    }
+  });
+
+  test("a canonical url is declared for the homepage (NFAC-SEO-003)", async ({ page }) => {
+    await page.goto("/");
+
+    const canonical = await page.locator('link[rel="canonical"]').getAttribute("href");
+
+    expect(canonical).toMatch(/^https?:\/\//);
   });
 });
