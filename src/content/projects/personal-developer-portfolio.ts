@@ -14,12 +14,24 @@ import { defineProject } from "@/domain/content/define";
  * developer" role wording — the work was AI-accelerated under his direction,
  * and `aiUsage` discloses that explicitly rather than leaving it implied.
  *
- * deliveryStatus remains "in-development" and that is deliberate. The
- * application is deployed and verified running, but the portfolio itself has
- * not launched: most content is still Draft and indexing is disabled.
- * FAC-PROJECT-004 forbids claiming a status the work has not reached, and
- * "production" would additionally require a verified productionConfirmation
- * (TD 9.5). Revisit this at launch, not before.
+ * deliveryStatus moved from "in-development" to "production" on 2026-08-10.
+ * The previous comment here said to revisit this at launch and not before, and
+ * this is that revisit.
+ *
+ * The reasons it was held back are all now resolved: the launch content is
+ * complete, release validation passes, and indexing is enabled. FAC-PROJECT-004
+ * forbids claiming a status the work has not reached — it does not require
+ * understating one it has.
+ *
+ * TD 9.5 requires a verified productionConfirmation for this status, and the
+ * note below is a summary of the P31 production verification recorded in
+ * docs/release-audit.md. That check was performed against the live deployment
+ * rather than inferred from a green build, which is the distinction the rule
+ * exists to enforce (NFAC-CICD-004).
+ *
+ * If this project is ever taken offline, this status and its confirmation come
+ * down with it. The confirmation is a statement about the present, not a
+ * permanent award.
  *
  * Editing any claim here means re-checking it against the repository. The
  * value of this case study is that every statement in it is verifiable.
@@ -34,7 +46,7 @@ export const personalDeveloperPortfolio = defineProject({
 
   projectType: "personal",
   role: "Sole developer — requirements, architecture, implementation, testing, and delivery",
-  deliveryStatus: "in-development",
+  deliveryStatus: "production",
   period: "2026",
 
   context:
@@ -203,6 +215,18 @@ export const personalDeveloperPortfolio = defineProject({
     "skill-ai-assisted-engineering",
   ],
 
+  // TD 9.5 and FAC-PROJECT-004. Every figure here was measured against the
+  // live deployment during P31 and is recorded in docs/release-audit.md.
+  productionConfirmation: {
+    verified: true,
+    note:
+      "Verified against the live deployment rather than inferred from a successful build " +
+      "(NFAC-CICD-004). Every public route returns 200, the resume serves as a PDF, robots and " +
+      "the sitemap reflect the launched state, and the security headers are present. A Lighthouse " +
+      "audit of the homepage, the projects index, and a case study scored 97 or above for " +
+      "performance and 100 for accessibility, best practices, and SEO on all three.",
+  },
+
   confidentialityClass: "public",
 
   // Published and featured together: Technical Design 9.4 requires every
@@ -211,5 +235,5 @@ export const personalDeveloperPortfolio = defineProject({
   featured: true,
   featuredPriority: 1,
   publicationStatus: "published",
-  updatedAt: "2026-08-04",
+  updatedAt: "2026-08-10",
 });

@@ -6,6 +6,7 @@ import { ExperienceSection } from "@/components/sections/experience-section";
 import { HeroSection } from "@/components/sections/hero-section";
 import { ProjectsSection } from "@/components/sections/projects-section";
 import { SkillsSection } from "@/components/sections/skills-section";
+import { getFeaturedProjects } from "@/domain/content/selectors";
 
 /**
  * Homepage sections against the real, unmocked selectors.
@@ -125,16 +126,45 @@ describe("Selected Projects renders both launch case studies", () => {
   });
 
   /**
-   * FAC-PROJECT-004. "Completed" is displayed for the professional work
-   * because the evidence does not support a production claim. A card that
-   * silently upgraded that label would misrepresent the work on the first
-   * screen a recruiter sees.
+   * FAC-PROJECT-004. Each card must show the status its evidence supports. The
+   * professional work is "Completed" because no production verification was
+   * performed on it; the portfolio itself is "Production" because one was, and
+   * is recorded. A card that silently upgraded its label would misrepresent the
+   * work on the first screen a recruiter sees.
+   *
+   * This reads the status attribute on each specific card rather than scanning
+   * the section's text. The previous version did the latter and was vacuous:
+   * container.textContent concatenates adjacent elements without separators, so
+   * the section reads "...Personal projectProduction. Verified...", and
+   * /\bProduction\b/ found no word boundary between "project" and "Production".
+   * It would have passed even if the professional card had been upgraded, which
+   * is the one thing it existed to catch.
    */
-  it("shows the honest delivery status on the professional card", () => {
-    const { container } = render(<ProjectsSection />);
+  function statusOf(title: string): string | null | undefined {
+    const card = screen.getByRole("link", { name: title }).closest("article");
 
-    expect(container.textContent).toContain("Completed");
-    expect(container.textContent).not.toMatch(/\bProduction\b/);
+    return card?.querySelector("[data-status]")?.getAttribute("data-status");
+  }
+
+  it("shows each card the delivery status its evidence supports", () => {
+    render(<ProjectsSection />);
+
+    expect(statusOf("Jury Process Management Integration")).toBe("completed");
+    expect(statusOf("Personal Developer Portfolio")).toBe("production");
+  });
+
+  it("never shows Production for work without a verified confirmation", () => {
+    render(<ProjectsSection />);
+
+    // The rule restated at the rendering layer: only a project carrying a
+    // productionConfirmation may display that badge.
+    for (const project of getFeaturedProjects()) {
+      const status = statusOf(project.title);
+
+      if (status === "production") {
+        expect(project.productionConfirmation?.verified, project.slug).toBe(true);
+      }
+    }
   });
 });
 
