@@ -252,3 +252,82 @@ The gap worth naming: the site is launched and indexable while the repository
 that produces it has no enforced branch protection. Nothing prevents a direct
 push to `production` today. That has been true for the whole build and was
 acceptable while the site was invisible; it is less acceptable now.
+
+---
+
+## 2026-08-10 — Public visibility gate and an accepted risk
+
+| | |
+|---|---|
+| Repository | Public as of this date |
+| Trigger | `github-configuration.md` section 9 |
+
+### An exposure found at the gate, and the decision taken
+
+Plan risk R-05 recorded that an amended commit left an unreachable object
+server-side, and said to re-confirm it at the public-visibility gate. Confirmed
+there: `ff7e735cce0eab952d3c679256936ae8f26646a6` is served by GitHub and
+contains the pre-sanitisation development plan.
+
+The exposure is three internal identifiers belonging to Randi's employer — a
+project code, a system name, and a feature code — in two lines of one planning
+document. Everything else in that commit is byte-identical to public history:
+the diff against the current root is `1 file changed, 2 insertions, 2
+deletions`. No credential, customer data, source code, or architecture detail
+is involved.
+
+The repository was briefly returned to private while this was assessed, which
+closed anonymous access, and then made public again.
+
+**Randi accepted the residual risk rather than requesting garbage collection.**
+The decision is recorded here with its evidence so it reads as a judgement
+rather than an oversight.
+
+Evidence supporting the decision:
+
+| Question | Answer |
+|---|---|
+| Reachable from any branch or tag? | No — unreferenced |
+| Carried by a network `git clone`? | **No** — verified by cloning and checking |
+| Present in the commit list, history, or code search? | No |
+| Forks | 0 |
+| Repository views during the public window | 0 |
+| Discoverable without the exact 40-character SHA? | No |
+| Was the SHA ever published? | **No.** The commit was authored and amended while the repository was private, so it never entered GitHub's public event firehose |
+
+The counter-argument, recorded because it was real: the identifiers belong to
+an employer rather than to Randi, and the fix — one support request, with the
+site unaffected throughout — was close to free. The recommendation at the time
+was to request garbage collection. Randi weighed it and chose otherwise.
+
+### A rule this creates
+
+The reason that object is undiscoverable is that it was orphaned **while the
+repository was private**. GitHub does not publish events for private
+repositories, so the pre-amend SHA was never emitted anywhere.
+
+That protection no longer applies. From now on, **amending or force-pushing a
+pushed commit publishes the pre-rewrite SHA permanently**, to event archives
+outside this repository's control. Fix forward with a new commit instead. This
+is not a style preference; it is the only reason the current exposure is
+containable.
+
+### Section 9 checklist, applied
+
+| Item | State |
+|---|---|
+| `Protect production` ruleset | **Active.** Deletion, force-push, and non-linear history blocked; pull request required with conversation resolution; squash-only merges; `quality` and `e2e` required; branch must be up to date |
+| Bypass actors | **None** — the ruleset applies to the owner as well |
+| Secret scanning | Enabled |
+| Push protection | Enabled |
+| Dependabot alerts and security updates | Enabled |
+| Code scanning | CodeQL default setup configured |
+| Repository topics | 11 set |
+| Non-provider secret patterns, validity checks | **Not enabled** — Advanced Security extras requiring a paid plan. Recorded as unavailable rather than as done |
+
+Verified against `GET /repos/.../rules/branches/production`, which returns the
+rules GitHub will actually evaluate, rather than trusting that creating the
+ruleset was enough.
+
+The prohibition on direct pushes to `production` has been policy since the
+first governance commit. As of today it is enforcement.
