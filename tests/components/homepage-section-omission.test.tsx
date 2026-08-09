@@ -66,34 +66,38 @@ const sections = [
   ["AI-Assisted Engineering", "@/components/sections/ai-workflow-section", "AIWorkflowSection"],
 ] as const;
 
+/**
+ * One test per section, asserting all three properties from a single render.
+ *
+ * The shape matters. This started as three tests that each looped over all six
+ * sections, which meant two of them performed six full module-graph reloads
+ * inside one five-second budget. Each reload resets the module registry and
+ * re-imports a component, its selectors, and the content modules beneath them.
+ *
+ * That passed in isolation and failed intermittently in the full suite — once
+ * at 11.3 seconds, while a CodeQL scan competed for CPU. A test that fails only
+ * under load is worse than one that fails outright: it trains you to re-run
+ * rather than to read.
+ *
+ * Now no test performs more than one reload, so none is near the timeout, and
+ * the file does six reloads in total rather than eighteen. Each assertion
+ * carries its own message, so a failure still names which property broke.
+ */
 describe("a section with nothing publicly eligible renders nothing", () => {
   for (const [label, moduleName, componentName] of sections) {
     it(`${label} omits itself entirely`, async () => {
       const container = await renderWithEmptyContent(moduleName, componentName);
 
-      expect(container).toBeEmptyDOMElement();
-    });
-  }
+      expect(container, `${label}: rendered something`).toBeEmptyDOMElement();
 
-  it("announces no heading for any omitted section", async () => {
-    for (const [label, moduleName, componentName] of sections) {
-      const container = await renderWithEmptyContent(moduleName, componentName);
-
-      // The specific failure this guards: a heading rendered outside the
-      // early return, leaving "Technical Skills" announced with nothing under
-      // it.
-      expect(container.querySelector("h1, h2, h3, h4"), label).toBeNull();
-    }
-  });
-
-  it("leaves no anchor target that scrolls to an empty region", async () => {
-    for (const [label, moduleName, componentName] of sections) {
-      const container = await renderWithEmptyContent(moduleName, componentName);
+      // A heading rendered outside the early return would leave "Technical
+      // Skills" announced with nothing under it (FAC-HOME-005).
+      expect(container.querySelector("h1, h2, h3, h4"), `${label}: kept a heading`).toBeNull();
 
       // Header links point at section ids. An id surviving an omitted section
       // gives a keyboard user a navigation target that goes nowhere
       // (FAC-NAV-002).
-      expect(container.querySelector("[id]"), label).toBeNull();
-    }
-  });
+      expect(container.querySelector("[id]"), `${label}: kept an anchor target`).toBeNull();
+    });
+  }
 });
