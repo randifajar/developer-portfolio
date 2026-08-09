@@ -234,15 +234,29 @@ describe("rule: unique featured priority", () => {
 
 describe("rule: production requires confirmation (TD 9.5)", () => {
   it("rejects Production status without a verified confirmation", () => {
+    // The confirmation must be stripped explicitly. This test previously
+    // spread a real project and set the status, which worked only while no
+    // real project was Production. Once one was, the spread carried its
+    // confirmation across and the rule stopped firing — the test passed
+    // without exercising anything.
     const [first] = projects;
+    const { productionConfirmation, ...withoutConfirmation } = first!;
+
+    expect(productionConfirmation, "fixture premise: the source record has one").toBeDefined();
+
     const content = {
       ...realContent(),
       // Bypasses the schema deliberately: this proves validation catches it
       // even if a record is ever built without the definition helper.
-      projects: [{ ...first!, deliveryStatus: "production" as const }],
+      projects: [{ ...withoutConfirmation, deliveryStatus: "production" as const }],
     };
 
     expect(rulesTriggeredBy(content)).toContain("production-requires-confirmation");
+  });
+
+  it("accepts the real content set, where Production carries its confirmation", () => {
+    // The live case: the portfolio case study is Production and confirmed.
+    expect(rulesTriggeredBy(realContent())).not.toContain("production-requires-confirmation");
   });
 
   it("accepts Production status with a verified confirmation", () => {
