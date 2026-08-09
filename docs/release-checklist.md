@@ -185,12 +185,36 @@ Prove recovery works *before* it is needed.
 3. Confirm the deployment reflects the revert.
 
 Hosting rollback alone leaves source and production inconsistent (TD 25.2). Any
-urgent hosting rollback must be followed by a source correction.
+urgent hosting rollback must be followed by a source correction — otherwise
+Vercel serves an older build while `production` still contains the change that
+caused the problem, and the next merge silently reintroduces it.
+
+**A pull request is the only route.** The `Protect production` ruleset blocks
+direct pushes and requires `quality` and `e2e` to pass, so the fastest possible
+source correction costs one full CI cycle. Budget for that rather than
+discovering it mid-incident.
+
+**Never amend or force-push to recover.** The repository is public, so
+rewriting a pushed commit permanently publishes the pre-rewrite SHA to event
+archives outside this repository's control. Always revert forward with a new
+commit.
 
 ---
 
 ## After launch
 
-- [ ] Enable private vulnerability reporting (now that the repository is public)
-- [ ] Confirm Dependabot is opening pull requests
-- [ ] Set repository description and topics
+Completed 2026-08-10. Recorded in [`release-audit.md`](release-audit.md).
+
+- [x] Enable private vulnerability reporting (now that the repository is public)
+- [x] Confirm Dependabot is opening pull requests — five raised, two merged,
+      three closed by the version ceilings in `dependabot.yml`
+- [x] Set repository description and topics
+
+The `Protect production` ruleset, secret scanning, push protection, Dependabot
+alerts and security updates, and CodeQL default setup were applied in the same
+pass and verified through `GET /repos/.../rules/branches/production`, which
+returns what GitHub actually evaluates.
+
+Two Advanced Security sub-features — non-provider secret patterns and validity
+checks — require a paid plan and are recorded as unavailable rather than as
+done.
