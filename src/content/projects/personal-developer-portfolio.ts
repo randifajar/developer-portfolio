@@ -180,6 +180,15 @@ export const personalDeveloperPortfolio = defineProject({
     "two routes reached production with no primary heading at all. Tool severity describes how " +
     "badly a rule breaks a page in general; it does not know which requirements a given project " +
     "treats as launch-blocking.\n\n" +
+    "**A gate that has never run is not a gate.** Running the release pipeline end to end for " +
+    "the first time turned up four problems, and every one existed because a check had never " +
+    "been executed: a dependency audit that reported three high-severity advisories the moment " +
+    "it was finally run; a link validator wired into the release script whose file had never " +
+    "been written, so the command could only ever crash; a workflow committed and never once " +
+    "dispatched; and a broken asset that no test in the project could detect, because only a " +
+    "browser audit looks for it. The pattern was consistent. The checks that ran on every change " +
+    "were sound; the ones reserved for the moment that mattered were the broken ones, and " +
+    "reserving them is precisely what kept them broken.\n\n" +
     "**Splitting the launch gate from the development gate was the decision that made the rest " +
     "workable.** Development ran for the entire build against placeholder content, with a second " +
     "validator that refused to let any of it reach production.",
