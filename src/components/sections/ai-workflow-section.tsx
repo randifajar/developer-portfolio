@@ -18,6 +18,24 @@ import { SECTION_IDS } from "@/lib/constants";
  *
  * Tool logos are omitted. UX 7.8: the workflow matters more than vendor
  * decoration.
+ *
+ * Visual weight was reduced in v1.1 (Issue 7). The section is a differentiator,
+ * not the identity — the page should read "a backend engineer who uses AI
+ * responsibly", not "an AI-tool operator who also does backend work".
+ *
+ * Measured before changing anything, because the handoff asked whether the
+ * treatment gave this more weight than Work Experience or Projects rather than
+ * asserting that it did. At 1280px it occupied 1206px against Projects' 734 —
+ * 64% more — and it carried bg-surface-muted, which only Work Experience
+ * otherwise had. So the evidence sections sat on plain background while the
+ * section about tooling was one of two visually promoted ones.
+ *
+ * The background is gone and the cards are denser. Nothing was removed:
+ * responsibility, verification, corrected assumptions, and the tool names are
+ * all still here, because those are what make the section honest rather than
+ * promotional. Height parity with Projects is therefore not reachable — four
+ * practices with five required fields each is simply that much content — and
+ * chasing it would mean deleting the disclosure the section exists to make.
  */
 export function AIWorkflowSection() {
   const practices = getPublishedAIPractices();
@@ -27,9 +45,9 @@ export function AIWorkflowSection() {
   }
 
   return (
-    <section className="bg-surface-muted py-16">
+    <section className="py-16">
       <div className="mx-auto w-full max-w-(--spacing-content) px-5 sm:px-8 lg:px-12">
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-8">
           <SectionHeader
             eyebrow="How I work"
             heading="AI-Assisted Engineering"
@@ -37,11 +55,11 @@ export function AIWorkflowSection() {
             description="AI accelerates the work. I remain responsible for the requirements, the architecture, the review, and every final decision."
           />
 
-          <ol className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <ol className="grid grid-cols-1 gap-5 md:grid-cols-2">
             {practices.map((practice, index) => (
               <li
                 key={practice.id}
-                className="flex flex-col gap-4 rounded-(--radius-card) border border-border bg-surface p-6"
+                className="flex flex-col gap-3 rounded-(--radius-card) border border-border bg-surface p-5"
               >
                 <div className="flex items-center gap-3">
                   <span
@@ -57,7 +75,16 @@ export function AIWorkflowSection() {
 
                 <MarkdownContent>{practice.purpose}</MarkdownContent>
 
-                <div className="flex flex-col gap-3 border-t border-border pt-4">
+                {/*
+                  These three blocks keep their stacked uppercase labels rather
+                  than being inlined to save height. Inlining would have cut
+                  roughly 120px, and it would have cut it from exactly the
+                  content the handoff says to preserve — the human
+                  responsibility and the verification method are what stop this
+                  reading as a tools showcase, so they keep their own scannable
+                  headings and their heading semantics.
+                */}
+                <div className="flex flex-col gap-2 border-t border-border pt-3">
                   <div className="flex flex-col gap-1">
                     <h4 className="text-sm font-semibold tracking-wide text-text-muted uppercase">
                       My responsibility

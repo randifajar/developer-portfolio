@@ -71,6 +71,10 @@ const mocks = {
       purpose: "Understand an unfamiliar codebase quickly.",
       humanResponsibility: "I confirm the analysis against the real system.",
       verificationMethod: "Checked against actual source.",
+      // Present in the fixture because it is present in the real content, and
+      // because its block is conditional — without it here the branch never
+      // rendered in any test and could have been deleted silently.
+      correctedAssumption: "It proposed an index that would not have been used.",
     },
   ]),
   getPublishedContactChannels: vi.fn(() => [
@@ -235,6 +239,22 @@ describe("AI-Assisted Engineering (FAC-AI-001, FAC-AI-002)", () => {
 
     expect(screen.getByRole("heading", { name: /My responsibility/i })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /How it is verified/i })).toBeInTheDocument();
+  });
+
+  /**
+   * The corrected assumption is the section's least flattering content and the
+   * most load-bearing: it is the difference between claiming AI is verified and
+   * showing an instance where verification caught something.
+   *
+   * It renders conditionally, and until v1.1 no fixture supplied one — so the
+   * branch never executed in any test. It could have been dropped during the
+   * Issue 7 density pass and every check would still have been green.
+   */
+  it("renders corrected-assumption evidence when a practice carries it", () => {
+    render(<AIWorkflowSection />);
+
+    expect(screen.getByRole("heading", { name: /A corrected assumption/i })).toBeInTheDocument();
+    expect(screen.getByText(/index that would not have been used/)).toBeInTheDocument();
   });
 });
 
