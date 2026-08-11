@@ -41,7 +41,7 @@
     "@tailwindcss/postcss": "4.3.3",
     "@testing-library/jest-dom": "7.0.0",
     "@testing-library/react": "16.3.2",
-    "@testing-library/user-event": "14.6.1",
+    "@testing-library/user-event": "14.6.3",
     "@types/node": "24.13.3",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
@@ -53,7 +53,7 @@
     "jsdom": "30.0.1",
     "prettier": "3.9.6",
     "tailwindcss": "4.3.3",
-    "tsx": "4.23.5",
+    "tsx": "4.23.9",
     "typescript": "6.0.3",
     "vitest": "4.1.10"
   }
