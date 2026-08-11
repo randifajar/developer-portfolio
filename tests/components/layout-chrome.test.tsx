@@ -22,10 +22,13 @@ function renderMenu(resumeHref: string | null = "/resume.pdf") {
 }
 
 describe("navigation inventory (UX 6.1)", () => {
+  // Experience leads as of v1.1 (SUP-005), following the homepage hierarchy.
+  // Why that matters, and why Projects is the odd entry here, is recorded in
+  // tests/components/homepage-order.test.tsx.
   it("covers every approved destination", () => {
     expect(NAVIGATION_LINKS.map((link) => link.label)).toEqual([
-      "Projects",
       "Experience",
+      "Projects",
       "Skills",
       "AI Workflow",
       "Contact",

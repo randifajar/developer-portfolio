@@ -10,10 +10,20 @@ import { getPublishedProfile, getSiteConfig } from "@/domain/content/selectors";
 /**
  * Home.
  *
- * A Server Component that composes the approved section order from DEC-025:
- * Navigation, Hero, About, Selected Projects, Work Experience, Technical
+ * A Server Component that composes the approved section order, now SUP-005:
+ * Navigation, Hero, About, Work Experience, Selected Projects, Technical
  * Skills, AI-Assisted Engineering, Contact, Footer. Navigation and Footer come
  * from the root layout.
+ *
+ * DEC-025 put Selected Projects first, which was right when project evidence
+ * had to carry the weight. It no longer does: Randi has more than two years of
+ * professional experience with a legible progression from internship to
+ * contract to full-time, and for an experienced developer a recruiter expects
+ * to see employment history before case studies (v1.1 Issue 5).
+ *
+ * The order is asserted by tests/components/homepage-order.test.tsx. It was not
+ * asserted by anything before this change — the sequence was an approved
+ * decision that nothing enforced, so it could have drifted silently.
  *
  * Each section reads its own data through a selector and returns null when it
  * has nothing publicly eligible to show. While content is Draft the page
@@ -36,8 +46,8 @@ export default function Home() {
 
       <HeroSection />
       <AboutSection />
-      <ProjectsSection />
       <ExperienceSection />
+      <ProjectsSection />
       <SkillsSection />
       <AIWorkflowSection />
       <ContactSection />

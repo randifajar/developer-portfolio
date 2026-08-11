@@ -27,15 +27,21 @@ Serve as the foundation of Randi's long-term personal brand and later expand wit
 
 ### 1.4 Professional Positioning
 
-**Backend-Focused Full-Stack Developer**
+**Backend Developer**
 
 Backend development is the primary strength, supported by practical experience in frontend implementation, system integration, debugging, deployment support, and AI-assisted engineering.
 
 ### 1.5 Target Roles
 
 1. Backend Developer
-2. Full-Stack Developer
+2. Backend Engineer
 3. Software Engineer
+
+> **Amended in v1.1 (Issue 2).** 1.4 read "Backend-Focused Full-Stack
+> Developer" and 1.5 listed Full-Stack Developer second — see SUP-002 and
+> SUP-003. Amended here rather than left to the Decision Ledger alone because
+> both sections state *current* positioning; uncorrected they would assert
+> something no longer true.
 
 ### 1.6 Target Audience
 

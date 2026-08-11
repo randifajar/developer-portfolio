@@ -23,7 +23,14 @@
 
 The product is a public professional portfolio that helps Randi Fajar Wicaksono secure new job opportunities while creating the foundation for long-term personal branding.
 
-The portfolio presents Randi as a **Backend-Focused Full-Stack Developer**. It must communicate that backend engineering is his primary strength, supported by practical experience in frontend implementation, application integration, debugging, deployment support, and AI-assisted software development.
+The portfolio presents Randi as a **Backend Developer**. It must communicate that backend engineering is his primary strength, supported by practical experience in frontend implementation, application integration, debugging, deployment support, and AI-assisted software development.
+
+> **Amended in v1.1 (Issue 2).** This read "Backend-Focused Full-Stack
+> Developer" — see SUP-002. The amendment is made here, rather than left to the
+> Decision Ledger alone, because this sentence states *current* product intent:
+> uncorrected it would assert something no longer true. The supporting
+> capabilities are unchanged and still stated, they simply no longer compete
+> with the primary identity.
 
 ## 1.3 Problem Statement
 
