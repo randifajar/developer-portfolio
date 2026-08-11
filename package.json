@@ -53,7 +53,7 @@
     "jsdom": "30.0.1",
     "prettier": "3.9.6",
     "tailwindcss": "4.3.3",
-    "tsx": "4.23.5",
+    "tsx": "4.23.9",
     "typescript": "6.0.3",
     "vitest": "4.1.10"
   }
