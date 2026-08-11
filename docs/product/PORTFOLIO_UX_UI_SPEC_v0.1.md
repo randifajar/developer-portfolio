@@ -351,12 +351,19 @@ The desktop header contains:
 
 - Randi's name or compact identity mark
 - Home
-- Projects
 - Experience
+- Projects
 - Skills
 - AI Workflow
 - Contact
 - Resume action
+
+> **Amended in v1.1 (Issue 5).** Projects listed before Experience here. The
+> header's four anchor links mirror the homepage, so it reads as a table of
+> contents with Projects hoisted out to its own route — and leaving Projects
+> first would have had the header and the page it describes disagree about what
+> comes first. Reordered alongside SUP-005. The inventory is otherwise
+> unchanged.
 
 Recommended behavior:
 

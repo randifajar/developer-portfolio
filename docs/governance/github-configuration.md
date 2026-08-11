@@ -353,9 +353,17 @@ sending it with any job application.
 ### Description
 
 ```text
-Personal developer portfolio showcasing my backend-focused full-stack
-experience, engineering projects, and AI-assisted development workflow.
+Personal developer portfolio showcasing my backend engineering experience,
+projects, and AI-assisted development workflow.
 ```
+
+> **Corrected in v1.1 (Issue 2).** This read "backend-focused full-stack
+> experience". The repository description is a public, recruiter-visible
+> surface — it sits at the top of the repository page and in GitHub search
+> results — but it is a repository *setting*, not a tracked file, so the
+> positioning sweep that covered `src/`, `README.md`, and `package.json` could
+> not have found it. The live setting was updated on 2026-08-12; this block is
+> the source of truth for it.
 
 ### Topics
 
