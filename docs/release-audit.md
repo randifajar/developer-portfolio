@@ -395,3 +395,194 @@ each. `validate:release`, `audit:prod`, and `check:links` all pass. CI green on
 |---|---|
 | Source rollback rehearsal | Not done. The one gap in P32 |
 | P33 Docker portability | Deferred by decision. Vercel does not accept container images, so Docker here would demonstrate portability rather than deliver anything. `architecture.md` already scopes it as a post-launch enhancement and the Handoff lists mandatory Docker as a non-goal |
+
+---
+
+## 2026-08-12 — v1.1 corrective release, closed
+
+| | |
+|---|---|
+| Commits audited | `68a96d0`, `72854ec`, `61df24b`, `66eae95` on `production` |
+| Deployment | `https://developer-portfolio-delta-three.vercel.app` |
+| Content state | All launch content Published. No content added or removed in this release |
+| Purpose | Close the seven issues in `V1.1_HANDOFF.md`, and record what running them surfaced |
+
+This is the §21 completion report the v1.1 handoff asks for. It is here rather
+than in its own file because the four v1 entries above are the record of what
+this project found by actually running things, and v1.1 belongs in that
+sequence rather than beside it.
+
+### What shipped
+
+| Issue | Outcome | Pull request |
+|---|---|---|
+| 1 — README accuracy | Corrected before v1.1 formally opened | #41 |
+| 2 — Backend-first positioning | Eight locations, not one | #42 |
+| 3 — Neutral opportunity wording | `Open to remote opportunities` → `Open to opportunities` | #42 |
+| 4 — Shorter About | **No work needed.** See below | — |
+| 5 — Homepage hierarchy | Work Experience now precedes Selected Projects | #43 |
+| 6 — Project card scanability | Role moved above summary, labelled "My role" | #44 |
+| 7 — AI section visual weight | Emphasis background removed, cards denser | #45 |
+
+Suite: 397 tests in 25 files → **408 in 28**. End-to-end unchanged at 149
+passed with 1 documented skip, across three engines.
+
+### Issue 4 required no work, and saying so mattered
+
+The handoff lists "About section too long" as an issue. Measured before editing:
+the body was already **126 words** against a 100–150 target. The handoff was
+describing the earlier, longer summary and had not been updated after it
+changed.
+
+Nothing was cut on that basis. The summary did shorten to 110 words, but only
+as a consequence of removing the "currently looking for remote…" closer that
+Issue 3 required — not to satisfy a length target that was already met.
+
+The handoff's own instruction covers this: it states product intent, the
+repository is the technical source of truth, and a conflict is reported rather
+than guessed at.
+
+### The positioning lived in eight places, and one of them was not a file
+
+Issue 2 reads as a content edit. It was not. The title was duplicated across
+`profile.ts`, `site.ts`, `opengraph-image.tsx`, `media.ts`, the About heading,
+`README.md`, `package.json` — and the **GitHub repository description**.
+
+That last one is the instructive case. It is a public, recruiter-visible
+surface at the top of the repository page and in search results, and it is a
+repository *setting*. A `grep` across the working tree — the check that found
+the other seven — could not have found it, because it is not in the tree. It
+was caught by reading `github-configuration.md`, which carries the approved
+description text, and noticing the live setting still disagreed.
+
+The live setting was updated on 2026-08-12 and the governance document now
+matches it.
+
+### Four decisions were being held in place by nothing
+
+The finding that recurred across every issue in this release, stated plainly:
+four approved, documented, implemented decisions had **no test**. Each could
+have been silently undone by an ordinary refactor with the whole suite green.
+
+| Decision | How it was held | Now |
+|---|---|---|
+| Homepage section order | Nobody had reordered the JSX | `homepage-order.test.tsx` |
+| Project card field order | Presence tests that pass under any sequence | `project-card-order.test.tsx` |
+| Social card derives from content | A comment claiming it did | `opengraph-card.test.ts` |
+| Corrected-assumption evidence | A conditional branch no fixture triggered | `homepage-sections.test.tsx` |
+
+The social card is the sharpest of the four. Its source comment said it was
+generated from configuration *"so it cannot drift out of sync with the name and
+positioning shown on the site itself."* Only the name was read; the
+professional title and location line were string literals. Because the card
+renders to a PNG, no assertion on page text reached them, and the one string a
+test *could* have reached — the `alt` export — carried the same stale literal.
+It would have gone on advertising the v1 positioning in every link preview
+after the site itself had moved on.
+
+The corrected-assumption branch is the quietest. It renders conditionally and
+no fixture ever supplied one, so the block had never executed in any test — and
+it could have been dropped during the Issue 7 density pass with every check
+still passing. It is the least flattering content in the AI section and the
+most load-bearing: the difference between claiming AI output is verified and
+showing an instance where verification caught something.
+
+Every one of the four new gates was confirmed by breaking what it guards and
+observing the failure, not by watching it pass.
+
+### Two approved specifications asserted things that had stopped being true
+
+| Document | What it said | Resolution |
+|---|---|---|
+| **FAC-PROFILE-001** (P0) | The page must display "Remote-work availability" | Amended to require *availability* without dictating its form. The neutral wording Issue 3 required could not satisfy the criterion as written |
+| **PRD 1.2**, **Product Model 1.4/1.5** | Positioning as Backend-Focused Full-Stack Developer, stated as *current* intent | Amended in place |
+
+A P0 acceptance criterion being amended is not routine, and it was raised
+explicitly in #42 rather than folded in quietly.
+
+The FAC, UX/UI specification, implementation plan and reference plan still
+carry the old positioning. That is deliberate: they are dated records of what
+v1 decided, not claims about what is true now.
+
+Six decisions were superseded rather than overwritten, using the ledger's
+existing convention, so the original rows keep their text and remain legible:
+
+```text
+SUP-002  positioning                SUP-005  homepage section order
+SUP-003  target roles               SUP-006  project card order and label
+SUP-004  availability wording       SUP-007  AI section visual weight
+```
+
+A test named `(FAC-PROFILE-002)` for location and availability was in fact
+asserting FAC-PROFILE-001; `-002` is the photograph criterion. Corrected while
+amending the requirement it pointed at.
+
+### Issue 7 asked a question, so it got measured
+
+The handoff asked whether the AI section's treatment gave it more weight than
+Work Experience or Projects. That is a question, not a premise. Measured at
+1280px before any change:
+
+| Section | Height | Share | Background |
+|---|---:|---:|---|
+| Work Experience | 2079px | 36.1% | muted |
+| **AI-Assisted Engineering** | **1206px** | **21.0%** | **muted** |
+| Selected Projects | 734px | 12.8% | plain |
+| Technical Skills | 656px | 11.4% | plain |
+
+Yes, on two counts: 64% taller than Projects, and one of only two sections
+carrying a filled background — so the evidence sections sat on plain background
+while the section about *tooling* was promoted alongside employment history.
+There is no alternating-band pattern in the page and no recorded rationale for
+the two that had one.
+
+After: **1134px, 20.0%, +54% over Projects, plain background.** Verified again
+against production after merge. Exactly one section now carries the emphasis
+background, and it is Work Experience.
+
+Height parity was not pursued and is explicitly not a goal. Four practices
+carrying activity, tool, purpose, human responsibility, verification method and
+a corrected assumption is that much content, and reaching 734px would mean
+deleting the disclosure the section exists to make. Inlining the three
+sub-block headings would have saved a further ~120px, taken from exactly the
+content the handoff says to preserve and from its heading semantics. UX 7.8
+now records this so it is not relitigated: reduce prominence, not honesty.
+
+### Corrections made during this release
+
+Recorded because the standing rule is to correct plainly rather than quietly.
+
+| Claim | Correction |
+|---|---|
+| "Five tests will break on the positioning change" | Seven did. Two asserted `/remote/i` and the AI tool names — neither contains the old title, so grep never saw them. Only running the suite found them |
+| "`navigation-links.ts` needs the same swap" | Imprecise. Its first entry targets the `/projects` route, not a section anchor, so it is not part of the section order. The swap was still made, for a different reason: the other four entries do mirror the homepage |
+| "Nothing asserted the order" (#43) | True of the homepage, not the header. `layout-chrome.test.tsx` already asserted the navigation inventory and caught the change on the first run |
+| "Tool disclosure is unguarded" (#45) | It is not. `homepage-sections.test.tsx` already asserted `Claude Code` renders. Only the corrected-assumption branch was uncovered |
+| "`check` fails on the merged tree" (#42 verification) | Wrong. A `next start` process left running held a lock on the SWC binary and `npm ci` failed — with its output suppressed. No code problem |
+
+### Standing state
+
+Open pull requests: none. Dependabot, CodeQL, and secret-scanning alerts: zero
+each. `npm run check` exit 0 with 408 passing; `npm run test:e2e` exit 0 with
+149 passing and 1 documented skip; `audit:prod` exit 0; `check:links` exit 0
+with the same two links that always need a human. CI green on `production`.
+
+`validate:release` exits 1 in a plain local shell because `SITE_URL` is unset,
+and exits 0 once it is supplied — which is how `release-audit.yml` runs it. An
+environment gap, not a content one, but worth writing down so the next person
+to see that failure does not go looking for a defect that is not there.
+
+Live verification after each merge covered the rendered document rather than
+the source: section order by element id, heading sequence, header link order
+including anchors resolving from a Project Detail page, the social card PNG
+fetched and viewed, all routes, byte-identical unknown-slug responses, robots
+and noindex state, and a sweep confirming **zero** stale positioning strings.
+
+### Outstanding after v1.1
+
+| Item | Status |
+|---|---|
+| Source rollback rehearsal | **Still not done.** v1.1 merged four pull requests through the normal path and none of them was a `git revert`, so four further opportunities to rehearse it passed unused. Carried forward from P32 and `V2_HANDOFF.md` §9 |
+| P33 Docker portability | Deferred by decision, unchanged |
+| `remoteAvailability` field name | Now holds "Open to opportunities", so the name is misleading. Renaming touches schema, selectors, components and tests for no reader-visible gain; left to v2 deliberately (SUP-004) |
+| Specification drift | The FAC, UX/UI spec, and both plans still describe the v1 positioning as historical record. Intentional, but a reader who opens them cold will need SUP-002 to interpret them |
