@@ -569,10 +569,19 @@ Mobile:
 - Project type
 - Delivery status
 - Title
+- My role
 - Short summary
-- Role
 - Key technologies
 - View Case Study action
+
+> **Amended in v1.1 (Issue 6).** Role sat below the summary and was labelled
+> "Role". No field was added or removed — only the order and the label changed
+> (SUP-006). In a five-to-ten second scan the summary describes the project and
+> the role describes Randi, so "what did *he* do here?" was being answered last.
+> The possessive scopes the claim for the same reason FAC-PROJECT-003 splits
+> responsibility on the detail page: the summary can describe work a team
+> delivered, and an unqualified "Role:" beneath it invites reading the whole
+> summary as his.
 
 ### Card Interaction
 
