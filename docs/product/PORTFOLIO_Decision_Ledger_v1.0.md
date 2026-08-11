@@ -29,8 +29,8 @@
 |---|---|---|---|---|
 | DEC-001 | Primary purpose | Help Randi secure a new job. | Confirmed | User approval |
 | DEC-002 | Long-term purpose | Grow into a personal-branding platform. | Confirmed | User approval |
-| DEC-003 | Positioning | Backend-Focused Full-Stack Developer. | Confirmed | User approval |
-| DEC-004 | Target roles | Backend Developer, Full-Stack Developer, Software Engineer. | Confirmed | User input |
+| DEC-003 | Positioning | Backend-Focused Full-Stack Developer. | Superseded | User approval; replaced by SUP-002 |
+| DEC-004 | Target roles | Backend Developer, Full-Stack Developer, Software Engineer. | Superseded | User input; replaced by SUP-003 |
 | DEC-005 | Market | Remote-friendly Indonesian and international roles. | Confirmed | User approval |
 | DEC-006 | Language | English. | Confirmed | User approval |
 | DEC-007 | Access | Public read-only website. | Confirmed | Round 1 approval |
@@ -99,3 +99,6 @@ These do not block technical design when represented by Draft placeholder conten
 | ID | Previous Decision | Replacement |
 |---|---|---|
 | SUP-001 | MVP structure required unspecified changes. | Original five-route structure approved in Rounds 4 and 5. |
+| SUP-002 | DEC-003 — positioning as Backend-Focused Full-Stack Developer. | **Backend Developer.** Randi's positioning is now consistently Backend Developer across LinkedIn, CV, and applications; the portfolio was the last surface still saying otherwise. Full-stack capability remains stated where it is truthful — the case studies and the technologies list — but no longer competes with the primary identity. v1.1 Issue 2. |
+| SUP-003 | DEC-004 — target roles including Full-Stack Developer. | **Backend Developer, Backend Engineer, Software Engineer.** Follows SUP-002 for the same reason. v1.1 Issue 2. |
+| SUP-004 | Availability stated as "Open to remote opportunities". | **"Open to opportunities."** The remote-only wording excluded hybrid and onsite roles Randi would consider, and no onsite, hybrid, or relocation availability has been confirmed — so the neutral form states openness without inventing a form of it. v1.1 Issue 3. The `remoteAvailability` field name is unchanged; renaming it would touch schema, selectors, components, and tests for no reader-visible gain, and belongs to v2. |

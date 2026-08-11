@@ -20,18 +20,36 @@ export const profile = defineProfile({
   fullName: "Randi Fajar Wicaksono",
   displayName: "Randi Fajar Wicaksono",
 
-  // Confirmed positioning: DEC-003.
-  professionalTitle: "Backend-Focused Full-Stack Developer",
+  // Repositioned in v1.1 (Issue 2). DEC-003 approved "Backend-Focused
+  // Full-Stack Developer" for v1; Randi's positioning is now consistently
+  // Backend Developer across LinkedIn, CV, portfolio, and applications, and
+  // the portfolio was the last surface still saying otherwise.
+  //
+  // Full-stack capability is real and still stated where it is truthful — in
+  // the case studies and the technologies list. It simply no longer competes
+  // with the primary identity.
+  professionalTitle: "Backend Developer",
 
   headline:
-    "Backend-focused full-stack developer building Node.js, GraphQL, and MongoDB systems, " +
-    "seeking remote backend and software engineering roles.",
+    "Backend Developer building Node.js, GraphQL, and MongoDB systems, open to backend and " +
+    "software engineering opportunities.",
 
+  // Repositioned, not rewritten. This is Randi's own approved v1 wording with
+  // exactly two changes: the opening no longer leads with "backend-focused
+  // full-stack developer", and the "currently looking for remote …" closer is
+  // gone (it duplicated the headline and pinned the search to remote-only).
+  //
+  // 110 words, against the 100-150 target. The drop from 126 is the removed
+  // closer.
+  //
+  // The AI paragraph keeps the tool names. A generic "AI-assisted tools" was
+  // considered and rejected: naming what he actually uses is the disclosure,
+  // and vagueness there reads worse to an interviewer than specificity.
   summary:
-    "I'm a backend-focused full-stack developer with more than two years of hands-on experience " +
-    "progressing from internship to contract and full-time backend roles. My work is centered on " +
-    "Node.js, GraphQL, MongoDB, APIs, data processing, background jobs, and integrations used in " +
-    "academic and administrative workflows.\n\n" +
+    "I'm a Backend Developer with more than two years of hands-on experience, progressing from " +
+    "internship to contract and full-time backend roles. My work centers on Node.js, GraphQL, " +
+    "MongoDB, APIs, data processing, background jobs, and integrations used in academic and " +
+    "administrative workflows.\n\n" +
     "I regularly work on problems that cross application and environment boundaries: designing " +
     "aggregation pipelines, integrating supporting services, tracing database and CORS issues, " +
     "investigating memory and background-job failures, and validating changes across " +
@@ -39,15 +57,24 @@ export const profile = defineProfile({
     "I use Codex, Claude Code, and ChatGPT to accelerate analysis, planning, implementation, " +
     "debugging, testing, and documentation, while keeping responsibility for requirement " +
     "validation, technical decisions, code review, regression checking, security, and final " +
-    "verification. I'm currently looking for remote Backend Developer, Full-Stack Developer, or " +
-    "Software Engineer opportunities.",
+    "verification.",
 
   // Confirmed: DEC-013.
   location: "Yogyakarta, Indonesia",
-  remoteAvailability: "Open to remote opportunities",
 
-  // Confirmed: DEC-004.
-  targetRoles: ["Backend Developer", "Full-Stack Developer", "Software Engineer"],
+  // Neutral wording, v1.1 Issue 3. "Open to remote opportunities" excluded
+  // hybrid and onsite roles that Randi would consider, and no onsite, hybrid,
+  // or relocation availability has been confirmed — so this states openness
+  // without inventing a form of it.
+  //
+  // The field is still named remoteAvailability. Renaming it would touch the
+  // schema, selectors, components, and tests for no reader-visible gain, so it
+  // is left for v2 rather than widening a corrective release.
+  remoteAvailability: "Open to opportunities",
+
+  // DEC-004 listed Full-Stack Developer second. Removed in v1.1 for the same
+  // reason as the title: it competed with the backend-first identity.
+  targetRoles: ["Backend Developer", "Backend Engineer", "Software Engineer"],
 
   // DEC-019. The image was supplied on 2026-08-08, so the asset it points at
   // is Published too and the Hero renders with a photograph.

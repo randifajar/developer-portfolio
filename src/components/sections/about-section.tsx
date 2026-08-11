@@ -27,7 +27,7 @@ export function AboutSection() {
     >
       <div className="flex flex-col gap-8 md:flex-row md:gap-16">
         <div className="md:w-1/3">
-          <SectionHeader eyebrow="About" heading="Backend-focused, full-stack capable" />
+          <SectionHeader eyebrow="About" heading="Backend engineering, end to end" />
         </div>
 
         <div className="flex flex-col gap-6 md:w-2/3">

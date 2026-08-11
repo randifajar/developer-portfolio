@@ -10,10 +10,10 @@ import { defineSiteConfig } from "@/domain/content/define";
  */
 export const siteConfig = defineSiteConfig({
   name: "Randi Fajar Wicaksono",
-  defaultTitle: "Randi Fajar Wicaksono — Backend-Focused Full-Stack Developer",
+  defaultTitle: "Randi Fajar Wicaksono — Backend Developer",
   titleTemplate: "%s — Randi Fajar Wicaksono",
   defaultDescription:
-    "Backend-focused full-stack developer based in Yogyakarta, Indonesia. Backend engineering, " +
+    "Backend Developer based in Yogyakarta, Indonesia. Node.js, GraphQL, and MongoDB services, " +
     "system integration, and AI-assisted development with human accountability.",
   ownerName: "Randi Fajar Wicaksono",
   locale: "en",

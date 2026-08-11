@@ -11,11 +11,11 @@ const profile = {
   id: "profile-a",
   fullName: "Randi Fajar Wicaksono",
   displayName: "Randi Fajar Wicaksono",
-  professionalTitle: "Backend-Focused Full-Stack Developer",
+  professionalTitle: "Backend Developer",
   headline: "Building reliable backend systems and integrations.",
   summary: "A **real** professional summary.",
   location: "Yogyakarta, Indonesia",
-  remoteAvailability: "Open to remote opportunities",
+  remoteAvailability: "Open to opportunities",
   targetRoles: ["Backend Developer", "Software Engineer"],
   photoAssetId: "media-photo",
   publicationStatus: "published",
@@ -102,7 +102,7 @@ describe("Hero (FAC-PROFILE-001, FAC-HOME-002)", () => {
     render(<HeroSection />);
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Randi Fajar Wicaksono");
-    expect(screen.getByText("Backend-Focused Full-Stack Developer")).toBeInTheDocument();
+    expect(screen.getByText("Backend Developer")).toBeInTheDocument();
     expect(screen.getByText(/Building reliable backend systems/)).toBeInTheDocument();
     expect(screen.getByText(/Yogyakarta, Indonesia/)).toBeInTheDocument();
   });

@@ -66,7 +66,7 @@ describe("root metadata", () => {
       title && typeof title === "object" && "default" in title ? title.default : String(title);
 
     expect(defaultTitle).toContain("Randi Fajar Wicaksono");
-    expect(metadata.description).toContain("Backend-focused");
+    expect(metadata.description).toContain("Backend Developer");
   });
 
   it("sets a canonical URL", () => {
