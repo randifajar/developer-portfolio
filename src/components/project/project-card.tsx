@@ -68,11 +68,34 @@ export function ProjectCard({ project, technologyNames, headingLevel = 3 }: Proj
         </Link>
       </Heading>
 
-      <p className="text-text-secondary">{project.summary}</p>
+      {/*
+        Role sits above the summary as of v1.1 (Issue 6).
 
-      <p className="text-sm text-text-muted">
-        <span className="font-medium text-text-secondary">Role:</span> {project.role}
+        In a five-to-ten second scan the summary describes the project and the
+        role describes Randi, and the recruiter question — "what did *he* do
+        here?" — was the one answered last. Reading order now matches the order
+        the questions are asked in.
+
+        "My role" rather than "Role" for the same reason FAC-PROJECT-003 splits
+        responsibility on the detail page: the summary can describe work a team
+        delivered, and an unqualified "Role:" directly beneath it invites
+        reading the whole summary as his. The possessive scopes the claim to
+        him without needing a second field.
+      */}
+      {/*
+        text-text-secondary, not text-text-muted. Moving the role up only helps
+        a scan if the eye actually stops there, and muted made it the faintest
+        text on the card while being the first thing a recruiter should read.
+
+        This is a token swap, not a new treatment — the same colour the summary
+        already uses. Size still separates the two: role at 14px reads as
+        metadata, summary at 16px as body.
+      */}
+      <p className="text-sm text-text-secondary">
+        <span className="font-medium">My role:</span> {project.role}
       </p>
+
+      <p className="text-text-secondary">{project.summary}</p>
 
       {technologyNames.length > 0 ? (
         <ul className="mt-auto flex flex-wrap gap-2 pt-2">
