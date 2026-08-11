@@ -8,12 +8,15 @@ skills, and an account of AI-assisted engineering practice — with the
 truthfulness and confidentiality rules enforced in code rather than left to
 review.
 
-**Public URL:** not yet deployed. Vercel connection is pending.
+**Live:** <https://developer-portfolio-delta-three.vercel.app/>
 
-**Status:** implementation in progress. The application builds and is fully
-tested; published content is still Draft placeholder text, so the site
-intentionally renders as chrome only. `npm run validate:release` reports exactly
-what remains.
+**Status:** Production. Version 1 is deployed, indexed, and verified against
+[`docs/release-checklist.md`](docs/release-checklist.md) rather than inferred
+from a successful build. `npm run release:check` passes end to end: formatting,
+linting, strict type checking, content validation, unit and component tests, a
+production build, release validation, link validation, end-to-end and
+accessibility tests across three browser engines, and a production dependency
+audit.
 
 ---
 
@@ -30,7 +33,7 @@ what remains.
 | Rich text  | react-markdown with raw HTML disabled                    |
 | Testing    | Vitest, Testing Library, Playwright, axe-core            |
 | CI         | GitHub Actions                                           |
-| Hosting    | Vercel (planned)                                         |
+| Hosting    | Vercel, deployed from `production`                       |
 
 Framework versions are pinned exactly — no caret ranges — so builds are
 reproducible.
@@ -82,7 +85,7 @@ a secret. It falls back to `http://localhost:3000` in development.
 | `npm run test:run`         | Unit and component tests                                      |
 | `npm run test:e2e`         | End-to-end and accessibility tests against a production build |
 | `npm run validate:content` | Structural content validation                                 |
-| `npm run validate:release` | Launch gate — expected to fail until content is final         |
+| `npm run validate:release` | Launch gate — content completeness and placeholder scan       |
 | `npm run audit:prod`       | Production dependency audit                                   |
 
 `npm run check` is what CI runs. Run it before opening a pull request.
@@ -152,10 +155,16 @@ fail the run.
 
 Two tests are load-bearing rather than routine:
 
-- An unknown slug and a Draft slug must return **byte-identical** responses.
-  Two 404s with different copy would still leak.
-- Release validation must **fail** on Draft content, and a completed-launch
-  fixture must pass. Without that pair, the failing assertion proves nothing.
+- An unknown slug and an unpublished slug must return **byte-identical**
+  responses. Two 404s with different copy would still leak.
+- Every release-validation rule is asserted in **both** directions: it fires
+  against content that violates it, and stays quiet against real content. Only
+  the second half would leave a broken rule and a satisfied rule looking
+  identical.
+
+Release validation failed for the whole of development, which is what made
+building against placeholder content safe. It passes now, so each rule is
+exercised against a deliberately violating fixture instead.
 
 ---
 
@@ -171,8 +180,15 @@ branches, merges by squash after review, and deploys automatically. Deployment
 success is not acceptance — production is verified manually against
 [`docs/release-checklist.md`](docs/release-checklist.md).
 
-The release audit workflow is manual and expected to fail during development,
-because release validation refuses placeholder content.
+`production` is protected by a branch ruleset with no bypass actors, so it
+applies to the repository owner too: pull request required, squash merge only,
+both checks green, linear history, force pushes and deletions blocked.
+
+The release audit workflow is manual rather than automatic, because running the
+full gate on every push would be slow without being more informative. Running it
+end to end for the first time is what surfaced four defects — including a script
+declared in `package.json` that had never been written, and a workflow that had
+never once been dispatched.
 
 ---
 
@@ -207,6 +223,8 @@ Raw AI session exports are never published.
 | -------------------------------------------------------- | ------------------------------------------------------ |
 | [`docs/architecture.md`](docs/architecture.md)           | How the system is built and why                        |
 | [`docs/release-checklist.md`](docs/release-checklist.md) | The ordered gate before going public                   |
+| [`docs/release-audit.md`](docs/release-audit.md)         | Dated audits: what was found, decided, and deferred    |
+| [`docs/content-authoring.md`](docs/content-authoring.md) | How to write and publish content truthfully            |
 | [`docs/product/`](docs/product/)                         | PRD, acceptance criteria, UX/UI spec, technical design |
 | [`docs/governance/`](docs/governance/)                   | Git workflow and GitHub configuration                  |
 | [`docs/plans/`](docs/plans/)                             | Implementation plan                                    |
