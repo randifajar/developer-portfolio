@@ -722,6 +722,28 @@ May include:
 
 Tool logos are optional. The workflow matters more than vendor decoration.
 
+### Visual Weight
+
+This section must not out-weigh Work Experience or Selected Projects. It is a
+differentiator, not the identity — the page should read "a backend engineer who
+uses AI responsibly", not "an AI-tool operator who also does backend work".
+
+It renders on the plain page background and uses the same card treatment as
+project cards, rather than a promoted variant.
+
+> **Amended in v1.1 (Issue 7).** The section previously used
+> `bg-surface-muted`, which only Work Experience otherwise had, so the evidence
+> sections sat on plain background while the section about tooling was one of
+> two visually promoted ones. Measured at 1280px before changing anything:
+> 1206px against Selected Projects' 734px. Now 1134px on plain background with
+> denser cards (SUP-007).
+>
+> Full height parity with Selected Projects is **not** a goal. Four practices
+> carrying activity, tool, purpose, human responsibility, verification method
+> and a corrected assumption is simply that much content, and reaching parity
+> would mean deleting the disclosure the section exists to make. Reduce
+> prominence; do not reduce honesty.
+
 ### Recommended Message
 
 AI accelerates:
