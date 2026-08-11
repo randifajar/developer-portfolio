@@ -67,37 +67,55 @@ const sections = [
 ] as const;
 
 /**
- * One test per section, asserting all three properties from a single render.
+ * One test per section, asserting all three properties from a single render,
+ * with a raised timeout.
  *
- * The shape matters. This started as three tests that each looped over all six
- * sections, which meant two of them performed six full module-graph reloads
- * inside one five-second budget. Each reload resets the module registry and
- * re-imports a component, its selectors, and the content modules beneath them.
+ * Both halves of that were needed, and the first alone was not enough.
  *
- * That passed in isolation and failed intermittently in the full suite — once
- * at 11.3 seconds, while a CodeQL scan competed for CPU. A test that fails only
- * under load is worse than one that fails outright: it trains you to re-run
- * rather than to read.
+ * This began as three tests that each looped over all six sections, so two of
+ * them performed six full module-graph reloads inside one five-second budget.
+ * Restructuring to one reload per test cut the file from eighteen reloads to
+ * six and from about eleven seconds to under four. That was reported as the
+ * fix, on the strength of three consecutive passing runs.
  *
- * Now no test performs more than one reload, so none is near the timeout, and
- * the file does six reloads in total rather than eighteen. Each assertion
- * carries its own message, so a failure still names which property broke.
+ * It flaked again anyway, at 12.2 seconds.
+ *
+ * Measured rather than guessed the second time: one reload costs about 540ms
+ * on an idle machine. That is legitimate, irreducible work — resetting the
+ * module registry and re-importing a component, its selectors, and roughly
+ * 1,100 lines of content modules beneath them. Against a five-second budget it
+ * leaves nine times headroom, which sounds ample and is not when several
+ * vitest workers, a CodeQL scan, and a Lighthouse run compete for CPU.
+ *
+ * So the restructure removed the avoidable cost and the budget was still
+ * wrong. Raising a global timeout would hide the next slow test; raising it for
+ * one file whose remaining cost is measured and irreducible is just describing
+ * the work honestly.
+ *
+ * If these become slow enough to hit twenty seconds, that is a real signal
+ * about module-graph size rather than a number to raise again.
  */
+const RELOAD_TIMEOUT_MS = 20_000;
+
 describe("a section with nothing publicly eligible renders nothing", () => {
   for (const [label, moduleName, componentName] of sections) {
-    it(`${label} omits itself entirely`, async () => {
-      const container = await renderWithEmptyContent(moduleName, componentName);
+    it(
+      `${label} omits itself entirely`,
+      async () => {
+        const container = await renderWithEmptyContent(moduleName, componentName);
 
-      expect(container, `${label}: rendered something`).toBeEmptyDOMElement();
+        expect(container, `${label}: rendered something`).toBeEmptyDOMElement();
 
-      // A heading rendered outside the early return would leave "Technical
-      // Skills" announced with nothing under it (FAC-HOME-005).
-      expect(container.querySelector("h1, h2, h3, h4"), `${label}: kept a heading`).toBeNull();
+        // A heading rendered outside the early return would leave "Technical
+        // Skills" announced with nothing under it (FAC-HOME-005).
+        expect(container.querySelector("h1, h2, h3, h4"), `${label}: kept a heading`).toBeNull();
 
-      // Header links point at section ids. An id surviving an omitted section
-      // gives a keyboard user a navigation target that goes nowhere
-      // (FAC-NAV-002).
-      expect(container.querySelector("[id]"), `${label}: kept an anchor target`).toBeNull();
-    });
+        // Header links point at section ids. An id surviving an omitted section
+        // gives a keyboard user a navigation target that goes nowhere
+        // (FAC-NAV-002).
+        expect(container.querySelector("[id]"), `${label}: kept an anchor target`).toBeNull();
+      },
+      RELOAD_TIMEOUT_MS,
+    );
   }
 });
