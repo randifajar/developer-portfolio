@@ -62,7 +62,7 @@ export const mediaAssets = [
     id: "media-social-card",
     type: "social-sharing-image",
     filePath: "/opengraph-image",
-    altText: "Randi Fajar Wicaksono — Backend-Focused Full-Stack Developer.",
+    altText: "Randi Fajar Wicaksono — Backend Developer.",
     width: 1200,
     height: 630,
     ownerType: "metadata",

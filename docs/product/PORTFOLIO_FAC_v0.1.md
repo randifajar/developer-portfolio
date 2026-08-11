@@ -70,7 +70,13 @@ All criteria in this document are `P0` or `P1`.
   - The approved professional title
   - The approved headline
   - `Yogyakarta, Indonesia`
-  - Remote-work availability
+  - Availability
+
+> **Amended in v1.1 (Issue 3).** This bullet read "Remote-work availability".
+> The neutral wording adopted in SUP-004 states that Randi is open without
+> asserting a form of availability that has not been confirmed, so the criterion
+> now requires availability to be shown rather than requiring it to be remote.
+> The visitor-facing guarantee is unchanged.
 
 **Acceptance evidence**
 - Homepage screenshot on desktop

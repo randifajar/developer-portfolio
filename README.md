@@ -1,7 +1,7 @@
 # Developer Portfolio
 
-Personal developer portfolio of **Randi Fajar Wicaksono**, a backend-focused
-full-stack developer based in Yogyakarta, Indonesia.
+Personal developer portfolio of **Randi Fajar Wicaksono**, a backend developer
+based in Yogyakarta, Indonesia.
 
 It presents professional experience, selected project case studies, technical
 skills, and an account of AI-assisted engineering practice — with the

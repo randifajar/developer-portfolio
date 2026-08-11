@@ -180,15 +180,24 @@ describe("Hero presents the professional identity", () => {
   it("states the professional title and headline", () => {
     const { container } = render(<HeroSection />);
 
-    expect(container.textContent).toContain("Backend-Focused Full-Stack Developer");
-    expect(container.textContent).toMatch(/seeking remote backend/i);
+    expect(container.textContent).toContain("Backend Developer");
+    expect(container.textContent).toMatch(/open to backend and software engineering/i);
   });
 
-  it("states location and remote availability (FAC-PROFILE-002)", () => {
+  /**
+   * FAC-PROFILE-001, not -002 — the old reference here pointed at the
+   * photograph criterion. Corrected while amending the requirement itself.
+   *
+   * FAC-PROFILE-001 asked for "Remote-work availability" specifically. v1.1
+   * Issue 3 replaced remote-only wording with the neutral form, so the criterion
+   * now asks for availability without dictating which kind. What the assertion
+   * guards is unchanged: a recruiter can see where he is and that he is open.
+   */
+  it("states location and availability (FAC-PROFILE-001)", () => {
     const { container } = render(<HeroSection />);
 
     expect(container.textContent).toContain("Yogyakarta, Indonesia");
-    expect(container.textContent).toMatch(/remote/i);
+    expect(container.textContent).toMatch(/open to opportunities/i);
   });
 
   it("renders the photograph with descriptive alternative text", () => {
