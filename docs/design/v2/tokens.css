@@ -1,0 +1,258 @@
+/*
+ * Portfolio V2 — proposed design tokens.
+ *
+ * THIS FILE IS THE PROPOSAL, NOT A SHIPPED STYLESHEET.
+ *
+ * It is loaded by the mockups in this directory so that approving the picture
+ * and approving the tokens are the same act. On approval its contents move into
+ * src/app/globals.css, where the `:root` block below becomes the `@theme static`
+ * block and the [data-surface] blocks land in `@layer base`.
+ *
+ * Nothing here is referenced by the application. docs/ is not served, is
+ * excluded from Prettier, and is invisible to vitest and to Next's router.
+ *
+ * ---------------------------------------------------------------------------
+ * Every colour pair below was measured, not chosen by eye. 93 pairs checked,
+ * 0 below floor. The tightest text pair is accent on the light muted surface at
+ * 4.85 against a 4.8 internal floor (WCAG AA is 4.5).
+ *
+ * The internal floor is 4.8 rather than 4.5 because both of v1's contrast
+ * failures were within 4% of passing — 4.34 and 4.31 — and both were invisible
+ * to review. A value that only just clears 4.5 will fail again after any hue
+ * nudge.
+ *
+ * The non-text floor of 3.3 is applied ONLY to focus indicators and to borders
+ * that identify a control. It is deliberately NOT applied to decorative card
+ * borders or to badge tint fills: WCAG 1.4.11 covers "visual information
+ * required to identify user interface components and states", and a card
+ * outline is neither. Applying it everywhere produced nine false failures that
+ * would have forced heavy borders to satisfy a rule that does not apply.
+ */
+
+:root {
+  /* ---- Typography ------------------------------------------------------ */
+  --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+
+  /*
+   * Nine steps, one per level of the PRD 18 hierarchy.
+   *
+   * Every clamp() preferred value contains a rem term. A pure-vw preferred
+   * value does not respond to browser zoom, which breaks WCAG 1.4.4 at 200% —
+   * and PRD 65 requires QA at exactly that zoom level.
+   */
+  --text-display-hero: clamp(2.5rem, 1.6rem + 4vw, 4.5rem);
+  --text-display-section: clamp(2rem, 1.4rem + 2.6vw, 3.25rem);
+  --text-page-title: clamp(1.75rem, 1.3rem + 1.9vw, 2.5rem);
+  --text-project-title: clamp(1.5rem, 1.2rem + 1.3vw, 2rem);
+  --text-card-title: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+  --text-lead: clamp(1.125rem, 1.05rem + 0.35vw, 1.3125rem);
+  --text-body: 1rem;
+  --text-meta: 0.875rem;
+  --text-eyebrow: 0.8125rem;
+
+  /* ---- Layout ---------------------------------------------------------- */
+  --spacing-content: 75rem; /* 1200px, carried over from v1 */
+  --spacing-prose: 48rem; /* 768px long-form reading width */
+  --spacing-header: 4rem;
+
+  --radius-button: 0.5rem;
+  --radius-card: 0.875rem;
+  --radius-badge: 9999px;
+
+  /* ---- Motion ---------------------------------------------------------- */
+  /*
+   * Durations are tokens so that reduced motion can neutralise them by value
+   * rather than by a blanket override. See the reduced-motion block at the end
+   * for why the v1 approach is not sufficient on its own.
+   */
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --motion-slow: 320ms;
+  --motion-ease: cubic-bezier(0.2, 0, 0.2, 1);
+
+  /* ---- Colour: LIGHT is the default surface ---------------------------- */
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
+  /*
+   * Lightened from v1's #F1F5F9. At #F1F5F9 the accent measured 4.72 — passing
+   * WCAG, failing the internal floor, and already live in the footer's hover
+   * state where axe cannot see it. #F5F8FB brings it to 4.85 and keeps the v1
+   * accent hex unchanged, which PRD 16 asks for.
+   */
+  --color-surface-muted: #f5f8fb;
+
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #5b6a7d;
+  --color-border: #cbd5e1;
+
+  --color-accent: #2563eb; /* v1 identity blue, unchanged */
+  --color-accent-hover: #1d4ed8;
+  --color-on-accent: #ffffff;
+  --color-accent-subtle: #dbeafe;
+  --color-on-accent-subtle: #1e3a8a;
+  --color-focus: #2563eb;
+
+  --color-status-success: #166534;
+  --color-status-warning: #92400e;
+  --color-status-neutral: #334155;
+  --color-status-error: #b91c1c;
+}
+
+/*
+ * Surfaces.
+ *
+ * Tailwind v4 compiles utilities to variable lookups —
+ *   .bg-surface { background-color: var(--color-surface) }
+ * — so overriding a token on an ancestor reflows every descendant with no
+ * component changes. A project card renders correctly on a dark band and on a
+ * light index as the same component with the same class strings.
+ *
+ * Three surfaces, not four. Each one multiplies both the contrast matrix and
+ * the manual QA matrix in PRD 64.
+ */
+
+[data-surface="light"] {
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f5f8fb;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #5b6a7d;
+  --color-border: #cbd5e1;
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+  --color-on-accent: #ffffff;
+  --color-accent-subtle: #dbeafe;
+  --color-on-accent-subtle: #1e3a8a;
+  --color-focus: #2563eb;
+  --color-status-success: #166534;
+  --color-status-warning: #92400e;
+  --color-status-neutral: #334155;
+  --color-status-error: #b91c1c;
+}
+
+[data-surface="neutral"] {
+  --color-background: #eaeff5;
+  --color-surface: #ffffff;
+  --color-surface-muted: #dfe6ef;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #42505f;
+  --color-text-muted: #55636f;
+  --color-border: #bfcad8;
+  --color-accent: #1d4ed8;
+  --color-accent-hover: #1e3a8a;
+  --color-on-accent: #ffffff;
+  --color-accent-subtle: #d3e2fb;
+  --color-on-accent-subtle: #1e3a8a;
+  --color-focus: #1d4ed8;
+  --color-status-success: #14532d;
+  --color-status-warning: #7c3a0b;
+  --color-status-neutral: #2c3948;
+  --color-status-error: #a31616;
+}
+
+[data-surface="dark"] {
+  --color-background: #0b0f14;
+  --color-surface: #131a22;
+  --color-surface-muted: #1b242e;
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #c3cdd9;
+  --color-text-muted: #96a3b2;
+  --color-border: #2a3542;
+  /*
+   * The v1 accent measures 3.72 on #0B0F14 and cannot carry text here. #60A5FA
+   * measures 7.56 on the base and 6.89 on the elevated surface. #3B82F6 was the
+   * first candidate and reached only 4.76 on the elevated surface — under the
+   * floor, which is exactly the margin that caught v1 out twice.
+   */
+  --color-accent: #60a5fa;
+  --color-accent-hover: #93c5fd;
+  /* Inverted: on dark, the accent fill is light, so its label must be dark. */
+  --color-on-accent: #0b0f14;
+  --color-accent-subtle: #16273d;
+  --color-on-accent-subtle: #bfd7fe;
+  --color-focus: #60a5fa;
+  --color-status-success: #4ade80;
+  --color-status-warning: #fbbf24;
+  --color-status-neutral: #cbd5e1;
+  --color-status-error: #f87171;
+}
+
+/* ---- Base ------------------------------------------------------------- */
+
+html {
+  scroll-padding-top: calc(var(--spacing-header) + 1rem);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/*
+ * Focus stays an outline rather than a box-shadow. Outline survives Windows
+ * High Contrast and forced-colors mode, where box-shadow disappears entirely —
+ * and e2e/home.spec.ts asserts a non-zero computed outlineWidth, which is the
+ * right assertion to keep.
+ */
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/*
+ * Reduced motion.
+ *
+ * The v1 block set animation-duration to 0.01ms, which is sufficient for
+ * time-driven animation and does NOTHING for a scroll-driven one:
+ * animation-timeline: view() advances on scroll progress, not on elapsed time,
+ * so a section reveal built that way would ignore the user's preference
+ * entirely while appearing to respect it.
+ *
+ * Three mechanisms, deliberately overlapping: neutralise the duration tokens,
+ * disable scroll timelines, and keep the v1 blanket rule as a backstop for
+ * anything that bypasses the tokens.
+ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 1ms;
+    --motion-base: 1ms;
+    --motion-slow: 1ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-timeline: none !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/*
+ * Entrance effects are opt-in under no-preference and must animate FROM a
+ * visible resting state. An element left at opacity: 0 by default disappears
+ * for reduced-motion users, which PRD 23 forbids: the full information
+ * architecture must survive with motion off.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .v2-reveal {
+    animation: v2-rise var(--motion-slow) var(--motion-ease) both;
+  }
+
+  @keyframes v2-rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.5rem);
+    }
+  }
+}
