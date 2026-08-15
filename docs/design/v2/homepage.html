@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>V2 mockup — Homepage</title>
+
+    <!--
+      Design mockup. Not application code, not served by the site.
+
+      Fonts load from Google Fonts because this file is opened directly in a
+      browser. The real implementation uses next/font, which self-hosts at build
+      time — no third-party origin, no preconnect, CSP-clean. Open this with a
+      network connection or the display face falls back to the body face.
+
+      Content is Randi's real published content, so the composition is judged
+      against real string lengths rather than lorem.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Geist:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="tokens.css" />
+
+    <style>
+      /* Mockup-only shims. In the real build these are Tailwind utilities. */
+      :root {
+        --font-archivo: "Archivo";
+        --font-geist-sans: "Geist";
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      body {
+        margin: 0;
+      }
+
+      .surface {
+        background-color: var(--color-background);
+        color: var(--color-text-primary);
+      }
+      .container {
+        margin-inline: auto;
+        width: 100%;
+        max-width: var(--spacing-content);
+        padding-inline: 1.25rem;
+      }
+      @media (min-width: 640px) {
+        .container {
+          padding-inline: 2rem;
+        }
+      }
+      @media (min-width: 1024px) {
+        .container {
+          padding-inline: 3rem;
+        }
+      }
+      section {
+        padding-block: clamp(3.5rem, 2rem + 5vw, 7rem);
+      }
+
+      .eyebrow {
+        font-size: var(--text-eyebrow);
+        letter-spacing: 0.12em;
+        text-transform: uppercase; /* never authored uppercase — screen readers spell it out */
+        color: var(--color-text-muted);
+        font-weight: 500;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: var(--font-display);
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+        font-weight: 600;
+        text-wrap: balance;
+      }
+      h1 {
+        font-size: var(--text-display-hero);
+      }
+      h2 {
+        font-size: var(--text-display-section);
+      }
+      h3 {
+        font-size: var(--text-project-title);
+      }
+      p {
+        max-width: var(--spacing-prose);
+        color: var(--color-text-secondary);
+      }
+      .lead {
+        font-size: var(--text-lead);
+      }
+      .meta {
+        font-size: var(--text-meta);
+        color: var(--color-text-muted);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        min-height: 2.75rem; /* 44px, NFAC-RESP-004 */
+        padding-inline: 1.25rem;
+        border-radius: var(--radius-button);
+        font-weight: 500;
+        text-decoration: none;
+        font-size: var(--text-meta);
+      }
+      .btn-primary {
+        background: var(--color-accent);
+        color: var(--color-on-accent);
+      }
+      .btn-secondary {
+        border: 1px solid var(--color-border);
+        color: var(--color-text-primary);
+      }
+
+      .rule {
+        height: 3px;
+        width: 84px;
+        background: var(--color-accent);
+        margin-bottom: 1.5rem;
+      }
+      .tag {
+        display: inline-block;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-badge);
+        padding: 0.2rem 0.7rem;
+        font-size: var(--text-meta);
+        color: var(--color-text-secondary);
+      }
+      .badge {
+        display: inline-block;
+        border-radius: var(--radius-badge);
+        padding: 0.2rem 0.7rem;
+        font-size: var(--text-meta);
+        font-weight: 500;
+        background: var(--color-accent-subtle);
+        color: var(--color-on-accent-subtle);
+      }
+      .stack {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: center;
+      }
+      .grid-2 {
+        display: grid;
+        gap: 3rem;
+        grid-template-columns: 1fr;
+      }
+      @media (min-width: 900px) {
+        .grid-2 {
+          grid-template-columns: 1fr 2fr;
+        }
+      }
+
+      /* Employer grouping — the progression is the point (PRD 29.1). */
+      .roles {
+        border-left: 2px solid var(--color-border);
+        padding-left: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2.5rem;
+      }
+      .role-current {
+        border-left: 2px solid var(--color-accent);
+        margin-left: -1.5rem;
+        padding-left: 1.5rem;
+      }
+
+      header.site {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        height: var(--spacing-header);
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid var(--color-border);
+      }
+      nav a {
+        color: var(--color-text-secondary);
+        text-decoration: none;
+        font-size: var(--text-meta);
+        margin-left: 1.5rem;
+      }
+      .note {
+        font-size: var(--text-meta);
+        color: var(--color-text-muted);
+        border-top: 1px solid var(--color-border);
+        padding-top: 1rem;
+        margin-top: 3rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Header is permanently dark: it crosses every surface, so it cannot
+         inherit one. Solid rather than translucent, which also removes a
+         colour-mix from the contrast surface. -->
+    <header class="site surface" data-surface="dark">
+      <div class="container row" style="justify-content: space-between">
+        <strong style="font-family: var(--font-display)">Randi Fajar Wicaksono</strong>
+        <nav>
+          <a href="#experience">Experience</a>
+          <a href="#projects">Projects</a>
+          <a href="#skills">Skills</a>
+          <a href="#workflow">Workflow</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- HERO — dark -->
+    <section class="surface" data-surface="dark">
+      <div class="container stack">
+        <div class="rule"></div>
+        <p class="eyebrow">Backend Developer · Yogyakarta, Indonesia</p>
+        <h1>Backend systems that hold up under inspection.</h1>
+        <p class="lead">
+          Node.js, GraphQL and MongoDB services for academic and administrative workflows —
+          APIs, aggregation pipelines, background jobs and integrations.
+        </p>
+        <div class="row" style="margin-top: 1rem">
+          <a class="btn btn-primary" href="#experience">View Experience</a>
+          <a class="btn btn-secondary" href="#">View Resume</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT — light -->
+    <section class="surface" data-surface="light" id="about">
+      <div class="container grid-2">
+        <div>
+          <p class="eyebrow">About</p>
+          <h2 style="font-size: var(--text-page-title)">Backend engineering, end to end</h2>
+        </div>
+        <div class="stack">
+          <p>
+            I'm a Backend Developer with more than two years of hands-on experience, progressing
+            from internship to contract and full-time backend roles. My work centers on Node.js,
+            GraphQL, MongoDB, APIs, data processing, background jobs, and integrations used in
+            academic and administrative workflows.
+          </p>
+          <p>
+            I regularly work on problems that cross application and environment boundaries:
+            designing aggregation pipelines, integrating supporting services, tracing database and
+            CORS issues, investigating memory and background-job failures, and validating changes
+            across development, staging, pre-production, and production environments.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- WORK EXPERIENCE — dark. The centrepiece: already 36.6% of the page,
+         and SUP-005 made it lead. It gets the most emphatic surface. -->
+    <section class="surface" data-surface="dark" id="experience">
+      <div class="container stack">
+        <p class="eyebrow">Work Experience</p>
+        <h2>Internship to full-time, one employer</h2>
+
+        <div style="margin-top: 2.5rem">
+          <div class="row" style="justify-content: space-between; margin-bottom: 1.75rem">
+            <strong style="font-family: var(--font-display); font-size: var(--text-card-title)"
+              >ZettaByte Pte Ltd</strong
+            >
+            <span class="meta">2024 — Present</span>
+          </div>
+
+          <div class="roles">
+            <div class="role-current stack">
+              <div class="row">
+                <h3 style="font-size: var(--text-card-title)">Backend Developer</h3>
+                <span class="badge">Current</span>
+              </div>
+              <span class="meta">April 2025 — Present</span>
+              <p>
+                Building and maintaining Node.js and GraphQL services, aggregation pipelines and
+                background jobs across development, staging, pre-production and production.
+              </p>
+              <div class="row">
+                <span class="tag">Node.js</span><span class="tag">GraphQL</span
+                ><span class="tag">MongoDB</span><span class="tag">Docker</span>
+              </div>
+            </div>
+
+            <div class="stack">
+              <h3 style="font-size: var(--text-card-title)">Backend Developer, Contract</h3>
+              <span class="meta">November 2024 — March 2025</span>
+              <p>Service integration and workflow synchronisation across application boundaries.</p>
+            </div>
+
+            <div class="stack">
+              <h3 style="font-size: var(--text-card-title)">Backend Developer, Internship</h3>
+              <span class="meta">July 2024 — October 2024</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SELECTED WORK — light. Editorial modules, not a uniform card pair. -->
+    <section class="surface" data-surface="light" id="projects">
+      <div class="container stack">
+        <p class="eyebrow">Selected Work</p>
+        <h2>Two case studies, written to be checked</h2>
+
+        <article style="margin-top: 3rem" class="grid-2">
+          <div class="stack">
+            <div class="row"><span class="tag">Professional work</span><span class="badge">Completed</span></div>
+            <span class="meta">2026</span>
+          </div>
+          <div class="stack">
+            <h3>Jury Process Management Integration</h3>
+            <p class="meta" style="color: var(--color-text-secondary)">
+              <strong>My role:</strong> Backend Developer — cross-application integration and
+              workflow synchronization
+            </p>
+            <p>
+              Integrated a separate jury-management workflow with a primary academic administration
+              platform, coordinating session data, scheduling state, and downstream workflow steps
+              across application boundaries.
+            </p>
+            <div class="row">
+              <span class="tag">Node.js</span><span class="tag">GraphQL</span
+              ><span class="tag">MongoDB</span>
+            </div>
+            <a href="#" style="color: var(--color-accent); font-size: var(--text-meta)"
+              >View case study →</a
+            >
+          </div>
+        </article>
+
+        <article style="margin-top: 4rem" class="grid-2">
+          <div class="stack">
+            <div class="row"><span class="tag">Personal project</span><span class="badge">Production</span></div>
+            <span class="meta">2026</span>
+          </div>
+          <div class="stack">
+            <h3>Personal Developer Portfolio</h3>
+            <p class="meta" style="color: var(--color-text-secondary)">
+              <strong>My role:</strong> Sole developer — requirements, architecture, implementation,
+              testing, and delivery
+            </p>
+            <p>
+              A statically generated portfolio built with typed local content, build-time
+              validation, and a publishing workflow that cannot ship unpublished or confidential
+              material.
+            </p>
+            <div class="row">
+              <span class="tag">TypeScript</span><span class="tag">Next.js</span
+              ><span class="tag">Playwright</span>
+            </div>
+            <a href="#" style="color: var(--color-accent); font-size: var(--text-meta)"
+              >View case study →</a
+            >
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- TECHNICAL SKILLS — neutral -->
+    <section class="surface" data-surface="neutral" id="skills">
+      <div class="container stack">
+        <p class="eyebrow">Technical Skills</p>
+        <h2>Grouped by what they are used for</h2>
+        <div style="margin-top: 2rem" class="row">
+          <span class="tag">Node.js</span><span class="tag">GraphQL</span
+          ><span class="tag">MongoDB</span><span class="tag">TypeScript</span
+          ><span class="tag">REST APIs</span><span class="tag">Git</span
+          ><span class="tag">Docker</span>
+        </div>
+        <p class="note">
+          No percentages, no progress bars, no star ratings — and no dot scales or segmented bars
+          either. FAC-SKILL-003 forbids graphical proficiency indicators; the current tests would
+          not catch a dot scale built from plain spans, so the specification forbids the category
+          rather than the markup.
+        </p>
+      </div>
+    </section>
+
+    <!-- ENGINEERING WORKFLOW — light, deliberately the least emphatic tier.
+         This is the re-expression of SUP-007: AI must never occupy a surface
+         ranked above Work Experience or Selected Work. -->
+    <section class="surface" data-surface="light" id="workflow">
+      <div class="container stack">
+        <p class="eyebrow">Engineering Workflow</p>
+        <h2 style="font-size: var(--text-page-title)">AI-assisted, human-verified</h2>
+        <p>
+          AI accelerates the work. I remain responsible for the requirements, the architecture, the
+          review, and every final decision.
+        </p>
+        <p class="note">
+          Surface tier is the mechanism here. v1.1 reduced this section's prominence by removing its
+          emphasis background — which no longer means anything once every section carries one. The
+          replacement rule is testable: this section may never sit on a tier above Experience or
+          Selected Work.
+        </p>
+      </div>
+    </section>
+
+    <!-- CONTACT — strong dark closing section -->
+    <section class="surface" data-surface="dark" id="contact">
+      <div class="container stack">
+        <div class="rule"></div>
+        <h2>Open to backend and software engineering opportunities.</h2>
+        <p class="lead">Yogyakarta, Indonesia · Open to opportunities</p>
+        <div class="row" style="margin-top: 1rem">
+          <a class="btn btn-primary" href="#">Email Randi</a>
+          <a class="btn btn-secondary" href="#">LinkedIn</a>
+          <a class="btn btn-secondary" href="#">GitHub</a>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

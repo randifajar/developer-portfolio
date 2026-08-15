@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>V2 mockup — Display typeface specimen</title>
+
+    <!--
+      Q1 of the analysis: which display typeface.
+      Deciding a typeface from adjectives is how you end up with the wrong one,
+      so this renders both candidates at the real sizes, against the real body
+      face, using Randi's real strings.
+
+      Body face is Geist in every case — that is not the question here.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="tokens.css" />
+
+    <style>
+      :root {
+        --font-geist-sans: "Geist";
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      body {
+        padding: clamp(1.5rem, 1rem + 3vw, 4rem);
+      }
+      .panel {
+        max-width: 62rem;
+        margin-inline: auto;
+        margin-bottom: 4rem;
+        padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-card);
+        background: var(--color-surface);
+      }
+      .panel[data-surface="dark"] {
+        background: var(--color-background);
+      }
+      .label {
+        font-family: var(--font-sans);
+        font-size: var(--text-eyebrow);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--color-text-muted);
+        margin-bottom: 1.5rem;
+        font-weight: 500;
+      }
+      .hero {
+        font-size: var(--text-display-hero);
+        line-height: 1.03;
+        letter-spacing: -0.02em;
+        font-weight: 600;
+        color: var(--color-text-primary);
+        text-wrap: balance;
+        margin-bottom: 1rem;
+      }
+      .sect {
+        font-size: var(--text-display-section);
+        line-height: 1.08;
+        letter-spacing: -0.015em;
+        font-weight: 600;
+        color: var(--color-text-primary);
+        margin-bottom: 0.75rem;
+      }
+      .proj {
+        font-size: var(--text-project-title);
+        line-height: 1.15;
+        font-weight: 600;
+        color: var(--color-text-primary);
+        margin-bottom: 1rem;
+      }
+      .body {
+        font-family: var(--font-sans);
+        font-size: var(--text-body);
+        color: var(--color-text-secondary);
+        max-width: var(--spacing-prose);
+      }
+      .archivo .hero,
+      .archivo .sect,
+      .archivo .proj {
+        font-family: "Archivo", sans-serif;
+      }
+      .serif .hero,
+      .serif .sect,
+      .serif .proj {
+        font-family: "Instrument Serif", serif;
+        font-weight: 400;
+        letter-spacing: -0.01em;
+      }
+      .verdict {
+        font-family: var(--font-sans);
+        font-size: var(--text-meta);
+        color: var(--color-text-muted);
+        border-top: 1px solid var(--color-border);
+        margin-top: 2rem;
+        padding-top: 1rem;
+        max-width: var(--spacing-prose);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="panel archivo" data-surface="light">
+      <p class="label">Candidate A — Archivo (grotesque) · on light</p>
+      <p class="hero">Backend systems that hold up under inspection.</p>
+      <p class="sect">Internship to full-time, one employer</p>
+      <p class="proj">Jury Process Management Integration</p>
+      <p class="body">
+        Body text stays Geist in both candidates. What is being judged is the contrast between the
+        display face and the body face, at the sizes they actually appear.
+      </p>
+      <p class="verdict">
+        Variable, SIL OFL, on Google Fonts. Reads as deliberate rather than decorative, and holds
+        up in uppercase eyebrows. My recommendation — it keeps the quiet-engineering credibility
+        while giving the hierarchy real force.
+      </p>
+    </div>
+
+    <div class="panel archivo" data-surface="dark">
+      <p class="label">Candidate A — Archivo · on dark</p>
+      <p class="hero">Backend systems that hold up under inspection.</p>
+      <p class="sect">Open to backend and software engineering opportunities.</p>
+      <p class="body">
+        The same face on the dark surface, where roughly half the page will live.
+      </p>
+    </div>
+
+    <div class="panel serif" data-surface="light">
+      <p class="label">Candidate B — Instrument Serif (editorial) · on light</p>
+      <p class="hero">Backend systems that hold up under inspection.</p>
+      <p class="sect">Internship to full-time, one employer</p>
+      <p class="proj">Jury Process Management Integration</p>
+      <p class="body">
+        Body text stays Geist in both candidates. What is being judged is the contrast between the
+        display face and the body face, at the sizes they actually appear.
+      </p>
+      <p class="verdict">
+        Much stronger editorial signal, and a real risk: on a backend engineer's portfolio it can
+        read as a design affectation rather than as engineering confidence. Worth looking at
+        honestly before ruling it out.
+      </p>
+    </div>
+
+    <div class="panel serif" data-surface="dark">
+      <p class="label">Candidate B — Instrument Serif · on dark</p>
+      <p class="hero">Backend systems that hold up under inspection.</p>
+      <p class="sect">Open to backend and software engineering opportunities.</p>
+      <p class="body">The same face on the dark surface.</p>
+    </div>
+
+    <div class="panel" data-surface="light">
+      <p class="label">Deliberately not shown</p>
+      <p class="body">
+        Anton and Oswald. PRD 17.3 warns against ultra-condensed faces for long text and against
+        choosing a font because it resembles motorsport branding. Those two hit both, so they were
+        excluded rather than rendered.
+      </p>
+    </div>
+  </body>
+</html>
