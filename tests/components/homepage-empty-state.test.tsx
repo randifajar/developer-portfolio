@@ -211,10 +211,12 @@ describe("Hero presents the professional identity", () => {
     expect(image.getAttribute("alt")).not.toMatch(/^(image|photo|picture)\b/i);
   });
 
+  // V2-P0-002: the primary action leads into Work Experience, which is the
+  // section SUP-005 put first.
   it("offers the primary action into the work", () => {
     render(<HeroSection />);
 
-    expect(screen.getByRole("link", { name: /view projects/i })).toBeVisible();
+    expect(screen.getByRole("link", { name: /view experience/i })).toBeVisible();
   });
 
   it("leaks no draft marker", () => {

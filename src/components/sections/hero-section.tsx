@@ -5,7 +5,7 @@ import {
   getPublishedMediaAsset,
   getPublishedProfile,
 } from "@/domain/content/selectors";
-import { ROUTES } from "@/lib/constants";
+import { ROUTES, SECTION_IDS } from "@/lib/constants";
 
 /**
  * The Hero (UX 7.3).
@@ -47,7 +47,19 @@ export function HeroSection() {
           </p>
 
           <div className="mt-2 flex flex-wrap items-center gap-3">
-            <ButtonLink href={ROUTES.projects}>View Projects</ButtonLink>
+            {/*
+             * V2-P0-002. The primary action was "View Projects", which pointed
+             * away from the section the homepage now leads with: SUP-005 put
+             * Work Experience ahead of Selected Projects, and the hero was
+             * still sending the first click past it.
+             *
+             * It targets the Experience anchor rather than a route, because
+             * that is where the evidence is. Wording is Randi's decision, taken
+             * from the PRD proposal.
+             */}
+            <ButtonLink href={`${ROUTES.home}#${SECTION_IDS.experience}`}>
+              View Experience
+            </ButtonLink>
 
             {/* FAC-HOME-002: the Resume action appears only when one exists. */}
             {resume ? (
