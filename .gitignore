@@ -43,3 +43,15 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Handoff documents awaiting a publication decision
+#
+# V2_HANDOFF_PRD.md is deliberately untracked pending Randi's decision on
+# whether it is published. On 2026-08-16 a `git add -A docs/` swept it into a
+# commit and pushed it to this public repository. The branch was deleted within
+# minutes, but an orphaned commit in a public repository stays retrievable by
+# SHA, so the exposure is permanent and is recorded in docs/release-audit.md.
+#
+# Deliberate intent is not a mechanism. This line is the mechanism. Remove it
+# only as an explicit decision to publish the file.
+docs/handoff/V2_HANDOFF_PRD.md

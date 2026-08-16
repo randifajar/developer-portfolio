@@ -753,6 +753,18 @@ It mattered here more than a wrong number usually does, because the sentence was
 Layer A's own justification. The feature is right; the case made for it overstated
 the problem by three sections.
 
+**And then it happened twice more, in the change that corrected it.** The new
+specification header said phases 2–9 shipped as "ten pull requests" — it was eleven,
+#49 through #59 — and DEC-049 cited "PRs #50–#59" when Phase 2a, which introduced the
+surface system, is #49. Both were caught by re-reading the merged files as GitHub
+serves them publicly, and both were fixed forward rather than by amending a pushed
+commit.
+
+Inherited numbers were never the problem; **unverified** ones are, and writing a
+section about unverified numbers confers no immunity. The load-bearing counts in this
+entry — seventeen files, seven with `UX2` citations, twelve deep sections, 436 and
+211 tests — were each produced by running something and reading its output.
+
 ### What v2 gated that v1 did not
 
 | Now enforced | Previously |
@@ -788,6 +800,54 @@ LinkedIn returns HTTP 999 to automated requests. That is its standard anti-bot
 response rather than a broken link, but it does mean no automated check can confirm
 it — the checklist's manual "open by hand" step is the only thing that can, and it
 remains Randi's to do.
+
+### An exposure I caused while closing the release
+
+Recorded in full because the 2026-08-10 entry set the precedent that an exposure gets
+written down, and because this one was mine.
+
+While committing the count corrections above I ran `git add -A docs/`. That swept in
+`docs/handoff/V2_HANDOFF_PRD.md` — 2,879 lines, deliberately untracked pending
+Randi's decision on whether it is published — and I committed and pushed it to this
+public repository as `5045005`.
+
+| | |
+|---|---|
+| Detected | On re-reading `git status` output in the same command's result |
+| Remote branch deleted | Within minutes. No pull request was ever opened |
+| Reached `production` | **No.** It existed only on the deleted task branch |
+| Still retrievable | **Yes.** `github.com/…/blob/5045005/…` and the raw URL both return 200 |
+
+**What was in it.** Assessed rather than assumed: no credentials, tokens, or keys —
+all eight pattern matches are design-token references or the PRD's own list of things
+never to publish. No internal or private URLs. No company or entity names. Its
+`AC-001`-style identifiers are its own acceptance-criteria numbering, not external
+tickets. It refers to the employer only generically, as "all roles are with the same
+employer".
+
+So **nothing in it meets the confidentiality definition in `CLAUDE.md`.** What was
+breached was consent, not confidentiality: the file was withheld pending a decision
+that is Randi's to make, and publishing it took that decision away from him.
+
+**The exposure is permanent.** Deleting the branch removed the file from listings and
+search, not from retrieval — an orphaned commit in a public repository stays served by
+SHA. This is the same condition the 2026-08-10 entry describes for an amended-away
+commit, minus its one mitigation: that one was orphaned while the repository was
+private, and this repository is public now.
+
+**The mechanism that was missing.** The file had been safe for the whole of v2 through
+nothing but repeated care, in a workflow where every other commit staged paths
+explicitly. `git add -A` needed to be wrong exactly once. `.gitignore` now carries the
+file with a comment explaining why, which is the difference between an intention and a
+control — the same distinction this entry makes about SUP-007 having been "held in
+place by nothing" for its whole existence.
+
+Two things follow for Randi, neither urgent, since there is nothing to rotate:
+
+- Decide whether the PRD should be tracked deliberately, or stay out. The
+  `.gitignore` line is a guard, not that decision.
+- If the orphaned commit matters, GitHub Support can purge unreachable objects on
+  request. Otherwise it stands as recorded here.
 
 ### Outstanding after v2
 
