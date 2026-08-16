@@ -5,10 +5,11 @@
 **Companion:** `PORTFOLIO_V2_ANALYSIS.md` carries the reasoning and the measurements;
 this document carries the rules.
 
-Every rule below ships. Phases 2 through 9 were implemented as ten pull requests,
-each reviewed and merged by Randi, and each gated by `quality` and `e2e`. Where the
-implementation departed from a rule, the rule was amended here rather than left
-describing something that is not on the site — the departures are listed in §16.
+Every rule below ships. Phases 2 through 9 were implemented as eleven pull requests,
+#49 through #59, each reviewed and merged by Randi and each gated by `quality` and
+`e2e`. Where the implementation departed from a rule, the rule was amended here
+rather than left describing something that is not on the site — the departures are
+listed in §16.
 
 > **Status accuracy matters more here than elsewhere.** Until this release the
 > header read *"Proposed. Awaiting the PRD §78 design review gate"* and *"Nothing
