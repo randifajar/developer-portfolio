@@ -25,7 +25,8 @@
     "test:e2e": "playwright test",
     "audit:prod": "npm audit --omit=dev --audit-level=high",
     "check": "npm run format:check && npm run lint && npm run typecheck && npm run validate:content && npm run test:run && npm run build",
-    "release:check": "npm run check && npm run validate:release && npm run check:links && npm run test:e2e && npm run audit:prod"
+    "release:check": "npm run check && npm run validate:release && npm run check:links && npm run test:e2e && npm run audit:prod",
+    "check:contrast": "tsx scripts/check-contrast.ts"
   },
   "dependencies": {
     "next": "16.3.0",
