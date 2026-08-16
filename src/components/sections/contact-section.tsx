@@ -1,3 +1,4 @@
+import { Section } from "@/components/layout/section";
 import { ButtonLink } from "@/components/ui/button-link";
 import { SectionHeader } from "@/components/ui/section-header";
 import {
@@ -32,13 +33,20 @@ export function ContactSection() {
 
   const [primaryChannel] = channels;
 
+  /*
+   * The strong dark closing section (UX2 4.3).
+   *
+   * The card treatment is dropped. On a light page a bordered panel separated
+   * Contact from what came before; on a dark band it would be a box inside a
+   * box, and PRD 20 asks for fewer cards where containment carries no meaning.
+   * The surface change is the separation now.
+   */
   return (
-    <section className="mx-auto w-full max-w-(--spacing-content) px-5 py-16 sm:px-8 lg:px-12">
-      <div className="flex flex-col gap-8 rounded-(--radius-card) border border-border bg-surface p-8 sm:p-12">
+    <Section surface="dark" id={SECTION_IDS.contact}>
+      <div className="flex flex-col gap-8">
         <SectionHeader
           eyebrow="Get in touch"
           heading="Contact"
-          id={SECTION_IDS.contact}
           /*
            * V2-P0-001. This offered "backend, full-stack, and software
            * engineering roles", which contradicted SUP-002 — v1.1 removed
@@ -81,6 +89,6 @@ export function ContactSection() {
           </p>
         ) : null}
       </div>
-    </section>
+    </Section>
   );
 }

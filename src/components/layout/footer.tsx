@@ -29,7 +29,16 @@ export function Footer({ year = new Date().getFullYear() }: FooterProps) {
   const siteConfig = getSiteConfig();
 
   return (
-    <footer className="mt-24 border-t border-border bg-surface-muted">
+    /*
+     * The footer continues the Contact band rather than introducing a fourth
+     * tone (UX2 4.3). Contact closes dark; a light or muted footer directly
+     * beneath it would read as a stray strip rather than a conclusion.
+     *
+     * `mt-24` is gone with it. That margin existed to separate the footer from
+     * a light page; against a dark closing section it produced a pale gap
+     * between two dark bands.
+     */
+    <footer data-surface="dark" className="border-t border-border bg-background text-text-primary">
       <div className="mx-auto flex max-w-(--spacing-content) flex-col gap-6 px-5 py-10 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-12">
         <div className="flex flex-col gap-1">
           <p className="font-semibold text-text-primary">{siteConfig.ownerName}</p>

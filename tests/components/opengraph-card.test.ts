@@ -83,3 +83,40 @@ describe("the social card text follows the profile", () => {
     expect(alt).not.toMatch(/Backend Developer/);
   });
 });
+
+/**
+ * The card's palette is read from globals.css, not copied into this file.
+ *
+ * This card has drifted once already: in v1 its title and location were
+ * literals, so it kept advertising the old positioning after the profile had
+ * changed. v1.1 fixed the text. The colours were the same problem waiting for
+ * the same trigger — and v2 was exactly the release that would have pulled it,
+ * because the site went dark while the card stayed light.
+ *
+ * Asserting specific hex values here would recreate the copy this change
+ * removes. What is asserted instead is the relationship: whatever the dark
+ * surface says, the card uses.
+ */
+describe("the social card palette follows the stylesheet", () => {
+  it("uses the dark surface tokens rather than its own copy of them", async () => {
+    const { readFileSync } = await import("node:fs");
+    const { resolve } = await import("node:path");
+    const { parseSurfaceTokens } = await import("@/domain/design/tokens");
+
+    const source = readFileSync(resolve(process.cwd(), "src/app/opengraph-image.tsx"), "utf8");
+    const { dark } = parseSurfaceTokens(
+      readFileSync(resolve(process.cwd(), "src/app/globals.css"), "utf8"),
+    );
+
+    // The renderer body must not contain a six-digit hex at all. Fallbacks in
+    // cardPalette are permitted — they sit above the marker and only apply if
+    // the token file cannot be parsed.
+    const renderer = source.slice(source.indexOf("export default function OpenGraphImage"));
+
+    expect(renderer.match(/#[0-9a-fA-F]{6}/g) ?? [], "the renderer hardcodes a colour").toEqual([]);
+
+    // And the values it will resolve to are the real dark surface.
+    expect(dark["color-background"]).toBe("#0b0f14");
+    expect(dark["color-accent"]).toBe("#60a5fa");
+  });
+});
