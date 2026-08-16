@@ -586,3 +586,217 @@ and noindex state, and a sweep confirming **zero** stale positioning strings.
 | P33 Docker portability | Deferred by decision, unchanged |
 | `remoteAvailability` field name | Now holds "Open to opportunities", so the name is misleading. Renaming touches schema, selectors, components and tests for no reader-visible gain; left to v2 deliberately (SUP-004) |
 | Specification drift | The FAC, UX/UI spec, and both plans still describe the v1 positioning as historical record. Intentional, but a reader who opens them cold will need SUP-002 to interpret them |
+
+---
+
+## 2026-08-16 — v2 "Performance Engineering" release, closed
+
+| | |
+|---|---|
+| Commits audited | `9867be2` … `2ec9d00` on `production` — thirteen squash merges, PRs #47–#59 |
+| Deployment | `https://developer-portfolio-delta-three.vercel.app` |
+| Content state | All content Published. **No content was added, removed, or reworded in v2** |
+| Purpose | Close the v2 UI/UX evolution governed by `V2_HANDOFF.md` and `V2_HANDOFF_PRD.md`, and record what running the gate surfaced |
+
+v2 is a redesign that changed no claims. That is the most important line in this
+entry: every employer, date, title, metric and technology on the site is the one
+Randi approved in v1, and the two open content questions raised during v2 both came
+back "no change". A visual release is exactly where invented detail creeps in to fill
+a layout, and none did.
+
+### What shipped
+
+| Phase | Outcome | PR |
+|---|---|---|
+| — | v2 design analysis, 27 sections, with a measured visual baseline | #47 |
+| — | UX/UI specification v2.0, mockups, review gate | #48 |
+| 2a | Three surface tokens and a contrast gate — **zero visual change** | #49 |
+| 2b | Archivo display face and a nine-step tokenised type scale | #50 |
+| 2c | Motion tokens, reduced-motion, three accessibility gaps closed | #51 |
+| 2c | Hero points at Experience; "full-stack" dropped from Contact | #52 |
+| 3 | The `Section` primitive; hero and header on dark | #53 |
+| 4 | Work Experience grouped by employer | #54 |
+| 5 | Selected Work as editorial modules; index adapted | #55 |
+| 6 | Fast-scan layer on Project Detail | #56 |
+| 8 | Page closes on dark; social card palette derived from the tokens | #57 |
+| 9 | Responsive widths and 200% zoom gated instead of eyeballed | #58 |
+| 7 | Skills and AI Workflow surfaces; SUP-007 finally enforced | #59 |
+
+Suite: **408 tests in 28 files → 436 in 32.** End-to-end **149 → 211** across three
+engines, 2 documented skips. Seven new test files, every one added because something
+was being held in place by nothing.
+
+### The release gate failed twice, and only one was the repository's fault
+
+`npm run check` and `npm run test:e2e` were green on the merged tree. `npm run
+release:check` — those two plus `validate:release`, `check:links` and `audit:prod` —
+exited **1**.
+
+**First failure: mine.** `SITE_URL is not set`. Production has it set; the canonical
+link, `og:url` and every `sitemap.xml` entry are absolute and correct. I had run the
+command without the environment that `release-checklist.md` line 41 documents.
+Recorded because the failure text is identical to what a genuinely misconfigured
+production would produce, and the difference is only visible if you go and look at
+the deployed page instead of reading the error.
+
+**Second failure: real.** `nanoid@3.3.17`, high severity, reached through
+`next@16.3.0 → postcss@8.5.23 → nanoid`. Fixed by `npm update nanoid` to **3.3.18**:
+postcss declares `^3.3.16`, so the patched version was already inside the permitted
+range. Three lines of `package-lock.json`, no Next bump, no `overrides` entry, and
+none of the deliberate `dependabot.yml` ceilings touched. `audit:prod` then reported
+`found 0 vulnerabilities`.
+
+Worth stating plainly: **`quality` and `e2e` never run `audit:prod`.** All thirteen
+v2 pull requests passed CI with that advisory outstanding, because the dependency
+audit lives only in `release:check`, which only runs at a release. The vulnerability
+was not reachable in a way that mattered for a static portfolio, but the structural
+point stands — CI being green for thirteen consecutive merges said nothing at all
+about dependency security.
+
+### The performance measurement was wrong the first time
+
+First Lighthouse pass against production: Home **86**, Projects 91, Detail 88 — below
+the ≥ 90 of NFAC-PERF-002.
+
+It was taken while `release:check` was building the site and driving three browser
+engines on the same machine. The 2026-08-09 entry above records this exact trap in
+the opposite direction, where a cold-deployment reading produced a pessimistic risk
+assessment that a warm re-measurement disproved. Re-run on an idle machine, three
+runs per route:
+
+| Page | Runs | Median | LCP | CLS |
+|---|---|---:|---|---|
+| Home | 88, 90, 92 | **90** | 2.3–2.4 s | 0 |
+| Projects Index | 90, 92, 92 | **92** | 2.0–2.2 s | 0–0.006 |
+| Project Detail | 91, 92, 90 | **91** | 2.1–2.3 s | 0 |
+
+Accessibility, Best Practices and SEO: **100 on all three pages.**
+
+NFAC-PERF-001 (P0) passes with room: LCP ≤ 2.4 s against a 2.5 s limit, CLS
+effectively zero against 0.1. NFAC-PERF-002 (P1) passes **at the median with no
+headroom** — Home's median is exactly 90, and one of its three runs scored 88.
+
+The LCP element is the hero photograph, which the release checklist names as the
+first thing to suspect. It transfers at **16 KB**, so payload is not the cost.
+
+v2 added exactly one webfont — Archivo, the display face; Geist was already the body
+face in v1.1. The two together transfer **63 KB**, and the stylesheet blocks render
+for 150 ms. So the v2-shaped candidate is roughly half of that 63 KB plus whatever
+the surface system added to the stylesheet, not the whole of either.
+
+This is not a launch blocker — it is a P1 that passes — but "passes at exactly the
+threshold" is worth writing down, because the next change that adds a kilobyte to the
+critical path will be the one that breaks it, and it will look like that change's
+fault.
+
+### Four documents were describing a product that no longer existed
+
+Not found by a tool. Found by reading the documents the release was supposed to be
+closing, which is the only way this class of defect is ever found.
+
+| Document | Said | Was |
+|---|---|---|
+| `PORTFOLIO_UX_UI_SPEC_v2.0.md` | "Proposed. Awaiting the PRD §78 design review gate" and **"Nothing here is implemented"** | Every rule in it live in production |
+| `src/content/media.ts` | "Media Assets — DRAFT … every asset here is Draft, and the referenced files do not exist yet" | Both assets Published; the photograph is production's measured LCP element |
+| Decision Ledger, open decisions | Seven items, all "Open Decision" | Four resolved on 2026-08-08 and left unmarked for eight months |
+| Decision Ledger, confirmed decisions | Fifty-seven rows | **None** mentioning a surface, a typeface, a type scale, a contrast floor, or motion |
+
+This is v1.1 Issue 1 again — the public `README.md` announcing a site that was "not
+yet deployed" long after launch — and it recurred inside a release whose own handoff
+opened by cataloguing how stale `V2_HANDOFF.md` had become. The pattern is not
+carelessness about documents. It is that **a document's status line is the one part
+of it that nothing ever executes.** Prose describing behaviour eventually gets
+contradicted by the running site; a header saying "Proposed" is contradicted by
+nothing, forever.
+
+All four are corrected in this release, and the seven v2 design decisions are now
+DEC-049 through DEC-055 with their approval basis recorded — Randi's merge of the
+pull request that implemented each.
+
+### A stated process that was not followed, and should not have been
+
+The v2.0 specification instructed: *"Implementation PRs update citations in the files
+they touch."* Seventeen files carrying v0.1 `UX n.n` citations were modified during
+v2. **Not one v0.1 citation was replaced.** Seven of the seventeen gained a `UX2`
+citation alongside the old one; the other ten gained nothing.
+
+The instruction was not followed, and following it would have made the repository
+worse. `globals.css` cites `UX 4.4` precisely in order to record that v0.1
+recommended `#64748B`, that the colour measured **4.34:1**, and that it was rejected.
+Rewriting that citation to `UX2 2` would delete the reason the token is what it is,
+and leave a number with no provenance for someone to later "simplify".
+
+What actually emerged in practice — add the current rule, keep the historical one —
+is the correct behaviour, and it happened in seven files without ever being written
+down. Some citations point at a governing rule and some are deliberately historical,
+and no find-and-replace can tell them apart. So the instruction is now replaced by
+the mapping table as the sole resolution mechanism, and the table was completed: it
+covered fifteen sections while code cited seven more, meaning a reader following a
+citation into v0.1 had no way to learn whether what they found there still applied.
+
+The ten files that gained nothing are not a defect to fix in bulk. They are a reason
+the mapping table has to be complete, which it now is.
+
+### A number that was never counted
+
+Both halves of the Layer A rule said the case study made a reader scroll through
+"fifteen sections". Counted on the live site: **twelve** `h2` sections on the personal
+project, thirteen on the sanitised professional one, the difference being a
+conditional screen-reader-only confidentiality heading.
+
+The fifteen came from v0.1 UX 9.5, which does list fifteen ordered items — but three
+of them are not deep sections. Technology Stack moved into Layer A during Phase 6,
+Confidentiality Note is an `sr-only` heading, and Related Navigation is a `nav`
+landmark. The figure was inherited and repeated, never counted.
+
+It mattered here more than a wrong number usually does, because the sentence was
+Layer A's own justification. The feature is right; the case made for it overstated
+the problem by three sections.
+
+### What v2 gated that v1 did not
+
+| Now enforced | Previously |
+|---|---|
+| Contrast, 93 pairs against the shipping `globals.css`, in `quality` | axe only, which cannot see a `color-mix` against `transparent` — the cause of v1's second contrast failure |
+| AI section never more emphatic than Experience or Selected Work (SUP-007) | **Nothing.** Measured once in pixels during v1.1, then held by nothing at all |
+| Homepage surface sequence, and section omission | Nothing |
+| Project detail fast-scan order, by real vertical position in a browser | Nothing |
+| Reduced motion, including `animation-timeline` | Nothing; a blanket duration override cannot stop a progress-driven timeline |
+| Seven viewport widths and 200% zoom | Manual review |
+| Type scale tokenisation and `rem`-based `clamp()` | Nothing |
+
+Each was verified by breaking what it guards and watching it fail. SUP-007 is the one
+worth naming: promoting AI Workflow to `dark` fails with `expected 3 to be less than
+or equal to 1`, and to `neutral` with `expected 2 to be less than or equal to 1`.
+Since Phase 3 that assertion had been printing `SUP-007 rank rule not yet enforceable`
+because two of its three inputs had no surface yet — so its silence proved nothing
+until Phase 7 supplied the third.
+
+### Production verification
+
+| Check | Result |
+|---|---|
+| `/`, `/projects`, both case studies, `/resume.pdf`, `/sitemap.xml`, `/robots.txt`, `/opengraph-image` | all 200, correct content types |
+| `/projects/does-not-exist`, `/projects/draft`, `/admin` | all 404 |
+| Surface sequence, read from the deployed page | `dark → dark → light → dark → light → neutral → light → dark → dark`, **0 sections without a surface** |
+| Neutral token as served | `--color-background:#eaeff5`, identical to the local capture |
+| Identity and positioning | "Backend Developer" throughout; no "full-stack" on the homepage |
+| Contact targets | `randifajar2307@gmail.com`, `github.com/randifajar`, `linkedin.com/in/randifajar` — match DEC-014, 015, 016 |
+| Draft content reachable | None exists — all 26 content records are `published` |
+
+LinkedIn returns HTTP 999 to automated requests. That is its standard anti-bot
+response rather than a broken link, but it does mean no automated check can confirm
+it — the checklist's manual "open by hand" step is the only thing that can, and it
+remains Randi's to do.
+
+### Outstanding after v2
+
+| Item | State |
+|---|---|
+| Source rollback rehearsal | **Still not done.** v2 merged thirteen more pull requests and not one was a `git revert`, so thirteen further opportunities passed unused. Carried since v1 P32, now across three releases |
+| Q9 — project diagram schema field | Deferred. Listed as blocking implementation; implementation completed without it. Nothing to render until a diagram is sanitised (OPEN-006) |
+| Q10 — `remoteAvailability` rename | Deferred by v1.1 to v2, and by v2 to nothing. Twice-deferred is worth closing as a decision either way |
+| Home Lighthouse headroom | Median exactly 90 against a P1 floor of 90 |
+| `audit:prod` outside CI | The nanoid advisory survived thirteen green CI runs. Moving the audit into `quality`, or adding a scheduled run, would close it |
+| OPEN-003, OPEN-006, OPEN-007 | Third project, safe project visuals, custom domain — genuinely open |
+| `V2_HANDOFF_PRD.md` | Still untracked, pending Randi's decision on whether it is published |

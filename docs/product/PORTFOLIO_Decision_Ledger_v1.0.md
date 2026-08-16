@@ -5,9 +5,9 @@
 - **Product Name:** Randi Fajar Wicaksono Developer Portfolio
 - **Document Type:** Decision Ledger
 - **Version:** 1.0
-- **Status:** Updated After Product Model Approval
+- **Status:** Updated at the v2 release
 - **Owner:** Randi Fajar Wicaksono
-- **Last Updated:** 2026-08-04
+- **Last Updated:** 2026-08-16
 
 ---
 
@@ -76,21 +76,42 @@
 | DEC-047 | Not Found privacy | Unknown and non-public project routes have the same public result. | Confirmed | Round 5 approval |
 | DEC-048 | Version 1 boundary | Future features are not implicit Version 1 requirements. | Confirmed | Round 6 approval |
 
+### Version 2 design decisions
+
+Added at the v2 release, 2026-08-16. Each was approved by Randi merging the pull
+request that implemented it, after review — that is the approval basis, and it is
+recorded here rather than left implicit in Git history. Before this block the ledger
+described a product whose entire visual system was undocumented: fifty-seven rows,
+none of them mentioning a surface, a typeface, or a contrast floor.
+
+| ID | Topic | Decision | Status | Source |
+|---|---|---|---|---|
+| DEC-049 | Composition system | **Three surfaces — `light`, `neutral`, `dark` — alternating down the page.** Implemented as `[data-surface]` CSS-variable overrides, so components resolve colour through `var()` against whichever band contains them and no component knows which surface it is on. Still a single theme with no switcher. | Confirmed | v2 Phase 2a–7, PRs #50–#59 |
+| DEC-050 | Typefaces | **Archivo for display, Geist Sans for body.** Geist was already the body face; v2 added the display face only, chosen from a rendered specimen rather than from prose description. Both self-hosted by `next/font` at build time, so there is no external font request at runtime. | Confirmed | v2 Phase 2b |
+| DEC-051 | Type scale | **Nine tokenised steps using `clamp()`**, each preferred value carrying a `rem` term so browser text scaling still applies. Raw Tailwind size utilities are forbidden in `src/` and the ban is asserted. | Confirmed | v2 Phase 2b |
+| DEC-052 | Contrast floor | **4.8:1 text and 3.3:1 non-text — stricter than WCAG AA on purpose.** Both v1 contrast failures were within 4% of passing, so a floor set exactly at 4.5 would have admitted them again. Enforced by a 93-pair matrix parsing the shipping `globals.css`, in `quality` rather than only in axe. | Confirmed | v2 Phase 2a |
+| DEC-053 | Motion | **Motion is tokenised and reduced-motion is honoured structurally.** `prefers-reduced-motion` collapses the duration tokens and sets `animation-timeline: none`, because a scroll-driven timeline is progress-driven and a duration override alone does not stop it. | Confirmed | v2 Phase 2c |
+| DEC-054 | Project detail structure | **Two layers.** Layer A carries role, status, stack, problem and outcome above the deep content; Layer B is the existing sequence. Technology Stack moved from the deep sequence into Layer A. Asserted by measuring real vertical positions in a browser, not by DOM order. | Confirmed | v2 Phase 6 |
+| DEC-055 | Work Experience grouping | **Grouped by employer**, so an internship → contract → full-time progression at one employer reads as one relationship rather than three unrelated jobs. | Confirmed | v2 Phase 4 |
+
 ---
 
 ## Remaining Content Decisions
 
-These do not block technical design when represented by Draft placeholder content:
+Reconciled at the v2 release. Four of the seven were resolved during v1 content
+approval and stayed marked "Open Decision" here for eight months, which made this
+table useless as a to-do list — the two entries that genuinely still need Randi are
+the two easiest to overlook in a column of seven identical values.
 
 | ID | Topic | Status |
 |---|---|---|
-| OPEN-001 | Final professional headline | Open Decision |
-| OPEN-002 | Final professional summary | Open Decision |
-| OPEN-003 | Final third project | Open Decision |
-| OPEN-004 | Final skill classification | Open Decision |
-| OPEN-005 | Final professional photograph | Open Decision |
-| OPEN-006 | Safe project visuals | Open Decision |
-| OPEN-007 | Custom domain at launch | Open Decision |
+| OPEN-001 | Final professional headline | **Resolved** 2026-08-08 — supplied by Randi (`src/content/profile.ts`) |
+| OPEN-002 | Final professional summary | **Resolved** 2026-08-08 — supplied by Randi (`src/content/profile.ts`) |
+| OPEN-003 | Final third project | Open Decision — two published case studies; never a launch blocker (DEC-031) |
+| OPEN-004 | Final skill classification | **Resolved** 2026-08-08 — every classification confirmed as assigned (`src/content/skills.ts`) |
+| OPEN-005 | Final professional photograph | **Resolved** 2026-08-08 — supplied, converted to WebP at 400×400, live |
+| OPEN-006 | Safe project visuals | Open Decision — no diagram sanitised yet, which is also why Q9's schema field was not added |
+| OPEN-007 | Custom domain at launch | Open Decision — still the Vercel subdomain |
 
 ---
 
