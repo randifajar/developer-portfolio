@@ -842,6 +842,30 @@ file with a comment explaining why, which is the difference between an intention
 control — the same distinction this entry makes about SUP-007 having been "held in
 place by nothing" for its whole existence.
 
+**The same mistake also deleted the file.** Committing an untracked file makes it
+tracked, and switching back to a branch where it does not exist removes it from the
+working tree. So abandoning the bad branch destroyed Randi's local copy of his own
+source document — 2,879 lines that exist nowhere in this repository by design. It was
+recovered from the orphaned commit's objects, still in the local store, and verified
+by hash rather than by eye: blob `354e41ce…`, identical to what was committed, CRLF
+line endings intact.
+
+Publishing a private file and deleting it are the same action from Git's point of
+view. That is not obvious, and it is the more dangerous half — the exposure was
+noticed immediately, the deletion was silent, and had the orphaned commit already
+been garbage-collected the file would simply have been gone.
+
+**The test that found it could not have failed.** The first check written for the new
+`.gitignore` rule ran `git add -A docs/`, saw the PRD was not staged, and reported the
+guard holding. It was not holding; the file was not on disk to stage. A guard tested
+against an absent subject is the exact defect this entry spends its length describing
+— SUP-007 asserted about sections that had no surface yet, the citation instruction
+nobody executed, `check:links` wired into a gate that had never run.
+
+Re-run with the file restored, the rule is genuinely load-bearing: `.gitignore:57`
+matches, `git add -A docs/` stages nothing, an explicit `git add` is refused, and
+`git add -f` still works so a deliberate decision to publish remains one command away.
+
 Two things follow for Randi, neither urgent, since there is nothing to rotate:
 
 - Decide whether the PRD should be tracked deliberately, or stay out. The
