@@ -13,6 +13,18 @@ import { defineAIPractice } from "@/domain/content/define";
  * gone and the text is otherwise unchanged — this is a review outcome, not new
  * copy.
  *
+ * Every practice names Claude Code, and that is deliberate (V2-P0-004).
+ *
+ * The About summary names Codex, Claude Code and ChatGPT, so a reader comparing
+ * the two might expect this section to model all three. Claude Code is the
+ * representative tool for the structured workflow; the others are used, and the
+ * summary is where that is said. Confirmed by Randi on 2026-08-16.
+ *
+ * Recorded because the asymmetry looks like an oversight and is not one. PRD
+ * section 13 is explicit that the content model must not be remodelled to
+ * create visual symmetry — inventing per-tool practices to fill a grid would be
+ * describing work that was not done that way.
+ *
  * FAC-AI-002 is the governing constraint: AI must never be presented as the
  * owner of final technical decisions. The schema enforces this structurally by
  * making humanResponsibility and verificationMethod required fields.
