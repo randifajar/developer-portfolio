@@ -1,16 +1,22 @@
-import { ProjectCard } from "@/components/project/project-card";
+import { Section } from "@/components/layout/section";
+import { ProjectModule } from "@/components/project/project-module";
 import { ButtonLink } from "@/components/ui/button-link";
 import { SectionHeader } from "@/components/ui/section-header";
 import { getFeaturedProjects, getTechnologyNames } from "@/domain/content/selectors";
 import { ROUTES, SECTION_IDS } from "@/lib/constants";
 
 /**
- * Selected Projects (UX 7.5).
+ * Selected Work (UX2 9.2).
  *
- * Renders exactly the featured projects the selector returns — nothing is
- * padded. FAC-HOME-004 is explicit: with two ready projects the section shows
- * two balanced cards, never an empty third slot and never a fake "Coming Soon"
- * card. The grid column count adapts to the real count for that reason.
+ * Editorial modules rather than a card grid. The homepage is a feature, not a
+ * catalogue: PRD 20 asks for fewer cards and warns against presenting every
+ * project identically, so the composition alternates and each project gets the
+ * full width rather than a slot.
+ *
+ * Nothing is padded. FAC-HOME-004 is explicit that two ready projects show as
+ * two — never an empty third, never a fake "Coming Soon". That was previously
+ * handled by adapting the grid column count; with full-width modules there is
+ * no grid to leave a hole in, which is a stronger form of the same guarantee.
  */
 export function ProjectsSection() {
   const projects = getFeaturedProjects();
@@ -19,16 +25,9 @@ export function ProjectsSection() {
     return null;
   }
 
-  // Two projects get two columns, three or more get three. This is what keeps
-  // a two-project launch looking deliberate rather than short.
-  const gridColumns = projects.length === 2 ? "md:grid-cols-2" : "md:grid-cols-2 lg:grid-cols-3";
-
   return (
-    <section
-      id={SECTION_IDS.projects}
-      className="mx-auto w-full max-w-(--spacing-content) px-5 py-16 sm:px-8 lg:px-12"
-    >
-      <div className="flex flex-col gap-10">
+    <Section surface="light" id={SECTION_IDS.projects}>
+      <div className="flex flex-col gap-12">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <SectionHeader
             eyebrow="Selected work"
@@ -40,17 +39,20 @@ export function ProjectsSection() {
           </ButtonLink>
         </div>
 
-        <ul className={`grid grid-cols-1 gap-6 ${gridColumns}`}>
-          {projects.map((project) => (
-            <li key={project.id} className="flex">
-              <ProjectCard
+        <ul className="flex flex-col gap-12">
+          {projects.map((project, index) => (
+            <li key={project.id}>
+              <ProjectModule
                 project={project}
                 technologyNames={getTechnologyNames(project.technologyIds)}
+                // Alternating the image side is what stops two modules reading
+                // as one repeated template (PRD 20).
+                reversed={index % 2 === 1}
               />
             </li>
           ))}
         </ul>
       </div>
-    </section>
+    </Section>
   );
 }

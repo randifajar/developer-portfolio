@@ -49,7 +49,24 @@ export default function ProjectsPage() {
         />
 
         {projects.length > 0 ? (
-          <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          /*
+           * Count-aware composition (V2-P0-005).
+           *
+           * The grid was fixed at three columns on large screens, so two
+           * published projects rendered as two cards and an obviously empty
+           * third slot — the exact impression FAC-HOME-004 forbids on the
+           * homepage, reproduced on the index because only the homepage had
+           * been given the adaptive rule.
+           *
+           * Two projects now fill two columns and stop. Three or more restore
+           * the third column. The layout follows the content rather than the
+           * content being judged against a fixed frame.
+           */
+          <ul
+            className={`grid grid-cols-1 gap-6 ${
+              projects.length === 2 ? "md:grid-cols-2" : "md:grid-cols-2 lg:grid-cols-3"
+            }`}
+          >
             {projects.map((project) => (
               <li key={project.id} className="flex">
                 <ProjectCard
