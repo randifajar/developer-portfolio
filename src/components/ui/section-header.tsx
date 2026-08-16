@@ -29,10 +29,10 @@ interface SectionHeaderProps {
 }
 
 const DEFAULT_HEADING_SIZE: Record<HeadingLevel, string> = {
-  1: "text-4xl sm:text-5xl",
-  2: "text-3xl sm:text-4xl",
-  3: "text-2xl sm:text-3xl",
-  4: "text-xl sm:text-2xl",
+  1: "text-display-section",
+  2: "text-display-section",
+  3: "text-page-title",
+  4: "text-project-title",
 };
 
 export function SectionHeader({
@@ -49,7 +49,7 @@ export function SectionHeader({
   return (
     <div className={["flex flex-col gap-3", className].filter(Boolean).join(" ")}>
       {eyebrow ? (
-        <p className="text-sm font-medium tracking-wide text-accent uppercase">{eyebrow}</p>
+        <p className="text-meta font-medium tracking-wide text-accent uppercase">{eyebrow}</p>
       ) : null}
 
       <Heading
@@ -66,7 +66,7 @@ export function SectionHeader({
       </Heading>
 
       {description ? (
-        <div className="max-w-(--spacing-prose) text-lg text-text-secondary">{description}</div>
+        <div className="max-w-(--spacing-prose) text-lead text-text-secondary">{description}</div>
       ) : null}
     </div>
   );

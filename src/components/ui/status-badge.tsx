@@ -38,7 +38,7 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
 
   const classes = [
     "inline-flex items-center rounded-(--radius-badge) border px-3 py-1",
-    "text-sm font-medium",
+    "text-meta font-medium",
     TREATMENT_CLASSES[treatment],
     className,
   ]

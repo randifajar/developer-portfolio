@@ -15,7 +15,7 @@ interface TechnologyTagProps {
 export function TechnologyTag({ name, className }: TechnologyTagProps) {
   const classes = [
     "inline-flex items-center rounded-(--radius-badge) border border-border",
-    "bg-surface-muted px-3 py-1 text-sm text-text-secondary",
+    "bg-surface-muted px-3 py-1 text-meta text-text-secondary",
     className,
   ]
     .filter(Boolean)

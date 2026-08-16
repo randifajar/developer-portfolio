@@ -35,7 +35,7 @@ export function ProjectNavigation({
               href={ROUTES.projectDetail(previous.slug)}
               className="flex flex-col gap-1 rounded-(--radius-card) border border-border p-5 hover:border-accent"
             >
-              <span className="text-sm text-text-muted">← Previous project</span>
+              <span className="text-meta text-text-muted">← Previous project</span>
               <span className="font-medium text-text-primary">{previous.title}</span>
             </Link>
           ) : (
@@ -47,7 +47,7 @@ export function ProjectNavigation({
               href={ROUTES.projectDetail(next.slug)}
               className="flex flex-col gap-1 rounded-(--radius-card) border border-border p-5 text-right hover:border-accent sm:items-end"
             >
-              <span className="text-sm text-text-muted">Next project →</span>
+              <span className="text-meta text-text-muted">Next project →</span>
               <span className="font-medium text-text-primary">{next.title}</span>
             </Link>
           ) : null}

@@ -32,19 +32,17 @@ export function HeroSection() {
       <div className="flex flex-col-reverse items-start gap-10 md:flex-row md:items-center md:gap-16">
         <div className="flex w-full flex-col gap-6 md:w-3/5">
           <div className="flex flex-col gap-3">
-            <h1 className="text-4xl font-bold text-balance text-text-primary sm:text-5xl lg:text-6xl">
+            <h1 className="text-display-hero font-bold text-balance text-text-primary">
               {profile.fullName}
             </h1>
-            <p className="text-xl font-medium text-accent sm:text-2xl">
-              {profile.professionalTitle}
-            </p>
+            <p className="text-lead font-medium text-accent">{profile.professionalTitle}</p>
           </div>
 
-          <p className="max-w-(--spacing-prose) text-lg text-pretty text-text-secondary">
+          <p className="max-w-(--spacing-prose) text-lead text-pretty text-text-secondary">
             {profile.headline}
           </p>
 
-          <p className="text-base text-text-muted">
+          <p className="text-body text-text-muted">
             {profile.location} · {profile.remoteAvailability}
           </p>
 

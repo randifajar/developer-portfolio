@@ -35,14 +35,14 @@ export function AboutSection() {
 
           {profile.targetRoles.length > 0 ? (
             <div className="flex flex-col gap-2">
-              <h3 className="text-sm font-semibold tracking-wide text-text-muted uppercase">
+              <h3 className="text-meta font-semibold tracking-wide text-text-muted uppercase">
                 Target roles
               </h3>
               <ul className="flex flex-wrap gap-2">
                 {profile.targetRoles.map((role) => (
                   <li
                     key={role}
-                    className="rounded-(--radius-badge) border border-border bg-surface px-3 py-1 text-sm text-text-secondary"
+                    className="rounded-(--radius-badge) border border-border bg-surface px-3 py-1 text-meta text-text-secondary"
                   >
                     {role}
                   </li>

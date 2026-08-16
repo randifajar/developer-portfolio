@@ -33,7 +33,7 @@ export function Footer({ year = new Date().getFullYear() }: FooterProps) {
       <div className="mx-auto flex max-w-(--spacing-content) flex-col gap-6 px-5 py-10 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-12">
         <div className="flex flex-col gap-1">
           <p className="font-semibold text-text-primary">{siteConfig.ownerName}</p>
-          <p className="text-sm text-text-muted">© {year}</p>
+          <p className="text-meta text-text-muted">© {year}</p>
         </div>
 
         <nav aria-label="Footer links" className="flex flex-wrap items-center gap-x-6 gap-y-3">
@@ -41,7 +41,7 @@ export function Footer({ year = new Date().getFullYear() }: FooterProps) {
             <a
               key={channel.id}
               href={channel.publicLink}
-              className="text-sm text-text-secondary hover:text-accent"
+              className="text-meta text-text-secondary hover:text-accent"
             >
               {channel.value}
             </a>
@@ -51,13 +51,16 @@ export function Footer({ year = new Date().getFullYear() }: FooterProps) {
             <ExternalLink
               key={entry.id}
               href={entry.url}
-              className="text-sm text-text-secondary hover:text-accent"
+              className="text-meta text-text-secondary hover:text-accent"
             >
               {entry.label}
             </ExternalLink>
           ))}
 
-          <a href={`#${MAIN_CONTENT_ID}`} className="text-sm text-text-secondary hover:text-accent">
+          <a
+            href={`#${MAIN_CONTENT_ID}`}
+            className="text-meta text-text-secondary hover:text-accent"
+          >
             Back to top
           </a>
         </nav>

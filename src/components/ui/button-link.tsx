@@ -30,7 +30,7 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
 
 const BASE_CLASSES =
   "inline-flex items-center justify-center gap-2 rounded-(--radius-button) " +
-  "px-5 py-3 min-h-11 text-base font-medium transition-colors";
+  "px-5 py-3 min-h-11 text-body font-medium transition-colors";
 
 /**
  * A link styled as a button.

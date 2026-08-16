@@ -64,14 +64,14 @@ export function AIWorkflowSection() {
                 <div className="flex items-center gap-3">
                   <span
                     aria-hidden="true"
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent/10 text-sm font-semibold text-accent"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent/10 text-meta font-semibold text-accent"
                   >
                     {index + 1}
                   </span>
-                  <h3 className="text-lg font-semibold text-text-primary">{practice.activity}</h3>
+                  <h3 className="text-lead font-semibold text-text-primary">{practice.activity}</h3>
                 </div>
 
-                <p className="text-sm text-text-muted">Tool: {practice.toolName}</p>
+                <p className="text-meta text-text-muted">Tool: {practice.toolName}</p>
 
                 <MarkdownContent>{practice.purpose}</MarkdownContent>
 
@@ -86,25 +86,27 @@ export function AIWorkflowSection() {
                 */}
                 <div className="flex flex-col gap-2 border-t border-border pt-3">
                   <div className="flex flex-col gap-1">
-                    <h4 className="text-sm font-semibold tracking-wide text-text-muted uppercase">
+                    <h4 className="text-meta font-semibold tracking-wide text-text-muted uppercase">
                       My responsibility
                     </h4>
-                    <p className="text-sm text-text-secondary">{practice.humanResponsibility}</p>
+                    <p className="text-meta text-text-secondary">{practice.humanResponsibility}</p>
                   </div>
 
                   <div className="flex flex-col gap-1">
-                    <h4 className="text-sm font-semibold tracking-wide text-text-muted uppercase">
+                    <h4 className="text-meta font-semibold tracking-wide text-text-muted uppercase">
                       How it is verified
                     </h4>
-                    <p className="text-sm text-text-secondary">{practice.verificationMethod}</p>
+                    <p className="text-meta text-text-secondary">{practice.verificationMethod}</p>
                   </div>
 
                   {practice.correctedAssumption ? (
                     <div className="flex flex-col gap-1">
-                      <h4 className="text-sm font-semibold tracking-wide text-text-muted uppercase">
+                      <h4 className="text-meta font-semibold tracking-wide text-text-muted uppercase">
                         A corrected assumption
                       </h4>
-                      <p className="text-sm text-text-secondary">{practice.correctedAssumption}</p>
+                      <p className="text-meta text-text-secondary">
+                        {practice.correctedAssumption}
+                      </p>
                     </div>
                   ) : null}
                 </div>

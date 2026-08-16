@@ -76,26 +76,26 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     <article className="mx-auto w-full max-w-(--spacing-content) px-5 py-12 sm:px-8 lg:px-12">
       <div className="flex flex-col gap-10">
         <header className="flex flex-col gap-6">
-          <a href={ROUTES.projects} className="text-sm text-accent hover:underline">
+          <a href={ROUTES.projects} className="text-meta text-accent hover:underline">
             ← Back to Projects
           </a>
 
           {/* UX 9.2: role and status appear near the top, not buried. */}
           <div className="flex flex-wrap items-center gap-3">
-            <span className="text-sm text-text-muted">
+            <span className="text-meta text-text-muted">
               {PROJECT_TYPE_LABEL[project.projectType]}
             </span>
             <StatusBadge status={project.deliveryStatus} />
             {project.period ? (
-              <span className="text-sm text-text-muted">{project.period}</span>
+              <span className="text-meta text-text-muted">{project.period}</span>
             ) : null}
           </div>
 
-          <h1 className="text-4xl font-bold text-balance text-text-primary sm:text-5xl">
+          <h1 className="text-display-hero font-bold text-balance text-text-primary">
             {project.title}
           </h1>
 
-          <p className="max-w-(--spacing-prose) text-lg text-text-secondary">{project.summary}</p>
+          <p className="max-w-(--spacing-prose) text-lead text-text-secondary">{project.summary}</p>
 
           <p className="text-text-muted">
             <span className="font-medium text-text-secondary">Role:</span> {project.role}
@@ -104,7 +104,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           {project.repositoryUrl ? (
             <ExternalLink
               href={project.repositoryUrl}
-              className="w-fit text-sm text-accent hover:underline"
+              className="w-fit text-meta text-accent hover:underline"
             >
               View repository
             </ExternalLink>
@@ -194,7 +194,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         {project.confidentialityNote ? (
           <section className="rounded-(--radius-card) border border-border bg-surface-muted p-5">
             <h2 className="sr-only">Confidentiality note</h2>
-            <p className="text-sm text-text-muted">{project.confidentialityNote}</p>
+            <p className="text-meta text-text-muted">{project.confidentialityNote}</p>
           </section>
         ) : null}
 
