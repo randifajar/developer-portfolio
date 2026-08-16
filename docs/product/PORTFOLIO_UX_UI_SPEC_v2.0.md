@@ -1,15 +1,38 @@
 # Developer Portfolio — UX/UI Specification v2.0
 
-**Status:** Proposed. Awaiting the PRD §78 design review gate.
+**Status:** Implemented and live as of 2026-08-16.
 **Supersedes:** `PORTFOLIO_UX_UI_SPEC_v0.1.md` for everything in scope below.
 **Companion:** `PORTFOLIO_V2_ANALYSIS.md` carries the reasoning and the measurements;
 this document carries the rules.
 
-Nothing here is implemented. Approving this document is what unblocks Phase 2.
+Every rule below ships. Phases 2 through 9 were implemented as ten pull requests,
+each reviewed and merged by Randi, and each gated by `quality` and `e2e`. Where the
+implementation departed from a rule, the rule was amended here rather than left
+describing something that is not on the site — the departures are listed in §16.
 
-> **Citation note.** 38 in-code comments cite `UX n.n` against v0.1. This document
-> uses the prefix **`UX2 n.n`** so the two are never confused. A mapping table is in
-> §14. Implementation PRs update citations in the files they touch.
+> **Status accuracy matters more here than elsewhere.** Until this release the
+> header read *"Proposed. Awaiting the PRD §78 design review gate"* and *"Nothing
+> here is implemented"* — while the whole specification was live in production. That
+> is the same defect as v1.1 Issue 1, where the public `README.md` announced a site
+> that was "not yet deployed" months after launch. A specification that misreports
+> its own status is worse than a stale README, because the next release reads it as
+> a description of what still needs building.
+
+> **Citation note.** In-code comments cite `UX n.n` against v0.1; this document uses
+> the prefix **`UX2 n.n`** so the two are never confused. The mapping table in §14
+> resolves every cited v0.1 section.
+>
+> This note previously said *"implementation PRs update citations in the files they
+> touch."* Across seventeen touched files, not one v0.1 citation was replaced — seven
+> added a `UX2` citation beside the old one, and that is the correct behaviour. Many
+> v0.1 citations are deliberately historical: `globals.css` cites `UX 4.4` precisely
+> to record that v0.1 recommended `#64748B`, that the colour measured 4.34:1, and
+> that it was rejected. Rewriting it to `UX2 2` would erase the reason the token is
+> what it is.
+>
+> **Add the current rule; keep the historical citation.** The mapping table below,
+> not a find-and-replace, is what resolves a v0.1 reference. See the 2026-08-16 entry
+> in `release-audit.md`.
 
 ---
 
@@ -283,12 +306,28 @@ and status.
 
 Above the deep content: title, project type, delivery status, period, **My role**,
 core technologies, the problem in one or two sentences, and the outcome. No scrolling
-through fifteen sections to learn what the project was.
+the full case study to learn what the project was.
 
 ### UX2 8.3 — Project detail, Layer B
 
-The existing fifteen sections, unchanged in substance and order. Responsibility
+The existing deep sections, unchanged in substance and order. Responsibility
 separation survives the redesign (PRD §38, FAC-PROJECT-003).
+
+**Twelve deep sections, not fifteen.** Both clauses above said "fifteen sections"
+until this release, a number inherited from v0.1 UX 9.5 and repeated without being
+counted. UX 9.5 does list fifteen ordered items, but three of them are not deep
+content sections:
+
+| v0.1 UX 9.5 item | Where it actually is |
+|---|---|
+| 13. Technology Stack | **Layer A** — moved above the fold in Phase 6, so it left the sequence |
+| 14. Confidentiality Note | A conditional `sr-only` heading, present only when the project has a note |
+| 15. Related Navigation | A `<nav>` landmark after the article, not a section |
+
+Counted on the live site: **twelve** `<h2>` sections on the personal project and
+**thirteen** on the sanitised professional one, the difference being the conditional
+confidentiality note. This is Layer A's own justification, so overstating it by three
+overstated the problem the layer was built to solve.
 
 ---
 
@@ -409,26 +448,84 @@ LCP ≤ 2.5s, CLS < 0.1, INP < 200ms (PRD §46.1). Current CLS is 0.005 and the 
 | UX 7.3–7.9 sections | UX2 9 | Superseded |
 | UX 7.5 project cards | UX2 9.2 | Superseded — modules; SUP-006 order retained |
 | UX 7.8 AI visual weight | UX2 4.4 | **Mechanism replaced, decision retained** |
-| UX 9.5 detail sections | UX2 8.3 | Retained |
+| UX 9.5 detail sections | UX2 8.3 | Amended — Technology Stack moved to Layer A; see the count correction there |
 | UX 12 components | UX2 6 | Amended |
 | UX 18.3 social card | — | Retained |
 
+Completed at the v2 release, so that **every** section cited from code has a verdict.
+The table above previously covered fifteen sections while code cited seven more, and
+a mapping table with holes sends the reader to v0.1 without telling them whether what
+they find there still applies:
+
+| v0.1 | v2.0 | Status |
+|---|---|---|
+| UX 6.2 mobile navigation | UX2 5 | Retained — still the only `"use client"` component |
+| UX 7.10 footer | UX2 9 | Amended — dark surface, Phase 8 |
+| UX 8.2 header | UX2 5 | Amended — dark surface, Phase 3 |
+| UX 9.2 detail header area | UX2 8.2 | Superseded — replaced by Layer A |
+| UX 9.12 related navigation | — | Retained |
+| UX 15.2 headings | UX2 3 | Amended — tokenised scale, display face |
+| UX 17.2 missing photograph | — | Retained |
+
 ---
 
-## 15. Open Questions
+## 15. Open Questions — outcomes
 
-Blocking implementation:
+All resolved or deliberately deferred. Recorded rather than deleted, because a
+question that was answered and a question that was skipped look identical once the
+table is empty.
 
-| # | Question |
-|---|---|
-| Q1 | Display typeface — decide from `type-specimen.html` |
-| Q9 | Whether project diagrams need a schema field (PRD §51's six questions) |
+| # | Question | Outcome |
+|---|---|---|
+| Q1 | Display typeface | **Archivo**, chosen from the rendered specimen in Phase 2b. Self-hosted by `next/font`; body face is Geist Sans |
+| Q6 | Docker classified `currently-learning` while listed under the current role | **No change** — intentional. Confirmed 2026-08-16, SUP-008 |
+| Q7 | Whether Claude Code is the deliberate representative tool | **Yes** — no change. Confirmed 2026-08-16, SUP-009 |
+| Q8 | Contact copy and hero CTA wording | PRD wording adopted for both, at Randi's direction |
+| Q9 | Whether project diagrams need a schema field | **Deferred. Never answered, and v2 shipped without it** — see below |
+| Q10 | `remoteAvailability` rename | Still deferred. v1.1 assigned it to v2; v2 did not do it |
 
-Not blocking this specification, but open:
+**Q9 was listed as blocking implementation and implementation completed anyway.**
+That is worth stating plainly rather than quietly reclassifying it. The field would
+carry sanitised architecture diagrams, which is what would make module alternation
+visible on a case study and close PRD §34's missing problem/outcome summaries. It
+needs Randi's answer to PRD §51's six questions before any schema change, and no
+diagram has been sanitised for publication yet — so there was nothing to render even
+if the field existed. It is a v2.1 candidate, not an oversight closed by silence.
 
-| # | Question |
-|---|---|
-| Q6 | Docker classified `currently-learning` while listed under the current role |
-| Q7 | Whether Claude Code is the deliberate representative tool for AI practices |
-| Q8 | Contact copy and hero CTA wording — Randi's voice, and an availability claim |
-| Q10 | `remoteAvailability` rename, deferred to v2 by v1.1 |
+**Q10 is now twice-deferred.** v1.1 assigned the `remoteAvailability` rename to v2 on
+the grounds that renaming a schema field mid-release touches schema, selectors,
+components and tests for no reader-visible gain. v2 reached the same conclusion by
+never scheduling it. A field name that has now been deferred by two consecutive
+releases is either worth doing deliberately or worth closing as won't-fix.
+
+---
+
+## 16. Departures from the PRD, and why
+
+Every rule in this document ships. Three implementation decisions departed from what
+the PRD or the platform suggested, and each was taken with evidence rather than
+preference.
+
+**AI Workflow sits on `light`, where PRD §14 suggests "Dark / Neutral."** Dark is the
+*most* emphatic of the three surfaces. v1.1 measured this section at 1206px against
+Projects' 734 — 64% taller — on one of only two filled backgrounds, and deliberately
+demoted it so the page reads as a backend engineer who uses AI responsibly rather
+than an AI-tool operator who also does backend work. Following §14 literally would
+have re-promoted with colour exactly what v1.1 demoted with layout. Light is the
+least emphatic tier, so the section takes it. Now enforced by `SURFACE_RANK` in
+`tests/components/section-surface.test.tsx` (UX2 4.4, SUP-007).
+
+**Scroll-driven reveals cannot rely on `animation-timeline` alone.** Measured across
+all three engines in Phase 2c: Chromium and WebKit support it, **Firefox does not**.
+An earlier draft of this specification and its analysis both stated that WebKit did
+not either; that was wrong and was corrected after measuring rather than after
+assuming. The reduced-motion block neutralises time-driven animation, but a
+progress-driven timeline is not time-driven — so `animation-timeline: none` is set
+explicitly under `prefers-reduced-motion`, and the e2e probe skips where the property
+is unsupported instead of failing.
+
+**The non-text contrast floor is scoped, not blanket.** WCAG 1.4.11 covers what is
+needed to *identify UI components and their states*. It is applied to focus
+indicators and control-identifying borders, and deliberately not to decorative
+borders or badge tint fills. `NON_TEXT_SCOPE` in `src/domain/design/contrast.ts`
+records the scope so a later reader does not widen or narrow it by accident.

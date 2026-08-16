@@ -1,15 +1,25 @@
 import { defineMediaAsset } from "@/domain/content/define";
 
 /**
- * Media Assets — DRAFT.
+ * Media Assets — PUBLISHED.
  *
- * The photograph is a Confirmed inclusion (DEC-019) but the actual image, crop,
- * and alt text are open (OPEN-005). Safe project visuals are open (OPEN-006).
+ * Both assets below are Published, both files resolve, and both are verified
+ * serving in production. OPEN-005 is resolved: the photograph was supplied on
+ * 2026-08-08 with its crop and alt text.
  *
- * Every asset here is Draft, and the referenced files do not exist yet. That is
- * deliberate: FAC-HOME-006 and FAC-PROJECT-006 require the site to degrade to
- * text when optional media is unavailable, so building against absent media is
- * the honest default rather than a gap.
+ * This header said "DRAFT" and "every asset here is Draft, and the referenced
+ * files do not exist yet" until 2026-08-16, by which point the photograph had
+ * been live for months and was the measured Largest Contentful Paint element of
+ * the homepage. Corrected at the v2 release, alongside the same class of stale
+ * status claim in the v2.0 specification header.
+ *
+ * The site still degrades to text when optional media is absent — FAC-HOME-006
+ * and FAC-PROJECT-006 require it, and that behaviour is tested rather than
+ * merely no longer exercised by this file.
+ *
+ * OPEN-006, safe project visuals, is genuinely still open. No diagram has been
+ * sanitised for publication, which is also why the diagram schema field (Q9)
+ * was never added: there is nothing yet to render.
  *
  * NFAC-SEC-002 and TD 16.4: no project screenshot or diagram may expose
  * internal identifiers, internal URLs, customer or student data, or private
