@@ -8,20 +8,39 @@
  * so `--color-accent` also generates `text-accent`, `bg-accent`, and so on.
  * There is deliberately no tailwind.config.js.
  *
- * Version 1 ships one light theme. A dark-mode switcher is out of scope
- * (UX 4.3, Product Model section 8).
+ * There is still no theme switcher (UX2 2, PRD section 15). What v2 adds is
+ * per-section surfaces: the block below is the light surface and the default,
+ * and [data-surface] blocks further down override it in place. Utilities
+ * compile to var() lookups — .bg-surface is background-color:
+ * var(--color-surface) — so a component inside a dark section resolves dark
+ * values with no component change and no `tone` prop.
  *
  * `static` emits every token whether or not a utility references it. Without
  * it Tailwind tree-shakes unused values, so a token read directly through
  * var() — for example a status colour used before any component consumes the
  * matching utility — would silently resolve to nothing. The design token set
  * is a documented contract (TD 14.2), so it is emitted in full.
+ *
+ * Every colour below is measured by tests/design/contrast.test.ts against the
+ * floors in src/domain/design/contrast.ts. Do not edit a hex here without
+ * running `npm run check:contrast`.
  */
 @theme static {
-  /* Surfaces and text — UX 4.4 */
+  /* Surfaces and text — UX2 2 */
   --color-background: #f8fafc;
   --color-surface: #ffffff;
-  --color-surface-muted: #f1f5f9;
+  /*
+   * Lightened from #F1F5F9 in v2.
+   *
+   * At #F1F5F9 the accent measured 4.72:1 here — passing WCAG AA, failing the
+   * 4.8 internal floor, and already live in the footer's hover state where the
+   * axe scan cannot see it, because axe does not scan hover.
+   *
+   * #F5F8FB brings it to 4.85 and leaves the accent hex untouched, which is the
+   * v1 continuity PRD section 16 asks for. This is the only visible change in
+   * this release, and it is roughly 1.5% of luminance.
+   */
+  --color-surface-muted: #f5f8fb;
   --color-text-primary: #0f172a;
   --color-text-secondary: #475569;
   /*
@@ -43,7 +62,21 @@
   --color-accent-hover: #1d4ed8;
   --color-focus: #3b82f6;
 
-  /* Delivery status — never the sole carrier of meaning (UX 4.5) */
+  /*
+   * Solid replacements for the alpha modifiers (UX2 2.3).
+   *
+   * `bg-accent/10` compiles to color-mix(… transparent) and therefore has no
+   * fixed colour — it is whatever is painted behind it. That is exactly why
+   * v1's second contrast failure was invisible: there was no pair to measure.
+   * These are opaque, so they can be gated.
+   *
+   * Declared now, adopted by components in a later phase.
+   */
+  --color-on-accent: #ffffff;
+  --color-accent-subtle: #dbeafe;
+  --color-on-accent-subtle: #1e3a8a;
+
+  /* Delivery status — never the sole carrier of meaning (UX2 2) */
   --color-status-success: #166534;
   --color-status-warning: #92400e;
   --color-status-neutral: #334155;
@@ -62,6 +95,106 @@
   --radius-button: 0.5rem;
   --radius-card: 0.875rem;
   --radius-badge: 9999px;
+}
+
+/*
+ * Surfaces (UX2 4.3).
+ *
+ * These live in @layer base, not inside @theme: @theme declares root-level
+ * theme variables and is not a place for scoped selectors. Base sits after
+ * theme in the cascade, and utilities set background-color rather than
+ * --color-*, so they never conflict with these.
+ *
+ * Three surfaces, not four. Each one multiplies both the contrast matrix and
+ * the manual QA matrix in PRD section 64.
+ *
+ * Custom properties inherit, so nesting works without a specificity fight: a
+ * light callout inside a dark section is just [data-surface="light"] inside
+ * [data-surface="dark"].
+ *
+ * Nothing consumes these yet — sections adopt them in the phase that redesigns
+ * them. They are landed first, with their gate, so that PR carries no visual
+ * risk of its own.
+ *
+ * Never build a surface selector from a dynamic class name. The surface is an
+ * attribute value, so it never participates in Tailwind's class generation at
+ * all — which is what keeps the tree-shaking failure from returning in a new
+ * shape.
+ */
+@layer base {
+  /*
+   * Light repeats the @theme values rather than relying on the default, so a
+   * light region nested inside a dark section resolves correctly.
+   */
+  [data-surface="light"] {
+    --color-background: #f8fafc;
+    --color-surface: #ffffff;
+    --color-surface-muted: #f5f8fb;
+    --color-text-primary: #0f172a;
+    --color-text-secondary: #475569;
+    --color-text-muted: #5b6a7d;
+    --color-border: #cbd5e1;
+    --color-accent: #2563eb;
+    --color-accent-hover: #1d4ed8;
+    --color-focus: #3b82f6;
+    --color-on-accent: #ffffff;
+    --color-accent-subtle: #dbeafe;
+    --color-on-accent-subtle: #1e3a8a;
+    --color-status-success: #166534;
+    --color-status-warning: #92400e;
+    --color-status-neutral: #334155;
+    --color-status-error: #b91c1c;
+  }
+
+  [data-surface="neutral"] {
+    --color-background: #eaeff5;
+    --color-surface: #ffffff;
+    --color-surface-muted: #dfe6ef;
+    --color-text-primary: #0f172a;
+    --color-text-secondary: #42505f;
+    --color-text-muted: #55636f;
+    --color-border: #bfcad8;
+    --color-accent: #1d4ed8;
+    --color-accent-hover: #1e3a8a;
+    --color-focus: #1d4ed8;
+    --color-on-accent: #ffffff;
+    --color-accent-subtle: #d3e2fb;
+    --color-on-accent-subtle: #1e3a8a;
+    --color-status-success: #14532d;
+    --color-status-warning: #7c3a0b;
+    --color-status-neutral: #2c3948;
+    --color-status-error: #a31616;
+  }
+
+  [data-surface="dark"] {
+    --color-background: #0b0f14;
+    --color-surface: #131a22;
+    --color-surface-muted: #1b242e;
+    --color-text-primary: #f8fafc;
+    --color-text-secondary: #c3cdd9;
+    --color-text-muted: #96a3b2;
+    --color-border: #2a3542;
+    /*
+     * The v1 accent measures 3.72:1 on #0B0F14 and cannot carry text here.
+     * #60A5FA measures 7.56 on the base and 6.89 on the elevated surface.
+     *
+     * #3B82F6 was the first candidate and reached only 4.76 on the elevated
+     * surface — under the floor, and exactly the margin that caught v1 out
+     * twice. It is also the v1 focus colour, which is why the dark focus ring
+     * moves with the accent rather than staying put.
+     */
+    --color-accent: #60a5fa;
+    --color-accent-hover: #93c5fd;
+    --color-focus: #60a5fa;
+    /* Inverted: the accent fill is light here, so its label must be dark. */
+    --color-on-accent: #0b0f14;
+    --color-accent-subtle: #16273d;
+    --color-on-accent-subtle: #bfd7fe;
+    --color-status-success: #4ade80;
+    --color-status-warning: #fbbf24;
+    --color-status-neutral: #cbd5e1;
+    --color-status-error: #f87171;
+  }
 }
 
 /*
