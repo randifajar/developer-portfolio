@@ -111,10 +111,21 @@ describe("Hero (FAC-PROFILE-001, FAC-HOME-002)", () => {
     expect(screen.getByText(/Yogyakarta, Indonesia/)).toBeInTheDocument();
   });
 
-  it("offers View Projects and the Resume action", () => {
+  /**
+   * The primary action points at Work Experience, not Projects (V2-P0-002).
+   *
+   * SUP-005 made Experience lead the homepage; the hero was still sending the
+   * first click past it. Asserting the destination as well as the label is what
+   * makes this a hierarchy test rather than a copy test — renaming the button
+   * without moving the target would still be wrong.
+   */
+  it("sends the primary action to Work Experience, with Resume secondary", () => {
     render(<HeroSection />);
 
-    expect(screen.getByRole("link", { name: "View Projects" })).toBeInTheDocument();
+    const primary = screen.getByRole("link", { name: "View Experience" });
+
+    expect(primary).toBeInTheDocument();
+    expect(primary).toHaveAttribute("href", "/#experience");
     expect(screen.getByRole("link", { name: /View Resume/ })).toBeInTheDocument();
   });
 

@@ -39,7 +39,15 @@ export function ContactSection() {
           eyebrow="Get in touch"
           heading="Contact"
           id={SECTION_IDS.contact}
-          description="Open to backend, full-stack, and software engineering roles. The fastest way to reach me is email."
+          /*
+           * V2-P0-001. This offered "backend, full-stack, and software
+           * engineering roles", which contradicted SUP-002 — v1.1 removed
+           * Full-Stack Developer as a target role, and this line was the last
+           * place still offering it.
+           *
+           * Wording is Randi's decision, taken from the PRD proposal.
+           */
+          description="Open to backend and software engineering opportunities. The fastest way to reach me is email."
         />
 
         <div className="flex flex-wrap items-center gap-3">
