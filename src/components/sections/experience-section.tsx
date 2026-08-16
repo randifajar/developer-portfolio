@@ -1,6 +1,8 @@
+import { Section } from "@/components/layout/section";
 import { MarkdownContent } from "@/components/ui/markdown-content";
 import { SectionHeader } from "@/components/ui/section-header";
 import { TechnologyTag } from "@/components/ui/technology-tag";
+import type { WorkExperience } from "@/domain/content/schemas";
 import { getPublishedExperience, getTechnologyNames } from "@/domain/content/selectors";
 import { SECTION_IDS } from "@/lib/constants";
 
@@ -35,15 +37,82 @@ function formatMonthYear(isoDate: string): string {
   return `${monthNames[Number(month) - 1] ?? month} ${year}`;
 }
 
+interface EmployerGroup {
+  readonly companyName: string;
+  readonly roles: readonly WorkExperience[];
+}
+
 /**
- * Work Experience (UX 7.6).
+ * Group *consecutive* roles at the same employer.
  *
- * Stacked entries with a dates column on desktop and dates above each role on
- * mobile. Most recent first, current role leading — the selector applies that
- * ordering.
+ * Consecutive, not global. The selector orders by current-first then start date
+ * descending, so grouping every matching name together would reorder history
+ * for anyone who left an employer and returned — A, B, A would silently render
+ * as A, A, B and imply an unbroken run that never happened.
  *
- * A decorative timeline is deliberately avoided: UX 7.6 warns it reduces
- * readability, and this section is scanned rather than read.
+ * Randi's three roles are all at one employer today, so the two approaches
+ * currently produce identical output. The distinction is invisible now and
+ * would be a truthfulness bug later, which is exactly the kind of thing worth
+ * getting right while it costs nothing.
+ */
+function groupByEmployer(roles: readonly WorkExperience[]): readonly EmployerGroup[] {
+  const groups: EmployerGroup[] = [];
+
+  for (const role of roles) {
+    const current = groups.at(-1);
+
+    if (current && current.companyName === role.companyName) {
+      groups[groups.length - 1] = {
+        companyName: current.companyName,
+        roles: [...current.roles, role],
+      };
+    } else {
+      groups.push({ companyName: role.companyName, roles: [role] });
+    }
+  }
+
+  return groups;
+}
+
+/**
+ * The span a group covers, from its earliest start to its latest end.
+ *
+ * Derived rather than authored: a hand-written range would be a second place
+ * for the same fact to live, and the two would drift.
+ */
+function groupPeriod(roles: readonly WorkExperience[]): string {
+  // Years only. The employer line is a span, not a date — the precise months
+  // belong to the individual roles, and repeating them here would be a second
+  // place for the same fact.
+  const year = (isoDate: string): string => isoDate.slice(0, 4);
+
+  const from = roles.map((role) => year(role.startDate)).sort()[0] ?? "";
+  const ongoing = roles.some((role) => role.isCurrent);
+  const to = ongoing
+    ? "Present"
+    : (roles
+        .map((role) => (role.endDate ? year(role.endDate) : ""))
+        .filter(Boolean)
+        .sort()
+        .at(-1) ?? "");
+
+  return from === to || to === "" ? from : `${from} — ${to}`;
+}
+
+/**
+ * Work Experience (UX2 9.1).
+ *
+ * Grouped by employer so the progression reads as one story. Three roles at one
+ * company previously rendered as three repeated company names, leaving the
+ * reader to infer that Internship → Contract → Full-time was a promotion path
+ * rather than three unrelated jobs. The employer is now stated once and the
+ * roles nest beneath it.
+ *
+ * The dark surface, because this is the section the homepage leads with
+ * (SUP-005) and the largest thing on the page. Emphasis follows evidence.
+ *
+ * A decorative timeline is still avoided: UX 7.6 warns it reduces readability,
+ * and this section is scanned rather than read.
  */
 export function ExperienceSection() {
   const experience = getPublishedExperience();
@@ -52,62 +121,84 @@ export function ExperienceSection() {
     return null;
   }
 
+  const employers = groupByEmployer(experience);
+
   return (
-    <section className="bg-surface-muted py-16">
-      <div className="mx-auto w-full max-w-(--spacing-content) px-5 sm:px-8 lg:px-12">
-        <div className="flex flex-col gap-10">
-          <SectionHeader eyebrow="Career" heading="Work Experience" id={SECTION_IDS.experience} />
+    <Section surface="dark" id={SECTION_IDS.experience}>
+      <div className="flex flex-col gap-10">
+        <SectionHeader eyebrow="Career" heading="Internship to full-time, one employer" />
 
-          <ol className="flex flex-col gap-10">
-            {experience.map((role) => {
-              const technologies = getTechnologyNames(role.technologyIds);
+        {employers.map((employer) => (
+          <div key={employer.companyName} className="flex flex-col gap-8">
+            {/*
+             * The employer is stated once, as an h3, and the roles below become
+             * h4. Heading order matters here beyond tidiness: axe's
+             * heading-order rule is in the always-blocking set, because two
+             * routes once shipped with no h1 at all and severity-based
+             * filtering let it through.
+             */}
+            <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-border pb-4">
+              <h3 className="text-project-title font-semibold text-text-primary">
+                {employer.companyName}
+              </h3>
+              <p className="text-meta text-text-muted">{groupPeriod([...employer.roles])}</p>
+            </div>
 
-              return (
-                <li
-                  key={role.id}
-                  className="flex flex-col gap-4 border-t border-border pt-8 md:flex-row md:gap-10"
-                >
-                  <div className="flex shrink-0 flex-col gap-1 md:w-48">
-                    <p className="text-meta font-medium text-text-secondary">
-                      {formatMonthYear(role.startDate)} —{" "}
-                      {role.isCurrent ? "Present" : formatMonthYear(role.endDate ?? "")}
-                    </p>
-                    {role.isCurrent ? (
-                      /*
-                       * The label uses the darker accent, not the base one.
-                       * Base accent on a 10% accent tint measures 4.31:1,
-                       * under the 4.5:1 that WCAG AA requires at this size —
-                       * caught by the axe scan the moment a current role was
-                       * first published. The darker accent measures 5.59:1.
-                       *
-                       * This is the second time a tinted-background pairing
-                       * has landed just under the threshold. Anything pairing
-                       * a colour with a 10% tint of itself is worth measuring
-                       * rather than eyeballing.
-                       */
-                      <span className="inline-flex w-fit rounded-(--radius-badge) bg-accent/10 px-2 py-0.5 text-eyebrow font-medium text-accent-hover">
-                        Current
-                      </span>
-                    ) : null}
-                    {role.locationOrArrangement ? (
-                      <p className="text-meta text-text-muted">{role.locationOrArrangement}</p>
-                    ) : null}
-                  </div>
+            <ol className="flex flex-col gap-10 border-l border-border pl-6 md:pl-8">
+              {employer.roles.map((role) => {
+                const technologies = getTechnologyNames(role.technologyIds);
 
-                  <div className="flex flex-col gap-4">
-                    <div className="flex flex-col gap-1">
-                      <h3 className="text-card-title font-semibold text-text-primary">
-                        {role.position}
-                      </h3>
-                      <p className="text-text-secondary">{role.companyName}</p>
+                return (
+                  <li
+                    key={role.id}
+                    className={
+                      role.isCurrent
+                        ? // The current role is marked by an accent rule rather
+                          // than by colour alone, so the emphasis survives for
+                          // anyone who cannot distinguish the hue.
+                          "-ml-6 flex flex-col gap-4 border-l-2 border-accent pl-6 md:-ml-8 md:pl-8"
+                        : "flex flex-col gap-4"
+                    }
+                  >
+                    <div className="flex flex-col gap-2">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <h4 className="text-card-title font-semibold text-text-primary">
+                          {role.position}
+                        </h4>
+                        {role.isCurrent ? (
+                          /*
+                           * Solid tokens, not bg-accent/10 (UX2 2.3).
+                           *
+                           * The old alpha modifier compiled to
+                           * color-mix(… transparent), which has no fixed colour
+                           * of its own — it was whatever happened to be painted
+                           * behind it. That is precisely why this pairing
+                           * measured 4.31:1 and nobody saw it: there was no
+                           * pair to measure until the composite was worked out.
+                           *
+                           * accent-subtle and on-accent-subtle are opaque and
+                           * flip per surface, so the contrast gate checks them
+                           * on every pull request.
+                           */
+                          <span className="inline-flex w-fit rounded-(--radius-badge) bg-accent-subtle px-2 py-0.5 text-eyebrow font-medium text-on-accent-subtle">
+                            Current
+                          </span>
+                        ) : null}
+                      </div>
+
+                      <p className="text-meta font-medium text-text-secondary">
+                        {formatMonthYear(role.startDate)} —{" "}
+                        {role.isCurrent ? "Present" : formatMonthYear(role.endDate ?? "")}
+                        {role.locationOrArrangement ? ` · ${role.locationOrArrangement}` : ""}
+                      </p>
                     </div>
 
                     <MarkdownContent>{role.summary}</MarkdownContent>
 
                     <div className="flex flex-col gap-2">
-                      <h4 className="text-meta font-semibold tracking-wide text-text-muted uppercase">
+                      <h5 className="text-meta font-semibold tracking-wide text-text-muted uppercase">
                         Responsibilities
-                      </h4>
+                      </h5>
                       <ul className="flex list-disc flex-col gap-1 pl-5 text-text-secondary">
                         {role.responsibilities.map((item) => (
                           <li key={item}>{item}</li>
@@ -117,9 +208,9 @@ export function ExperienceSection() {
 
                     {role.contributions && role.contributions.length > 0 ? (
                       <div className="flex flex-col gap-2">
-                        <h4 className="text-meta font-semibold tracking-wide text-text-muted uppercase">
+                        <h5 className="text-meta font-semibold tracking-wide text-text-muted uppercase">
                           Selected contributions
-                        </h4>
+                        </h5>
                         <ul className="flex list-disc flex-col gap-1 pl-5 text-text-secondary">
                           {role.contributions.map((item) => (
                             <li key={item}>{item}</li>
@@ -137,13 +228,13 @@ export function ExperienceSection() {
                         ))}
                       </ul>
                     ) : null}
-                  </div>
-                </li>
-              );
-            })}
-          </ol>
-        </div>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
+        ))}
       </div>
-    </section>
+    </Section>
   );
 }
