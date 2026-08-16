@@ -448,8 +448,13 @@ functions, no content coupling, following the existing
 The single-Client-Component property is preserved. **Decision taken:** §24.2's
 active-section indicator is deliberately deferred rather than delivered, because it
 would require either a second client component or a Chromium-only CSS scroll-timeline
-that silently does nothing in Firefox and WebKit. Recorded as a deferral with its
+that silently does nothing in Firefox. Recorded as a deferral with its
 reason, not dropped silently.
+
+> **Corrected in Phase 2c.** This said "Firefox and WebKit". Measured across all
+> three engines: Chromium and WebKit both support `animation-timeline`; only
+> Firefox does not. The decision stands — a feature missing in one major engine
+> is still a silent gap — but the reason as written overstated it.
 
 ---
 

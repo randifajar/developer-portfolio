@@ -145,6 +145,21 @@
   --radius-button: 0.5rem;
   --radius-card: 0.875rem;
   --radius-badge: 9999px;
+
+  /*
+   * Motion — UX2 7.
+   *
+   * Durations are tokens so reduced motion can neutralise them by value rather
+   * than only by a blanket override. See the reduced-motion block at the end of
+   * this file for why the blanket rule alone is not sufficient.
+   *
+   * Motion communicates state, hierarchy, interaction and navigation. Anything
+   * that exists purely for spectacle fails V2-DP-005.
+   */
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --motion-slow: 320ms;
+  --motion-ease: cubic-bezier(0.2, 0, 0.2, 1);
 }
 
 /*
@@ -301,16 +316,64 @@
 }
 
 /*
+ * Entrance effects, opt-in (UX2 7.2).
+ *
+ * Declared under no-preference and animating FROM a visible resting state.
+ *
+ * The direction matters. An element parked at opacity: 0 by default, revealed
+ * by an animation, simply never appears for a reduced-motion user — the
+ * information is gone, not merely still. PRD 23 requires the full information
+ * architecture to survive with motion off, so the base state is always the
+ * readable one and the animation only adds arrival.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .motion-rise {
+    animation: motion-rise var(--motion-slow) var(--motion-ease) both;
+  }
+
+  @keyframes motion-rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.5rem);
+    }
+  }
+}
+
+/*
  * Reduced motion.
  *
- * NFAC-A11Y-006 requires every animation to be non-essential and to respect
- * the user's preference. Content access is never delayed by a transition, so
+ * NFAC-A11Y-006 requires every animation to be non-essential and to respect the
+ * user's preference. Content access is never delayed by a transition, so
  * removing them entirely is safe.
+ *
+ * Three overlapping mechanisms, and the middle one is the reason this block was
+ * rewritten:
+ *
+ *   1. Collapse the duration tokens, so anything built on them stops.
+ *
+ *   2. Disable scroll timelines. `animation-duration: 0.01ms` does NOTHING to
+ *      an animation driven by `animation-timeline: view()`, because that
+ *      advances on scroll progress rather than elapsed time. A section reveal
+ *      built that way would ignore the user's preference completely while
+ *      appearing to respect it — the v1 block could not have caught it.
+ *
+ *   3. The v1 blanket rule, kept as a backstop for anything that bypasses the
+ *      tokens entirely.
+ *
+ * Asserted by e2e/reduced-motion.spec.ts. PRD 62 asks for reduced-motion tests
+ * to be *maintained*; before v2 there were none to maintain.
  */
 @media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 1ms;
+    --motion-base: 1ms;
+    --motion-slow: 1ms;
+  }
+
   *,
   *::before,
   *::after {
+    animation-timeline: none !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
