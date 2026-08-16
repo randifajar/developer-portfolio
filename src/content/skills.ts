@@ -78,6 +78,19 @@ export const skills = [
     publicationStatus: "published",
     sortOrder: 7,
   }),
+  /*
+   * Docker stays "currently learning", and that is deliberate (V2-P0-003).
+   *
+   * It also appears in the current role's technology list, which reads like a
+   * contradiction and is not one: using a technology on the job does not make
+   * it a skill Randi is prepared to claim independently. Confirmed by him on
+   * 2026-08-16 when the question was raised rather than assumed.
+   *
+   * Recorded here because the apparent mismatch is the kind of thing a future
+   * reader — or a future assistant — will notice and "fix". Upgrading it would
+   * be inventing a claim on his behalf, which is the one thing the content
+   * rules forbid absolutely.
+   */
   defineSkill({
     id: "skill-docker",
     name: "Docker",
