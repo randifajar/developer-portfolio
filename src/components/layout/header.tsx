@@ -36,7 +36,24 @@ export function Header() {
   }));
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur">
+    /*
+     * The header is permanently dark (UX2 4.3).
+     *
+     * It is sticky and crosses every surface on the page, so it cannot inherit
+     * one — a header that took its colour from whatever is beneath it would
+     * change as the visitor scrolls, and there is no scroll listener to do that
+     * without adding a second Client Component.
+     *
+     * Solid rather than translucent. The previous `bg-background/90
+     * backdrop-blur` composited against whatever passed behind it, which meant
+     * the header's text sat on a colour that could not be measured — the same
+     * class of unmeasurable pairing that hid v1's second contrast failure. An
+     * opaque surface has one value, and the contrast gate can check it.
+     */
+    <header
+      data-surface="dark"
+      className="sticky top-0 z-30 border-b border-border bg-background text-text-primary"
+    >
       <div className="mx-auto flex h-(--spacing-header) max-w-(--spacing-content) items-center justify-between gap-4 px-5 sm:px-8 lg:px-12">
         <Link
           href={ROUTES.home}

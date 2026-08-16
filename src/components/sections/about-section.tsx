@@ -1,3 +1,4 @@
+import { Section } from "@/components/layout/section";
 import { MarkdownContent } from "@/components/ui/markdown-content";
 import { SectionHeader } from "@/components/ui/section-header";
 import { getPublishedProfile } from "@/domain/content/selectors";
@@ -20,11 +21,16 @@ export function AboutSection() {
     return null;
   }
 
+  /*
+   * The Section wrapper sits inside the null guard, not around the component.
+   *
+   * If page.tsx wrapped this in a band instead, an unpublished profile would
+   * leave an empty coloured stripe on the page and
+   * homepage-section-omission.test.tsx would fail on the surviving [id]. The
+   * omission has to take the band with it.
+   */
   return (
-    <section
-      id={SECTION_IDS.about}
-      className="mx-auto w-full max-w-(--spacing-content) px-5 py-16 sm:px-8 lg:px-12"
-    >
+    <Section surface="light" id={SECTION_IDS.about}>
       <div className="flex flex-col gap-8 md:flex-row md:gap-16">
         <div className="md:w-1/3">
           <SectionHeader eyebrow="About" heading="Backend engineering, end to end" />
@@ -52,6 +58,6 @@ export function AboutSection() {
           ) : null}
         </div>
       </div>
-    </section>
+    </Section>
   );
 }

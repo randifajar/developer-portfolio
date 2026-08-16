@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Section } from "@/components/layout/section";
 import { ButtonLink } from "@/components/ui/button-link";
 import {
   getActiveResume,
@@ -27,8 +28,16 @@ export function HeroSection() {
   const resume = getActiveResume();
   const photo = getPublishedMediaAsset(profile.photoAssetId);
 
+  /*
+   * Dark, as the page's opening statement (UX2 4.3).
+   *
+   * The Hero carries no id: it is not a navigation target, and
+   * homepage-order.test.tsx scans every element with an id and requires the
+   * result to equal the approved sequence exactly. An id here would be an extra
+   * entry in that list.
+   */
   return (
-    <section className="mx-auto w-full max-w-(--spacing-content) px-5 pt-16 pb-12 sm:px-8 sm:pt-24 lg:px-12">
+    <Section surface="dark" className="pt-16 pb-12 sm:pt-24">
       <div className="flex flex-col-reverse items-start gap-10 md:flex-row md:items-center md:gap-16">
         <div className="flex w-full flex-col gap-6 md:w-3/5">
           <div className="flex flex-col gap-3">
@@ -88,6 +97,6 @@ export function HeroSection() {
           </div>
         ) : null}
       </div>
-    </section>
+    </Section>
   );
 }
