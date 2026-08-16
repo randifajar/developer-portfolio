@@ -1,6 +1,9 @@
 import AxeBuilder from "@axe-core/playwright";
 import type { Page } from "@playwright/test";
 import { expect, test } from "@playwright/test";
+import { projects } from "../src/content/projects";
+
+const publishedProjects = projects.filter((project) => project.publicationStatus === "published");
 
 /**
  * Automated accessibility scanning (TD 15.4, NFAC-A11Y-001).
@@ -66,9 +69,30 @@ async function blockingViolations(page: Page): Promise<string[]> {
     );
 }
 
+/**
+ * Project Detail is derived rather than hardcoded so the scan follows the
+ * published set instead of a slug that could quietly stop existing.
+ *
+ * `publishedProjects` reads the registry directly, which is deliberate here:
+ * end-to-end specs sit outside the lint boundary precisely so a privacy test is
+ * not circular. Falling back to the index route rather than throwing keeps the
+ * suite meaningful in the empty-content state the project supports.
+ */
+const [firstPublished] = publishedProjects;
+
 const PAGE_TYPES = [
   { name: "Home", path: "/" },
   { name: "Projects Index", path: "/projects" },
+  {
+    /*
+     * Added in v2. Before this, the project detail route was scanned by
+     * nothing at all — and it is both the longest page on the site and the one
+     * receiving the largest redesign (PRD 33). The gap predates v2; it is fixed
+     * here because this is the phase that finishes the accessibility baseline.
+     */
+    name: "Project Detail",
+    path: firstPublished ? `/projects/${firstPublished.slug}` : "/projects",
+  },
   { name: "Not Found", path: "/this-route-does-not-exist" },
 ];
 

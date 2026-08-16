@@ -193,7 +193,13 @@ so they resolve from a project detail page.
 ### UX2 5.1 — No active-section indicator
 
 PRD §24.2 is **deliberately not delivered**. It requires either a second Client
-Component or a CSS scroll-timeline that silently does nothing in Firefox and WebKit.
+Component or a CSS scroll-timeline that silently does nothing in Firefox.
+
+> **Correction (Phase 2c).** This previously said "Firefox and WebKit". Measured
+> across all three engines: Chromium and **WebKit both support**
+> `animation-timeline`; only Firefox does not. The deferral decision is
+> unchanged — one major engine without the feature is still a silent gap for a
+> large share of visitors — but the stated reason was wrong by one browser.
 `MobileNavigation` remains the only `"use client"` file — a property Randi has
 published in his live case study.
 

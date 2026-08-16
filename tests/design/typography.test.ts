@@ -7,8 +7,14 @@ import { describe, expect, it } from "vitest";
  * them.
  *
  * 1. A stray raw size utility. Tailwind silently generates nothing for a class
- *    it does not know, so a leftover `text-xl` after the migration produces no
- *    CSS and no error — the element just inherits, and it looks *almost* right.
+ *    it does not know, so one left behind by the migration produces no CSS and
+ *    no error — the element just inherits, and it looks *almost* right.
+ *
+ *    Note the prose here deliberately avoids spelling out the class names.
+ *    Tailwind v4 scans this file for class-like strings, and the first version
+ *    of this comment caused two dead utilities to be emitted into the shipped
+ *    stylesheet — generated from documentation, used by nothing. Harmless, but
+ *    a guard should not pollute the artifact it guards.
  *
  * 2. A clamp() without a rem term. A preferred value expressed purely in vw
  *    does not respond to browser zoom, so the text stays put while everything
@@ -29,7 +35,7 @@ function sourceFiles(dir: string): string[] {
 
 /**
  * Tailwind's built-in size scale. These are exactly the names the v2 scale
- * replaces — `text-meta` instead of `text-sm`, and so on.
+ * replaces, one role-named token per built-in step.
  *
  * Deliberately not matched with a leading `(sm|lg):` alternative, because a
  * responsive variant of a raw size is just as wrong and the pattern below
