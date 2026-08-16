@@ -55,13 +55,13 @@ export function SkillsSection() {
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {groups.map(({ group, skills: groupSkills }) => (
             <div key={group} className="flex flex-col gap-3">
-              <h3 className="text-base font-semibold text-text-primary">{GROUP_LABEL[group]}</h3>
+              <h3 className="text-body font-semibold text-text-primary">{GROUP_LABEL[group]}</h3>
 
               <ul className="flex flex-col gap-2">
                 {groupSkills.map((skill) => (
                   <li key={skill.id} className="flex flex-wrap items-center gap-2">
                     <TechnologyTag name={skill.name} />
-                    <span className="text-xs text-text-muted">
+                    <span className="text-eyebrow text-text-muted">
                       {CLASSIFICATION_LABEL[skill.classification]}
                     </span>
                   </li>

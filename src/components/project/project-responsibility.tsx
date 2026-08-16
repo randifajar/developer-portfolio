@@ -19,7 +19,7 @@ export function ProjectResponsibility({ personal, team }: ProjectResponsibilityP
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
       <div className="flex flex-col gap-3 rounded-(--radius-card) border border-accent/30 bg-accent/5 p-5">
-        <h3 className="text-sm font-semibold tracking-wide text-accent uppercase">
+        <h3 className="text-meta font-semibold tracking-wide text-accent uppercase">
           My responsibility
         </h3>
         <ul className="flex list-disc flex-col gap-2 pl-5 text-text-secondary">
@@ -31,7 +31,7 @@ export function ProjectResponsibility({ personal, team }: ProjectResponsibilityP
 
       {team && team.length > 0 ? (
         <div className="flex flex-col gap-3 rounded-(--radius-card) border border-border bg-surface-muted p-5">
-          <h3 className="text-sm font-semibold tracking-wide text-text-muted uppercase">
+          <h3 className="text-meta font-semibold tracking-wide text-text-muted uppercase">
             Team or external responsibility
           </h3>
           <ul className="flex list-disc flex-col gap-2 pl-5 text-text-secondary">

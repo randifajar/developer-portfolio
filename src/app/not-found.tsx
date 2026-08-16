@@ -19,11 +19,11 @@ export default function NotFound() {
 
   return (
     <div className="mx-auto flex w-full max-w-(--spacing-prose) flex-col items-center gap-6 px-5 py-24 text-center sm:px-8">
-      <p className="text-sm font-medium tracking-wide text-accent uppercase">404</p>
+      <p className="text-meta font-medium tracking-wide text-accent uppercase">404</p>
 
-      <h1 className="text-4xl font-bold text-text-primary sm:text-5xl">Page not found</h1>
+      <h1 className="text-display-hero font-bold text-text-primary">Page not found</h1>
 
-      <p className="text-lg text-text-secondary">
+      <p className="text-lead text-text-secondary">
         This page does not exist. It may have been moved, or the address may be incorrect.
       </p>
 
@@ -41,7 +41,7 @@ export default function NotFound() {
               href={resume.publicPath}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-text-secondary hover:text-accent"
+              className="text-meta text-text-secondary hover:text-accent"
             >
               View Resume
               <span className="sr-only"> (opens in a new tab)</span>
@@ -49,7 +49,10 @@ export default function NotFound() {
           ) : null}
 
           {contact ? (
-            <a href={contact.publicLink} className="text-sm text-text-secondary hover:text-accent">
+            <a
+              href={contact.publicLink}
+              className="text-meta text-text-secondary hover:text-accent"
+            >
               {contact.label}
             </a>
           ) : null}

@@ -68,7 +68,7 @@ export function ExperienceSection() {
                   className="flex flex-col gap-4 border-t border-border pt-8 md:flex-row md:gap-10"
                 >
                   <div className="flex shrink-0 flex-col gap-1 md:w-48">
-                    <p className="text-sm font-medium text-text-secondary">
+                    <p className="text-meta font-medium text-text-secondary">
                       {formatMonthYear(role.startDate)} —{" "}
                       {role.isCurrent ? "Present" : formatMonthYear(role.endDate ?? "")}
                     </p>
@@ -85,25 +85,27 @@ export function ExperienceSection() {
                        * a colour with a 10% tint of itself is worth measuring
                        * rather than eyeballing.
                        */
-                      <span className="inline-flex w-fit rounded-(--radius-badge) bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent-hover">
+                      <span className="inline-flex w-fit rounded-(--radius-badge) bg-accent/10 px-2 py-0.5 text-eyebrow font-medium text-accent-hover">
                         Current
                       </span>
                     ) : null}
                     {role.locationOrArrangement ? (
-                      <p className="text-sm text-text-muted">{role.locationOrArrangement}</p>
+                      <p className="text-meta text-text-muted">{role.locationOrArrangement}</p>
                     ) : null}
                   </div>
 
                   <div className="flex flex-col gap-4">
                     <div className="flex flex-col gap-1">
-                      <h3 className="text-xl font-semibold text-text-primary">{role.position}</h3>
+                      <h3 className="text-card-title font-semibold text-text-primary">
+                        {role.position}
+                      </h3>
                       <p className="text-text-secondary">{role.companyName}</p>
                     </div>
 
                     <MarkdownContent>{role.summary}</MarkdownContent>
 
                     <div className="flex flex-col gap-2">
-                      <h4 className="text-sm font-semibold tracking-wide text-text-muted uppercase">
+                      <h4 className="text-meta font-semibold tracking-wide text-text-muted uppercase">
                         Responsibilities
                       </h4>
                       <ul className="flex list-disc flex-col gap-1 pl-5 text-text-secondary">
@@ -115,7 +117,7 @@ export function ExperienceSection() {
 
                     {role.contributions && role.contributions.length > 0 ? (
                       <div className="flex flex-col gap-2">
-                        <h4 className="text-sm font-semibold tracking-wide text-text-muted uppercase">
+                        <h4 className="text-meta font-semibold tracking-wide text-text-muted uppercase">
                           Selected contributions
                         </h4>
                         <ul className="flex list-disc flex-col gap-1 pl-5 text-text-secondary">

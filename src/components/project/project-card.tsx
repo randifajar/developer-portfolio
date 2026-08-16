@@ -55,11 +55,11 @@ export function ProjectCard({ project, technologyNames, headingLevel = 3 }: Proj
       ) : null}
 
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-sm text-text-muted">{PROJECT_TYPE_LABEL[project.projectType]}</span>
+        <span className="text-meta text-text-muted">{PROJECT_TYPE_LABEL[project.projectType]}</span>
         <StatusBadge status={project.deliveryStatus} />
       </div>
 
-      <Heading className="text-xl font-semibold text-text-primary">
+      <Heading className="text-card-title font-semibold text-text-primary">
         <Link
           href={ROUTES.projectDetail(project.slug)}
           className="after:absolute after:inset-0 after:content-[''] group-hover:text-accent"
@@ -91,7 +91,7 @@ export function ProjectCard({ project, technologyNames, headingLevel = 3 }: Proj
         already uses. Size still separates the two: role at 14px reads as
         metadata, summary at 16px as body.
       */}
-      <p className="text-sm text-text-secondary">
+      <p className="text-meta text-text-secondary">
         <span className="font-medium">My role:</span> {project.role}
       </p>
 
@@ -107,7 +107,7 @@ export function ProjectCard({ project, technologyNames, headingLevel = 3 }: Proj
         </ul>
       ) : null}
 
-      <p className="text-sm font-medium text-accent">View case study →</p>
+      <p className="text-meta font-medium text-accent">View case study →</p>
     </article>
   );
 }

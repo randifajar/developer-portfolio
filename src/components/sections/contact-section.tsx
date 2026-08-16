@@ -61,14 +61,14 @@ export function ContactSection() {
         </div>
 
         {primaryChannel ? (
-          <p className="text-sm text-text-muted">
+          <p className="text-meta text-text-muted">
             Or copy the address directly:{" "}
             <span className="text-text-secondary">{primaryChannel.value}</span>
           </p>
         ) : null}
 
         {profile ? (
-          <p className="text-sm text-text-muted">
+          <p className="text-meta text-text-muted">
             {profile.location} · {profile.remoteAvailability}
           </p>
         ) : null}

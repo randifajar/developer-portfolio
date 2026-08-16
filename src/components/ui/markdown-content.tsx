@@ -30,18 +30,18 @@ export function MarkdownContent({ children, className }: MarkdownContentProps) {
         remarkPlugins={[remarkGfm]}
         components={{
           p: ({ children: content }) => (
-            <p className="text-base leading-relaxed text-text-secondary">{content}</p>
+            <p className="text-body leading-relaxed text-text-secondary">{content}</p>
           ),
           // Content starts at h3: the page owns h1 and the section owns h2, so
           // a content heading must not outrank them (NFAC-A11Y-003).
           h1: ({ children: content }) => (
-            <h3 className="mt-2 text-xl font-semibold text-text-primary">{content}</h3>
+            <h3 className="mt-2 text-card-title font-semibold text-text-primary">{content}</h3>
           ),
           h2: ({ children: content }) => (
-            <h3 className="mt-2 text-xl font-semibold text-text-primary">{content}</h3>
+            <h3 className="mt-2 text-card-title font-semibold text-text-primary">{content}</h3>
           ),
           h3: ({ children: content }) => (
-            <h4 className="mt-2 text-lg font-semibold text-text-primary">{content}</h4>
+            <h4 className="mt-2 text-lead font-semibold text-text-primary">{content}</h4>
           ),
           ul: ({ children: content }) => (
             <ul className="flex list-disc flex-col gap-2 pl-6 text-text-secondary">{content}</ul>
@@ -54,7 +54,7 @@ export function MarkdownContent({ children, className }: MarkdownContentProps) {
             <strong className="font-semibold text-text-primary">{content}</strong>
           ),
           code: ({ children: content }) => (
-            <code className="rounded bg-surface-muted px-1.5 py-0.5 font-mono text-sm text-text-primary">
+            <code className="rounded bg-surface-muted px-1.5 py-0.5 font-mono text-meta text-text-primary">
               {content}
             </code>
           ),
@@ -83,7 +83,7 @@ export function MarkdownContent({ children, className }: MarkdownContentProps) {
           // forcing the page to scroll horizontally (NFAC-RESP-001).
           table: ({ children: content }) => (
             <div className="overflow-x-auto">
-              <table className="w-full border-collapse text-left text-sm">{content}</table>
+              <table className="w-full border-collapse text-left text-meta">{content}</table>
             </div>
           ),
           th: ({ children: content }) => (

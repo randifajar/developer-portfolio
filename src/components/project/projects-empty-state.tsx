@@ -35,7 +35,7 @@ export function ProjectsEmptyState({ resumePath, contact }: ProjectsEmptyStatePr
   return (
     <div className="flex flex-col items-start gap-6 rounded-(--radius-card) border border-border bg-surface p-8 sm:p-12">
       <div className="flex flex-col gap-3">
-        <h2 className="text-2xl font-semibold text-text-primary">
+        <h2 className="text-project-title font-semibold text-text-primary">
           Case studies are being prepared
         </h2>
         <p className="max-w-(--spacing-prose) text-text-secondary">

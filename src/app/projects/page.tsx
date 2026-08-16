@@ -40,7 +40,7 @@ export default function ProjectsPage() {
               </p>
               {/* UX 8.2 requires this note so sanitized professional work is
                   understood as deliberate rather than vague. */}
-              <p className="mt-3 text-base text-text-muted">
+              <p className="mt-3 text-body text-text-muted">
                 Professional case studies may use sanitized names, diagrams, and workflow
                 descriptions to protect confidential company information.
               </p>

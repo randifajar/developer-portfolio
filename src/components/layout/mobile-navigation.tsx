@@ -132,7 +132,7 @@ export function MobileNavigation({ links, resumeHref, externalLinks }: MobileNav
                 key={link.href}
                 href={link.href}
                 onClick={close}
-                className="flex min-h-11 items-center rounded-(--radius-button) px-3 text-lg text-text-primary hover:text-accent"
+                className="flex min-h-11 items-center rounded-(--radius-button) px-3 text-lead text-text-primary hover:text-accent"
               >
                 {link.label}
               </Link>
@@ -144,7 +144,7 @@ export function MobileNavigation({ links, resumeHref, externalLinks }: MobileNav
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={close}
-                className="mt-2 flex min-h-11 items-center rounded-(--radius-button) bg-accent px-3 text-lg text-surface"
+                className="mt-2 flex min-h-11 items-center rounded-(--radius-button) bg-accent px-3 text-lead text-surface"
               >
                 View Resume
                 <span className="sr-only"> (opens in a new tab)</span>

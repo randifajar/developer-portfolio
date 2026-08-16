@@ -40,7 +40,7 @@ export function Header() {
       <div className="mx-auto flex h-(--spacing-header) max-w-(--spacing-content) items-center justify-between gap-4 px-5 sm:px-8 lg:px-12">
         <Link
           href={ROUTES.home}
-          className="text-base font-semibold text-text-primary hover:text-accent"
+          className="text-body font-semibold text-text-primary hover:text-accent"
         >
           {identity}
         </Link>
@@ -50,7 +50,7 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm text-text-secondary hover:text-accent"
+              className="text-meta text-text-secondary hover:text-accent"
             >
               {link.label}
             </Link>
@@ -61,7 +61,7 @@ export function Header() {
               href={resume.publicPath}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-11 items-center rounded-(--radius-button) border border-border px-4 text-sm font-medium text-text-primary hover:border-accent hover:text-accent"
+              className="inline-flex min-h-11 items-center rounded-(--radius-button) border border-border px-4 text-meta font-medium text-text-primary hover:border-accent hover:text-accent"
             >
               View Resume
               <span className="sr-only"> (opens in a new tab)</span>

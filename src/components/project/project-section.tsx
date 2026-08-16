@@ -25,7 +25,7 @@ export function ProjectSection({ heading, body, children }: ProjectSectionProps)
 
   return (
     <section className="flex flex-col gap-4 border-t border-border pt-8">
-      <h2 className="text-2xl font-semibold text-text-primary">{heading}</h2>
+      <h2 className="text-project-title font-semibold text-text-primary">{heading}</h2>
       {body ? <MarkdownContent>{body}</MarkdownContent> : null}
       {children}
     </section>
