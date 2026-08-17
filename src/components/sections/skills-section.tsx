@@ -1,4 +1,3 @@
-import { Section } from "@/components/layout/section";
 import { SectionHeader } from "@/components/ui/section-header";
 import { TechnologyTag } from "@/components/ui/technology-tag";
 import type { SkillClassification, SkillGroup } from "@/domain/content/types";
@@ -44,11 +43,12 @@ export function SkillsSection() {
   }
 
   return (
-    <Section surface="neutral" id={SECTION_IDS.skills}>
+    <section className="mx-auto w-full max-w-(--spacing-content) px-5 py-16 sm:px-8 lg:px-12">
       <div className="flex flex-col gap-10">
         <SectionHeader
           eyebrow="Toolkit"
           heading="Technical Skills"
+          id={SECTION_IDS.skills}
           description="Grouped by discipline and labelled by the level of real evidence behind each one."
         />
 
@@ -71,6 +71,6 @@ export function SkillsSection() {
           ))}
         </div>
       </div>
-    </Section>
+    </section>
   );
 }
