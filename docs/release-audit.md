@@ -987,9 +987,35 @@ runner being fast enough is the same shape as a contrast ratio that passes by 4%
 The structural point is the one that matters, and it demonstrated itself: **a
 nondeterministic failure in a required check converts a seven-minute rollback into an
 unbounded one.** This finding was written after the first occurrence, and the second
-occurrence then blocked the verification of the rehearsal's own restore commit. Left
-as a finding here rather than fixed in the same change, because a test-infrastructure
-fix is a different objective from a rehearsal record and deserves its own review.
+occurrence then blocked the verification of the rehearsal's own restore commit.
+
+**Fixed the same day, in its own change.** The cause was reproduced deterministically
+before anything was altered: a test that times out with an async render in flight
+mounts DOM after cleanup has run, so the next test finds it. Forcing that condition
+produced both failures verbatim — `Test timed out`, then `Found multiple elements with
+the text: 2024 — Present`.
+
+Two mitigations were tried and one was discarded:
+
+- **`beforeEach(cleanup)` — rejected.** It looks like the obvious fix and the probe
+  disproved it. The next test begins almost immediately after an abort, so the
+  pre-test cleanup runs *before* the delayed orphan lands. Shipping it would have
+  added a hook that reads as protection and is not.
+- **Remove the per-test dynamic import — kept.** `experience-grouping.test.tsx` now
+  imports the component once and swaps a `vi.hoisted` fixture underneath it. The
+  first test drops from **1118ms to 342ms**, and the module load moves out of the
+  test body entirely, where no single test's timeout applies.
+
+`testTimeout` is also now set explicitly to 20000ms rather than inherited from
+vitest's 5000ms default, because the files that load a module by a runtime-computed
+name cannot be restructured the same way — `homepage-section-omission.test.tsx` does
+six dynamic imports, worst case 573ms.
+
+Verified by breaking what it guards: global-instead-of-consecutive grouping fails the
+returning-employer test, never grouping fails two more, and marking every role current
+fails the fourth — so the restructured plumbing still bites. Ten consecutive
+full-suite runs passed 436/436, which is corroboration rather than proof at a base
+rate of roughly two in twelve; the mechanical argument is the stronger one.
 
 **2. A revert is all-or-nothing.** #59 bundled a presentational change with two
 decision records, so rolling back the visuals also rolled back the Docker and Claude

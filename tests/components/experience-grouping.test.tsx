@@ -1,5 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+import { ExperienceSection } from "@/components/sections/experience-section";
 
 /**
  * Employer grouping.
@@ -23,9 +25,31 @@ import { afterEach, describe, expect, it, vi } from "vitest";
  * produce it means shipping the bug first.
  */
 
-afterEach(() => {
-  vi.resetModules();
-});
+/**
+ * The component is imported once, and each test swaps the fixture underneath it.
+ *
+ * It used to call `vi.resetModules()` and re-`import()` the component inside
+ * every test, which meant re-transforming and re-evaluating the whole component
+ * subgraph four times. That put ~1100ms of module work inside the *first* test
+ * body against vitest's 5000ms default — a margin of about 4.5x, where the
+ * other three tests had 150x.
+ *
+ * Under full-suite parallelism that margin ran out twice on 2026-08-17, and the
+ * failure was worse than a slow test: vitest aborts at the await point, but the
+ * import keeps resolving and calls `render()` afterwards, so a DOM belonging to
+ * no test appeared during the *next* one. It failed with "Found multiple
+ * elements", pointing the reader at an assertion that was never wrong.
+ *
+ * `vi.hoisted` gives the mock factory a mutable fixture it can close over, so
+ * the module graph loads once at import time and no test body starts async work
+ * that can outlive it. See the 2026-08-17 entry in docs/release-audit.md.
+ */
+const fixture = vi.hoisted(() => ({ roles: [] as unknown[] }));
+
+vi.mock("@/domain/content/selectors", () => ({
+  getPublishedExperience: () => fixture.roles,
+  getTechnologyNames: () => [],
+}));
 
 interface RoleOverrides {
   readonly id: string;
@@ -46,21 +70,14 @@ function role(overrides: RoleOverrides) {
   };
 }
 
-async function renderWith(roles: readonly ReturnType<typeof role>[]) {
-  vi.resetModules();
-
-  vi.doMock("@/domain/content/selectors", () => ({
-    getPublishedExperience: vi.fn(() => roles),
-    getTechnologyNames: vi.fn(() => []),
-  }));
-
-  const { ExperienceSection } = await import("@/components/sections/experience-section");
+function renderWith(roles: readonly ReturnType<typeof role>[]) {
+  fixture.roles = [...roles];
   return render(<ExperienceSection />).container;
 }
 
 describe("roles group under one employer heading", () => {
-  it("names the employer once, not once per role", async () => {
-    await renderWith([
+  it("names the employer once, not once per role", () => {
+    renderWith([
       role({
         id: "a",
         companyName: "Acme",
@@ -89,8 +106,8 @@ describe("roles group under one employer heading", () => {
     expect(screen.getAllByRole("heading", { level: 4 })).toHaveLength(3);
   });
 
-  it("spans the employer from earliest start to Present while a role is current", async () => {
-    await renderWith([
+  it("spans the employer from earliest start to Present while a role is current", () => {
+    renderWith([
       role({
         id: "a",
         companyName: "Acme",
@@ -117,8 +134,8 @@ describe("roles group under one employer heading", () => {
    * unbroken run at Acme that never happened, and moving Other out of
    * chronological position. Grouping consecutive runs keeps the history true.
    */
-  it("does not merge a returning employer across an intervening one", async () => {
-    const container = await renderWith([
+  it("does not merge a returning employer across an intervening one", () => {
+    const container = renderWith([
       role({
         id: "a",
         companyName: "Acme",
@@ -158,8 +175,8 @@ describe("roles group under one employer heading", () => {
     expect(within(groups[2] as HTMLElement).getByText("Junior Engineer")).toBeInTheDocument();
   });
 
-  it("marks the current role and no other", async () => {
-    await renderWith([
+  it("marks the current role and no other", () => {
+    renderWith([
       role({
         id: "a",
         companyName: "Acme",
