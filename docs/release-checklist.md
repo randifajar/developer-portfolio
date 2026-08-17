@@ -184,6 +184,30 @@ Prove recovery works *before* it is needed.
 2. Open a pull request to `production`, let CI run, merge.
 3. Confirm the deployment reflects the revert.
 
+**Exercised end to end on 2026-08-17**, in both directions, against the live
+site. Full record in [`release-audit.md`](release-audit.md).
+
+| Interval | Measured | Measured again |
+|---|---|---|
+| Local gate (`check` + `test:e2e`) | 6m25s | 6m25s |
+| Push → CI green, i.e. mergeable | **6m55s** | **6m44s** |
+| Merge → production serving it | 23s | 31s |
+
+**Budget about seven minutes from push, thirteen from decision.** Deployment is
+negligible; essentially the whole cost is the CI cycle the ruleset makes
+unavoidable. Four things learned by doing it, each of which would have cost
+more to learn during an incident:
+
+- **A revert is all-or-nothing.** It takes back everything in the commit, not
+  the part you wanted. Keep decision records in separate commits from the
+  changes they explain.
+- **Check production more than once.** Two fetches seconds apart returned
+  different builds before propagation settled.
+- **A flaky required check blocks the rollback.** `quality` gates precisely the
+  pull request you need to merge fastest.
+- **Confirm the restore by tree, not by eye.** `git diff <pre-incident-sha> HEAD`
+  returning empty is the only proof the round trip was lossless.
+
 Hosting rollback alone leaves source and production inconsistent (TD 25.2). Any
 urgent hosting rollback must be followed by a source correction — otherwise
 Vercel serves an older build while `production` still contains the change that
