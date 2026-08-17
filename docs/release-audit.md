@@ -884,3 +884,168 @@ Two things follow for Randi, neither urgent, since there is nothing to rotate:
 | `audit:prod` outside CI | The nanoid advisory survived thirteen green CI runs. Moving the audit into `quality`, or adding a scheduled run, would close it |
 | OPEN-003, OPEN-006, OPEN-007 | Third project, safe project visuals, custom domain — genuinely open |
 | `V2_HANDOFF_PRD.md` | Still untracked, pending Randi's decision on whether it is published |
+
+> **The source rollback rehearsal row above was closed the next day**, 2026-08-17 —
+> see the entry below. The row is left as written rather than edited, because it
+> records what was true at the v2 close and because "carried across three releases"
+> is the more useful fact about it than "done".
+
+---
+
+## 2026-08-17 — source rollback rehearsal, and P32 finally closed
+
+| | |
+|---|---|
+| Commits audited | `095ddbd` (revert) and `0784b6a` (restore) on `production`, PRs #67 and #68 |
+| Deployment | `https://developer-portfolio-delta-three.vercel.app` |
+| Content state | Unchanged. No claim, classification or wording was altered at any point |
+| Purpose | Execute `release-checklist.md` §10's source-rollback procedure, which had never been run |
+
+The last unexercised item in this project. It was recorded as outstanding at P32
+on 2026-08-10, again at the v1.1 close, and again at the v2 close. **Twenty-nine pull
+requests were merged in that window and not one of them was a `git revert`** — every
+release added opportunities to rehearse the procedure and used none of them.
+
+This is a rehearsal on a healthy site. Nothing was wrong with the commit that was
+rolled back.
+
+### Why a visible target, deliberately
+
+Step 3 of the procedure is *"confirm the deployment reflects the revert."* That
+assertion is only worth anything if the revert changes what production serves, so a
+documentation-only target would have left the rehearsal's central check unexercised —
+the precise "gate that never runs" failure this file has now recorded five times.
+
+PR #59 was chosen: user-visible, fully restorable, and harmless while rolled back.
+For **16m35s** — 10:48:54 to 11:05:29 UTC — the homepage served Skills and AI Workflow
+without their background bands. Everything rendered, read and navigated throughout.
+
+### What it cost, measured rather than estimated
+
+| Interval | Revert (#67) | Restore (#68) |
+|---|---|---|
+| Local gate before pushing (`check` + `test:e2e`) | 6m25s | 6m25s |
+| Push → CI green, i.e. mergeable | **6m55s** | **6m44s** |
+| — `quality` | 56s | 1m0s |
+| — `e2e` | 5m8s | 4m55s |
+| Merge → production actually serving it | **23s** | **31s** |
+
+**A source rollback cannot land in under about seven minutes from push**, or roughly
+thirteen from decision if the local gate runs first as `CLAUDE.md` requires.
+Deployment is negligible — under half a minute — so essentially the entire cost is
+the required CI cycle that the `Protect production` ruleset makes unavoidable.
+
+Both figures were taken twice and agree. That is the number P32 said should not be
+discovered mid-incident, and it is no longer an assumption.
+
+### The restore was provably exact
+
+```text
+git diff --stat 3109144 HEAD   →   (empty)
+```
+
+After both merges, the `production` tree is **byte-identical** to the commit that was
+live before the rehearsal began. Not "equivalent", not "looks right" — identical.
+The live surface sequence matches the 09:32:08 baseline exactly:
+`dark dark light dark light neutral light dark dark`, zero sections without a surface.
+
+### Five findings, in order of how much each would hurt during a real incident
+
+**1. A flaky required check can block an emergency rollback.** `quality` is required
+on precisely the pull request you would need to merge fastest. During the rehearsal
+`tests/components/experience-grouping.test.tsx` failed twice in one run: a 5000ms
+vitest timeout, then `Found multiple elements with the text: 2024 — Present` because
+the timed-out test left its DOM mounted. One root cause, two failures.
+
+**Then it reproduced, on the restored production tree**, with an identical signature —
+the same two tests, the same 5000ms timeout, the same cascade. `release:check` on
+`0784b6a` exited 1 with 434/436. Two occurrences in roughly a dozen full-suite runs;
+never once when the file is run alone.
+
+That second occurrence is what turned it from an anomaly into a diagnosis:
+
+- `vitest.config.mts` sets no `testTimeout`, so the limit is vitest's default
+  **5000ms**.
+- `renderWith` calls `vi.resetModules()` before a dynamic `import()` of the
+  component. Resetting the module registry forces Vite to re-transform and
+  re-evaluate the whole component subgraph **on every single test**, which is the
+  slow part — and under full-suite parallelism it can cross 5s.
+- When the test aborts mid-`render`, the mounted DOM survives into the next test.
+  Testing Library's auto-cleanup is registered (`globals: true`), but a timed-out
+  test does not get to it. So `getByText("2024 — Present")` then finds two.
+
+Six test files use the `vi.resetModules()` + dynamic-import pattern; only this one
+has been observed failing, presumably because it renders the heaviest component.
+
+**It has never been observed failing in CI.** Both occurrences were local, and
+GitHub's `quality` job passed on the very commit where the local `release:check`
+failed. That narrows the practical risk without removing it: the difference between
+the two environments has not been established either, so "CI is safe" is an
+observation across a handful of runs, not a property. A margin that depends on the
+runner being fast enough is the same shape as a contrast ratio that passes by 4%.
+
+The structural point is the one that matters, and it demonstrated itself: **a
+nondeterministic failure in a required check converts a seven-minute rollback into an
+unbounded one.** This finding was written after the first occurrence, and the second
+occurrence then blocked the verification of the rehearsal's own restore commit. Left
+as a finding here rather than fixed in the same change, because a test-infrastructure
+fix is a different objective from a rehearsal record and deserves its own review.
+
+**2. A revert is all-or-nothing.** #59 bundled a presentational change with two
+decision records, so rolling back the visuals also rolled back the Docker and Claude
+Code comments and the SUP-008/SUP-009 ledger rows. No content claim changed — but in
+a real incident that means discarding records you wanted to keep, and finding out
+while under pressure. It argues for keeping decision records in separate commits from
+the changes they explain.
+
+**3. Production propagation is not atomic.** Two fetches seconds apart returned
+different builds — one reverted, one not — before settling; eight consecutive fetches
+afterwards agreed. A single check is not evidence that a rollback has taken effect.
+This nearly entered this document as a contradiction rather than a finding, because
+the first two readings disagreed and the obvious move was to trust the more recent
+one.
+
+**4. Anchors survived, but by the luck of the markup.** Reverted, `id="skills"` and
+`id="ai-workflow"` sit on the `<h2>` rather than the `<section>` — the pre-#59
+arrangement — so all six navigation targets resolved and the rolled-back state was
+cosmetic. Had those ids lived only on the wrapper the rollback would have broken
+navigation, and **nothing in the suite asserts where an anchor lives.**
+
+**5. The rank rule degrades honestly.** With its input reverted away,
+`section-surface.test.tsx` printed to stderr:
+
+```text
+SUP-007 rank rule not yet enforceable — awaiting: AI Workflow (Phase 7)
+```
+
+It did not pass silently. That behaviour was designed in Phase 3 and has now been
+proved by an actual revert instead of by construction — which is the whole argument
+of this file applied to itself.
+
+### Verification
+
+| Check | Revert (#67) | Restore (#68) |
+|---|---|---|
+| `npm run check` | exit 0, 436 passed | exit 0, 436 passed |
+| `npm run test:e2e` | exit 0, 211 passed, 2 skipped | exit 0, 211 passed, 2 skipped |
+| CI on the branch | `quality` 56s, `e2e` 5m8s, both pass | `quality` 1m0s, `e2e` 4m55s, both pass |
+| CI on the merged commit | `CI` success, `CodeQL` success | `CI` success, `CodeQL` success |
+| `release:check` on the merged tree | — | **exit 1, 434/436** — the flake in finding 1, not a defect in the restore |
+| Production, post-merge | 7 sections, 2 without a surface, 5 fetches agreeing | matches the baseline exactly, 6 fetches agreeing |
+
+The restore's merged-tree `release:check` failure is recorded rather than re-run into
+a green result. The restored tree is byte-identical to a commit that has passed the
+full gate repeatedly, and the two failing tests pass when run alone — so the failure
+is the flake, not the restore. Re-running until green and reporting only that number
+would have hidden the single most useful thing this rehearsal found.
+
+All four candidate commits were tested for revert cleanliness beforehand — #62, #59,
+#58 and #57 — and all four applied without conflict despite #59 being four commits
+back.
+
+### P32 is closed
+
+`release-checklist.md` §10 has now been executed end to end, in both directions,
+against the live site, with every interval measured. The hosting rollback was
+verified on 2026-08-10; the source rollback is verified today. TD 25.2's requirement
+that the two stay consistent is satisfied by having exercised both.
