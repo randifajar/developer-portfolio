@@ -1,4 +1,3 @@
-import { Section } from "@/components/layout/section";
 import { MarkdownContent } from "@/components/ui/markdown-content";
 import { SectionHeader } from "@/components/ui/section-header";
 import { getPublishedAIPractices } from "@/domain/content/selectors";
@@ -37,20 +36,6 @@ import { SECTION_IDS } from "@/lib/constants";
  * promotional. Height parity with Projects is therefore not reachable — four
  * practices with five required fields each is simply that much content — and
  * chasing it would mean deleting the disclosure the section exists to make.
- *
- * v2 re-expresses that decision rather than repeating it. "Remove the emphasis
- * background so only one section has one" is void when every section carries a
- * band, so the rule became a tier: this section may never sit above Work
- * Experience or Selected Work (SUP-007, UX2 4.4).
- *
- * Light is the least emphatic tier, which is why it is used here. PRD 14
- * suggests "Dark / Neutral" for this section; dark is the *most* emphatic tier,
- * and following that literally would visually re-promote exactly what v1.1
- * demoted after measuring. The departure is deliberate and Randi confirmed it.
- *
- * With this section finally carrying a surface, the rank rule has all three of
- * its inputs and stops reporting itself unenforceable — it has been warning
- * since Phase 3 rather than passing quietly.
  */
 export function AIWorkflowSection() {
   const practices = getPublishedAIPractices();
@@ -60,35 +45,37 @@ export function AIWorkflowSection() {
   }
 
   return (
-    <Section surface="light" id={SECTION_IDS.aiWorkflow}>
-      <div className="flex flex-col gap-8">
-        <SectionHeader
-          eyebrow="How I work"
-          heading="AI-Assisted Engineering"
-          description="AI accelerates the work. I remain responsible for the requirements, the architecture, the review, and every final decision."
-        />
+    <section className="py-16">
+      <div className="mx-auto w-full max-w-(--spacing-content) px-5 sm:px-8 lg:px-12">
+        <div className="flex flex-col gap-8">
+          <SectionHeader
+            eyebrow="How I work"
+            heading="AI-Assisted Engineering"
+            id={SECTION_IDS.aiWorkflow}
+            description="AI accelerates the work. I remain responsible for the requirements, the architecture, the review, and every final decision."
+          />
 
-        <ol className="grid grid-cols-1 gap-5 md:grid-cols-2">
-          {practices.map((practice, index) => (
-            <li
-              key={practice.id}
-              className="flex flex-col gap-3 rounded-(--radius-card) border border-border bg-surface p-5"
-            >
-              <div className="flex items-center gap-3">
-                <span
-                  aria-hidden="true"
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent/10 text-meta font-semibold text-accent"
-                >
-                  {index + 1}
-                </span>
-                <h3 className="text-lead font-semibold text-text-primary">{practice.activity}</h3>
-              </div>
+          <ol className="grid grid-cols-1 gap-5 md:grid-cols-2">
+            {practices.map((practice, index) => (
+              <li
+                key={practice.id}
+                className="flex flex-col gap-3 rounded-(--radius-card) border border-border bg-surface p-5"
+              >
+                <div className="flex items-center gap-3">
+                  <span
+                    aria-hidden="true"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent/10 text-meta font-semibold text-accent"
+                  >
+                    {index + 1}
+                  </span>
+                  <h3 className="text-lead font-semibold text-text-primary">{practice.activity}</h3>
+                </div>
 
-              <p className="text-meta text-text-muted">Tool: {practice.toolName}</p>
+                <p className="text-meta text-text-muted">Tool: {practice.toolName}</p>
 
-              <MarkdownContent>{practice.purpose}</MarkdownContent>
+                <MarkdownContent>{practice.purpose}</MarkdownContent>
 
-              {/*
+                {/*
                   These three blocks keep their stacked uppercase labels rather
                   than being inlined to save height. Inlining would have cut
                   roughly 120px, and it would have cut it from exactly the
@@ -97,34 +84,37 @@ export function AIWorkflowSection() {
                   reading as a tools showcase, so they keep their own scannable
                   headings and their heading semantics.
                 */}
-              <div className="flex flex-col gap-2 border-t border-border pt-3">
-                <div className="flex flex-col gap-1">
-                  <h4 className="text-meta font-semibold tracking-wide text-text-muted uppercase">
-                    My responsibility
-                  </h4>
-                  <p className="text-meta text-text-secondary">{practice.humanResponsibility}</p>
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <h4 className="text-meta font-semibold tracking-wide text-text-muted uppercase">
-                    How it is verified
-                  </h4>
-                  <p className="text-meta text-text-secondary">{practice.verificationMethod}</p>
-                </div>
-
-                {practice.correctedAssumption ? (
+                <div className="flex flex-col gap-2 border-t border-border pt-3">
                   <div className="flex flex-col gap-1">
                     <h4 className="text-meta font-semibold tracking-wide text-text-muted uppercase">
-                      A corrected assumption
+                      My responsibility
                     </h4>
-                    <p className="text-meta text-text-secondary">{practice.correctedAssumption}</p>
+                    <p className="text-meta text-text-secondary">{practice.humanResponsibility}</p>
                   </div>
-                ) : null}
-              </div>
-            </li>
-          ))}
-        </ol>
+
+                  <div className="flex flex-col gap-1">
+                    <h4 className="text-meta font-semibold tracking-wide text-text-muted uppercase">
+                      How it is verified
+                    </h4>
+                    <p className="text-meta text-text-secondary">{practice.verificationMethod}</p>
+                  </div>
+
+                  {practice.correctedAssumption ? (
+                    <div className="flex flex-col gap-1">
+                      <h4 className="text-meta font-semibold tracking-wide text-text-muted uppercase">
+                        A corrected assumption
+                      </h4>
+                      <p className="text-meta text-text-secondary">
+                        {practice.correctedAssumption}
+                      </p>
+                    </div>
+                  ) : null}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
       </div>
-    </Section>
+    </section>
   );
 }
