@@ -1,0 +1,52 @@
+name: Security Audit
+
+# The per-pull-request `audit` job in ci.yml only runs when something changes.
+# A dependency advisory is published by someone else, on their schedule, against
+# a lock file that has not moved — which is exactly what happened with `nanoid`:
+# no pull request introduced it, and it sat in `production` until the v2 release
+# gate was run by hand on 2026-08-16.
+#
+# With v2 closed, this repository can now go weeks without a pull request while
+# remaining a live, publicly linked job-search asset. A scheduled sweep is the
+# only thing that notices an advisory during a quiet period.
+#
+# Kept out of ci.yml deliberately. `quality` and `e2e` are the two required
+# status checks and their names are contractual with the branch ruleset
+# (github-configuration.md section 4); adding schedule-only conditionals to that
+# file risks the contract for no gain.
+on:
+  schedule:
+    # Daily at 21:00 UTC, which is 04:00 Asia/Jakarta. Daily rather than weekly
+    # because an advisory is published on its author's schedule, not ours, and a
+    # week of exposure on a live job-search asset is a week too long. On Mondays
+    # it lands an hour after Dependabot 03:00, so a fix and the advisory that
+    # motivates it tend to surface together.
+    - cron: "0 21 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Production dependencies only, matching ci.yml and release:check. A
+      # failure here means an advisory landed with no change on our side, so the
+      # next step is `npm audit fix` scoped to the offending package — or a
+      # documented decision, per release-checklist.md section 8.
+      - name: Production dependency audit
+        run: npm run audit:prod

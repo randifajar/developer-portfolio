@@ -92,3 +92,39 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+  # Added 2026-08-18. `audit:prod` previously ran only inside `release:check`
+  # and `release-audit.yml`, both of which are manual — so a high-severity
+  # advisory in `nanoid` reached `production` through thirteen consecutive
+  # green CI runs and was found only when the v2 release gate was run by hand.
+  #
+  # Deliberately its own job rather than a step inside `quality`. `quality` and
+  # `e2e` are the two required status checks, and a dependency audit fails for
+  # a reason that has nothing to do with the pull request in front of it: an
+  # advisory published upstream overnight would block every merge, including
+  # the revert you would need during an incident. The 2026-08-17 rehearsal
+  # recorded exactly that hazard.
+  #
+  # So this reports, loudly and on every change, without holding the merge
+  # button hostage. Promote it to a required check only as a deliberate
+  # decision, knowing what it costs.
+  audit:
+    name: audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Production dependencies only. Dev-tool advisories do not ship to a
+      # visitor, and failing on them would train everyone to ignore this job.
+      - name: Production dependency audit
+        run: npm run audit:prod
