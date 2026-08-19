@@ -165,10 +165,27 @@ e2e
 Use the exact workflow job names. These match the two jobs defined in the
 Technical Design CI workflow.
 
-Dependency and secret protection are covered without a separate required check:
-the production dependency audit runs inside `npm run release:check`, and
+Dependency and secret protection are covered without a separate required check.
 Dependabot alerts, secret scanning, and push protection are configured in
-section 6.
+section 6, and the production dependency audit runs in three places:
+
+| Where | When | Blocking |
+|---|---|---|
+| `ci.yml` job `audit` | every pull request and push | no |
+| `security-audit.yml` | daily, 21:00 UTC | no |
+| `npm run release:check` | manually, at a release | yes, locally |
+
+**The `audit` job is deliberately not a required status check.** Adding it would
+mean an advisory published upstream overnight blocks every merge — including the
+revert needed to recover from an unrelated incident, which the 2026-08-17
+rollback rehearsal measured at seven minutes only because nothing else was in
+the way. A dependency audit fails for reasons that have nothing to do with the
+pull request in front of it.
+
+This is a change from the original arrangement, where the audit ran *only* at a
+release. A high-severity `nanoid` advisory consequently reached `production`
+through thirteen consecutive green CI runs and was found by hand on 2026-08-16.
+Visibility on every change was the gap; blocking every change was never the fix.
 
 Randi remains the only merge authority by project policy, even when GitHub
 requires zero external approvals.

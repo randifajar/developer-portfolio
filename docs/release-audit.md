@@ -881,7 +881,7 @@ Two things follow for Randi, neither urgent, since there is nothing to rotate:
 | Q9 — project diagram schema field | Deferred. Listed as blocking implementation; implementation completed without it. Nothing to render until a diagram is sanitised (OPEN-006) |
 | Q10 — `remoteAvailability` rename | Deferred by v1.1 to v2, and by v2 to nothing. Twice-deferred is worth closing as a decision either way |
 | Home Lighthouse headroom | Median exactly 90 against a P1 floor of 90 |
-| `audit:prod` outside CI | The nanoid advisory survived thirteen green CI runs. Moving the audit into `quality`, or adding a scheduled run, would close it |
+| `audit:prod` outside CI | **Closed 2026-08-18.** A non-blocking `audit` job now runs on every pull request and push, and `security-audit.yml` sweeps daily so an advisory published during a quiet period is caught without waiting for a pull request. Deliberately *not* added to the required checks: an advisory published upstream overnight would otherwise block every merge, including the revert needed during an incident |
 | OPEN-003, OPEN-006, OPEN-007 | Third project, safe project visuals, custom domain — genuinely open |
 | `V2_HANDOFF_PRD.md` | Still untracked, pending Randi's decision on whether it is published |
 
