@@ -14,9 +14,19 @@ import "./globals.css";
  *
  * `adjustFontFallback` defaults to true and must stay that way. It generates a
  * metric-matched local fallback so the swap from fallback to webfont does not
- * reflow the page. CLS is 0.005 and the hero h1 — set in the display face at up
- * to 4.5rem — is the LCP element, which makes this the single most likely way
- * for v2 to regress a number v1 worked to earn.
+ * reflow the page. The hero h1 is set in the display face at up to 4.5rem, so
+ * an unmatched fallback would move the largest text on the page — the single
+ * most likely way for v2 to regress the CLS that v1 worked to earn.
+ *
+ * Both faces preload. Removing the display-face preload was measured on
+ * 2026-08-19 and rejected: three runs each showed no score improvement outside
+ * the noise and a slightly *worse* LCP, in exchange for the most prominent text
+ * on the page rendering in fallback first.
+ *
+ * An earlier version of this comment said the hero h1 was the LCP element. It
+ * is not, and may not have been since Phase 3 reworked the hero: Lighthouse
+ * reports the profile photograph. The CLS reasoning above stands on its own —
+ * a reflow of the largest text matters whether or not it is what LCP measures.
  */
 const geistSans = Geist({
   variable: "--font-geist-sans",
