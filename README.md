@@ -10,7 +10,7 @@ review.
 
 **Live:** <https://developer-portfolio-delta-three.vercel.app/>
 
-**Status:** Production. Version 1 is deployed, indexed, and verified against
+**Status:** Production. Version 2 is deployed, indexed, and verified against
 [`docs/release-checklist.md`](docs/release-checklist.md) rather than inferred
 from a successful build. `npm run release:check` passes end to end: formatting,
 linting, strict type checking, content validation, unit and component tests, a
@@ -170,10 +170,16 @@ exercised against a deliberately violating fixture instead.
 
 ## CI/CD
 
-Pull requests to `production` run two required checks: `quality` (format, lint,
-typecheck, content validation, tests, build) and `e2e` (all three browser
-engines plus accessibility). The job names are matched by exact string in the
-branch ruleset, so renaming one silently detaches the required check.
+Pull requests to `production` run three jobs, two of which are required:
+`quality` (format, lint, typecheck, content validation, tests, build) and `e2e`
+(all three browser engines plus accessibility). The job names are matched by
+exact string in the branch ruleset, so renaming one silently detaches the
+required check.
+
+The third, `audit`, runs the production dependency audit and is deliberately
+**not** required. An advisory published upstream overnight would otherwise block
+every merge, including a revert needed during an unrelated incident. It reports
+on every change without holding the merge button hostage.
 
 `production` is the only long-lived branch. Work happens on short-lived task
 branches, merges by squash after review, and deploys automatically. Deployment
@@ -189,6 +195,11 @@ full gate on every push would be slow without being more informative. Running it
 end to end for the first time is what surfaced four defects — including a script
 declared in `package.json` that had never been written, and a workflow that had
 never once been dispatched.
+
+A separate scheduled workflow runs the dependency audit daily. A vulnerability
+is published on its author's timetable, not on the cadence of pull requests: a
+high-severity advisory once reached `production` through thirteen consecutive
+green CI runs, because at the time the audit ran only at a release.
 
 ---
 
