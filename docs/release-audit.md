@@ -873,6 +873,12 @@ Two things follow for Randi, neither urgent, since there is nothing to rotate:
 - If the orphaned commit matters, GitHub Support can purge unreachable objects on
   request. Otherwise it stands as recorded here.
 
+**Both decided on 2026-08-23.** The PRD is now tracked deliberately, and the
+orphaned commit is left to stand. Those answers settle each other: once the file
+is published on purpose, `5045005` serves a document that is public anyway, and
+the only thing it still records is that it got there by accident first. That is
+worth leaving legible rather than tidying away.
+
 ### Outstanding after v2
 
 | Item | State |
@@ -883,7 +889,7 @@ Two things follow for Randi, neither urgent, since there is nothing to rotate:
 | Home Lighthouse headroom | **Investigated 2026-08-19; no action taken.** Every lever was already pulled — the LCP image carries `priority` and emits a preload, the optimizer returns a *smaller* file than the source (15.8KB vs 20.9KB, measured), both faces are subset to `latin` with metric-matched fallbacks, and the only unused JavaScript is 29KB of a 71KB framework chunk. The one untested lever, dropping the display-face preload, was A/B measured and rejected: no gain outside the noise and a slightly worse LCP. The remaining Lighthouse cost is its simulated throttling of an already-lean page — real TTFB measures 116–358ms against the 753ms it models |
 | `audit:prod` outside CI | **Closed 2026-08-18.** A non-blocking `audit` job now runs on every pull request and push, and `security-audit.yml` sweeps daily so an advisory published during a quiet period is caught without waiting for a pull request. Deliberately *not* added to the required checks: an advisory published upstream overnight would otherwise block every merge, including the revert needed during an incident |
 | OPEN-003, OPEN-006, OPEN-007 | Third project, safe project visuals, custom domain — genuinely open |
-| `V2_HANDOFF_PRD.md` | Still untracked, pending Randi's decision on whether it is published |
+| `V2_HANDOFF_PRD.md` | **Resolved 2026-08-23: published.** Randi decided to track it. Every sibling handoff was already public, and `PORTFOLIO_UX_UI_SPEC_v2.0.md` and `PORTFOLIO_V2_ANALYSIS.md` cite it by section number — so a reader could see "PRD 14 suggests Dark / Neutral" and had no way to check it. Reviewed in full before publishing: no credentials, no internal URLs, no company or entity names, employer referenced only generically, no placeholder markers. Section 55 is a list of claims never to invent |
 
 > **The source rollback rehearsal row above was closed the next day**, 2026-08-17 —
 > see the entry below. The row is left as written rather than edited, because it
