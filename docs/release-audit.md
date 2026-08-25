@@ -713,6 +713,22 @@ All four are corrected in this release, and the seven v2 design decisions are no
 DEC-049 through DEC-055 with their approval basis recorded — Randi's merge of the
 pull request that implemented each.
 
+**A fifth followed on 2026-08-23**: the README still announced "Version 1 is
+deployed" after v2 had shipped. **A sixth surfaced on 2026-08-25** while writing
+the gate for the other five — `PORTFOLIO_V2_ANALYSIS.md` still said "No
+specification and no implementation code exists yet". That one is the most
+instructive of the six: its companion, the v2.0 specification header, was
+corrected in this very release, and the sibling document was not checked in the
+same pass. Fixing an instance is not the same as fixing the class.
+
+Six instances, all found by reading, none by tooling — so the pattern is now
+gated. `tests/docs/status-accuracy.test.ts`
+asserts that the README's version claim matches the newest release on record,
+and fails rather than passing vacuously if either document is reworded so the
+pattern stops matching. It is deliberately narrow: it checks the one fact that
+went stale twice rather than trying to police prose, because a gate people learn
+to work around is worse than no gate.
+
 ### A stated process that was not followed, and should not have been
 
 The v2.0 specification instructed: *"Implementation PRs update citations in the files
