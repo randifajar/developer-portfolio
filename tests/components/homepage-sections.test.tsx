@@ -15,7 +15,7 @@ const profile = {
   headline: "Building reliable backend systems and integrations.",
   summary: "A **real** professional summary.",
   location: "Yogyakarta, Indonesia",
-  remoteAvailability: "Open to opportunities",
+  availabilityStatement: "Open to opportunities",
   targetRoles: ["Backend Developer", "Software Engineer"],
   photoAssetId: "media-photo",
   publicationStatus: "published",

@@ -67,10 +67,16 @@ export const profile = defineProfile({
   // or relocation availability has been confirmed — so this states openness
   // without inventing a form of it.
   //
-  // The field is still named remoteAvailability. Renaming it would touch the
-  // schema, selectors, components, and tests for no reader-visible gain, so it
-  // is left for v2 rather than widening a corrective release.
-  remoteAvailability: "Open to opportunities",
+  // Renamed from remoteAvailability on 2026-08-25 (Q10). v1.1 changed the value
+  // from "Open to remote opportunities" to "Open to opportunities" but left the
+  // field name, judging the rename not worth widening a corrective release. v2
+  // then deferred it again. Twice-deferred is a decision by attrition, so it was
+  // made deliberately instead: the name said remote, the value does not, and a
+  // field whose name contradicts its content is the kind of small untruth this
+  // repository exists to argue against.
+  //
+  // Reader-visible output is unchanged. Only the identifier moved.
+  availabilityStatement: "Open to opportunities",
 
   // DEC-004 listed Full-Stack Developer second. Removed in v1.1 for the same
   // reason as the title: it competed with the backend-first identity.

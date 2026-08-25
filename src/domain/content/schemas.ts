@@ -74,7 +74,7 @@ export const professionalProfileSchema = z.object({
   headline: nonEmptyText,
   summary: nonEmptyText,
   location: nonEmptyText,
-  remoteAvailability: nonEmptyText,
+  availabilityStatement: nonEmptyText,
   targetRoles: z.array(nonEmptyText).min(1),
   photoAssetId: identifier.optional(),
   publicationStatus,

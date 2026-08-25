@@ -85,7 +85,7 @@ export function ContactSection() {
 
         {profile ? (
           <p className="text-meta text-text-muted">
-            {profile.location} · {profile.remoteAvailability}
+            {profile.location} · {profile.availabilityStatement}
           </p>
         ) : null}
       </div>
