@@ -52,7 +52,7 @@ export function HeroSection() {
           </p>
 
           <p className="text-body text-text-muted">
-            {profile.location} · {profile.remoteAvailability}
+            {profile.location} · {profile.availabilityStatement}
           </p>
 
           <div className="mt-2 flex flex-wrap items-center gap-3">
