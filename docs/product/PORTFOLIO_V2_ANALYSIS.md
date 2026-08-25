@@ -1,9 +1,19 @@
 # Portfolio V2 Analysis
 
 **Document type:** V2 design analysis (PRD §76)
-**Status:** For review. No specification and no implementation code exists yet.
+**Status:** Superseded by delivery. Written 2026-08-12 as the pre-implementation
+analysis; v2 shipped across thirteen phase pull requests and closed on 2026-08-16.
+The specification it defers to is `PORTFOLIO_UX_UI_SPEC_v2.0.md`, and the outcome
+is the 2026-08-16 entry in `release-audit.md`.
 **Baseline commit:** `8b26b8a` on `production`
 **Date:** 2026-08-12
+
+> The header previously read *"For review. No specification and no implementation
+> code exists yet"* — true when written, false from the moment the specification
+> landed. Corrected 2026-08-25. Everything below is deliberately unchanged: the
+> body is a record of what was known on 2026-08-12, including seven conflicts and
+> a set of open questions, and rewriting it would destroy the thing it is for.
+> Only the status line made a claim about the present.
 
 This is the first of the two artifacts PRD §75 requires before any V2 code is
 written. It ends at a decision gate: §27 lists what needs Randi's answer, and the
