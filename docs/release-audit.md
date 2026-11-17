@@ -1232,7 +1232,7 @@ this crash appear. Re-run alone: 211 passed, zero crash markers.
 
 | Item | State |
 |---|---|
-| Audit failures reach a person | **Open.** Proposed: the scheduled audit opens a GitHub issue on failure and closes it on recovery. Awaiting decision |
+| Audit failures reach a person | **Closed** by #97 (`5c31170`). A failing scheduled audit now opens an issue assigned to the owner and the first passing run closes it. Proven on GitHub, not only locally: a drill run opened #96 and the next normal run closed it. Re-prove at any time by dispatching the workflow with `drill` checked |
 | Site answers at its declared `SITE_URL` | **Open.** The check that would have caught the URL incident |
 | #94, typescript-eslint 8.73.0 | **Closed** — merged as `c77fdf6`. Full audit, dev included, reports zero |
 | CV, LinkedIn, applications | Outside the repository. Any copy of the old URL now opens someone else's portfolio |
