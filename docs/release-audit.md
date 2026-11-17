@@ -1097,3 +1097,143 @@ back.
 against the live site, with every interval measured. The hosting rollback was
 verified on 2026-08-10; the source rollback is verified today. TD 25.2's requirement
 that the two stay consistent is satisfied by having exercised both.
+
+---
+
+## 2026-11-17 — security hotfix, and an audit nobody watched
+
+| | |
+|---|---|
+| Commits audited | `dd4e9c1` (#92) and `4843051` (#93) on `production` |
+| Deployment | `https://randi-fajar-wicaksono.vercel.app` — see the URL section below |
+| Content state | Unchanged. No claim, classification or wording moved |
+| Purpose | Record two incidents found on returning after twelve weeks without a pull request, and what fixing them surfaced |
+
+### The gate worked. Nobody read it.
+
+`security-audit.yml` was added on 2026-08-18 (#71) precisely so that an advisory
+published during a quiet period would still be caught. It did exactly that:
+
+| | |
+|---|---|
+| First failure | 2026-09-03 |
+| Last success before the fix | 2026-09-07 |
+| Consecutive daily failures before the fix | **69** |
+| First success after the fix | 2026-11-17 |
+
+It was not the only signal. The per-pull-request `audit` job in `ci.yml` was
+also red on Dependabot #83 and #85 in October. Two independent warnings, both
+correct, both in places nobody was looking.
+
+The design decision behind that is recorded in `github-configuration.md` section
+4 and was mine: the audit was made deliberately non-blocking, so that an advisory
+published overnight could never hold up the revert needed during an unrelated
+incident. That reasoning still stands. What it relied on was GitHub's failure
+email reaching someone, and for eleven weeks it did not.
+
+**A gate that reports to nobody is the same defect as a gate that never runs.**
+This file has recorded the second kind six times. This is the first instance of
+the first kind, and it is subtler, because every check involved was green or red
+exactly when it should have been. The workflow did its job; the loop it was meant
+to close was never closed.
+
+### What it had been reporting
+
+Production ran `next` 16.3.0 throughout. By November it carried critical
+advisories including unauthenticated remote code execution in the Image
+Optimization API (AVIF and SVG inputs), remote code execution in `next/og`
+`ImageResponse`, and server-side request forgery in image optimization. This site
+uses both `next/image` and `next/og`.
+
+Some of the advisories cannot apply on Vercel — the Windows-hosted and
+self-hosted cache-poisoning ones — but the image-optimization and `next/og` ones
+touch code paths the site exercises, and Vercel's internals cannot be verified
+from here, so the deployment was treated as exposed for the whole window.
+
+Fixed in #92: `next` 16.4.6 (bringing `sharp` 0.35.5), `zod` 4.6.7, and
+`source-map-js` 1.2.2. `audit:prod` went from 1 critical and 3 high to zero.
+Rendered output was compared against a 16.3.0 build of the same commit rather
+than trusted to the suite: visible text identical on every route, and the
+`next/og` social card a byte-identical PNG.
+
+`zod` had no Dependabot pull request at all. It was found only because the audit
+was read directly.
+
+### The URL that changed hands
+
+The Vercel project was renamed on 2026-08-25. That released its old automatic
+alias, `developer-portfolio-delta-three.vercel.app`, which first returned
+`404 DEPLOYMENT_NOT_FOUND` and was later assigned to an unrelated developer's
+portfolio — almost certainly an innocent reuse of a freed name, not a takeover.
+
+The live site, now at `randi-fajar-wicaksono.vercel.app`, still declared the old
+address as its canonical URL, its `og:url`, and in every sitemap entry, because
+`SITE_URL` in Vercel's production environment had not moved. The README's
+**Live:** link pointed there too. So search engines, link previews, and anyone
+arriving from GitHub were being sent to a stranger's site.
+
+Resolved 2026-11-17 by setting `SITE_URL` to the Vercel URL and redeploying,
+then confirmed on the live site across three separate fetches: canonical,
+`og:url`, `og:image`, all four sitemap entries, and `robots.txt` agree. The
+README link is corrected in this change.
+
+**Nothing in the gate could have caught it.** `check:links` validates links found
+in content — GitHub, LinkedIn, mailto, local assets — and never tests the site's
+own address, which is why `release:check` passed while production's canonical
+pointed at a 404 and later at someone else's site. The README status-accuracy test
+checks a version number, not a URL. A check that the deployed site answers at
+its declared `SITE_URL` would have, and does not yet exist.
+
+The historical entries above, and the handoff documents, still name the old URL.
+They record what was true when they were written and are deliberately unchanged.
+
+### Twelve Dependabot pull requests, and why most were closed
+
+Merging them one at a time would have cost twelve sequential update-and-CI cycles
+under the strict up-to-date rule, and **would not have cleared the audit**:
+
+- #78 took `next` to 16.3.1, still inside the critical range
+- #82 took `sharp` to 0.35.4, below the 0.35.5 fix
+- #87 fixed only the 1.x copy of `brace-expansion`; a 5.x copy needed 5.0.12
+- #76 and #74 stopped at `vitest` 4.1.11; `@vitest/mocker` needed 4.1.12
+
+#92 and #93 replaced them. Each closed pull request carries a comment saying what
+superseded it and why it would not have fixed its advisory.
+
+### A correction to #93
+
+#93 described the dev-tooling result as "14 → 1". That compared two different
+units. npm counts *flagged packages*, and the 14 was that count; measured the
+same way the result was 7 — a single `minimatch` advisory counted once for itself
+and once for each of the six typescript-eslint packages that depend on it. In
+*distinct advisories* the result was 14 → 1. The pull request is merged, so the
+correction lives here.
+
+That one remaining advisory was accepted in #93 because no upstream fix existed:
+the newest typescript-eslint required `minimatch ^10.2.2`, and `npm audit fix
+--dry-run` changed nothing despite npm reporting a fix as available.
+typescript-eslint 8.73.0 shipped the next day accepting `minimatch ^11.0.1`, and
+Dependabot opened #94 for it. Reviewed: development dependencies only, `npm
+audit` with dev included reports zero, and the selector-layer lint rule still
+fires. Merged the same day as `c77fdf6`, which left `npm audit` — production and
+development dependencies both — reporting zero for the first time since
+September.
+
+### Running gates concurrently is not safe on this machine
+
+The first merged-tree `release:check` on `4843051` exited 1 with 210 of 211
+passing. Firefox crashed in its software compositor — `RenderCompositorSWGL
+failed mapping default framebuffer` — with no assertion failing. It ran alongside
+a dependency review in a separate worktree, on the stated assumption that a
+separate checkout could not interfere. It shares the CPU, and load is what makes
+this crash appear. Re-run alone: 211 passed, zero crash markers.
+
+### Outstanding
+
+| Item | State |
+|---|---|
+| Audit failures reach a person | **Open.** Proposed: the scheduled audit opens a GitHub issue on failure and closes it on recovery. Awaiting decision |
+| Site answers at its declared `SITE_URL` | **Open.** The check that would have caught the URL incident |
+| #94, typescript-eslint 8.73.0 | **Closed** — merged as `c77fdf6`. Full audit, dev included, reports zero |
+| CV, LinkedIn, applications | Outside the repository. Any copy of the old URL now opens someone else's portfolio |
+| `eslint-config-next` 16.3.0 alongside `next` 16.4.6 | No advisory; noted so the mismatch reads as known |
