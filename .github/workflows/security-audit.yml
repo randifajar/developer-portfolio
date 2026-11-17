@@ -10,6 +10,12 @@ name: Security Audit
 # remaining a live, publicly linked job-search asset. A scheduled sweep is the
 # only thing that notices an advisory during a quiet period.
 #
+# Noticing is not the same as telling someone. From 2026-09-03 to 2026-11-15 this
+# workflow failed 69 days running while production ran Next.js under critical
+# advisories, and nobody saw it: a failed scheduled run only sends an email. So a
+# failure now opens a GitHub issue assigned to the repository owner, and the first
+# passing run closes it. See the 2026-11-17 entry in docs/release-audit.md.
+#
 # Kept out of ci.yml deliberately. `quality` and `e2e` are the two required
 # status checks and their names are contractual with the branch ruleset
 # (github-configuration.md section 4); adding schedule-only conditionals to that
@@ -23,15 +29,36 @@ on:
     # motivates it tend to surface together.
     - cron: "0 21 * * *"
   workflow_dispatch:
+    inputs:
+      drill:
+        # An alert that has never fired is indistinguishable from one that cannot.
+        # A drill forces the failure path under a separate label, so the alert can
+        # be proven on demand instead of waiting for a real advisory. Run once
+        # with this set, then once without: the issue should open, then close.
+        description: "Drill: skip the audit and force the failure path"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
+
+# Two overlapping runs could each see no open issue and open one apiece.
+concurrency:
+  group: security-audit
+  cancel-in-progress: false
 
 jobs:
   audit:
     name: audit
     runs-on: ubuntu-latest
     timeout-minutes: 10
+
+    # The only workflow file in this repository that requests write access, and
+    # only to issues. Job-level permissions replace the workflow-level block, so
+    # `contents: read` is restated for checkout.
+    permissions:
+      contents: read
+      issues: write
 
     steps:
       - uses: actions/checkout@v7
@@ -44,9 +71,34 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Production dependencies only, matching ci.yml and release:check. A
-      # failure here means an advisory landed with no change on our side, so the
-      # next step is `npm audit fix` scoped to the offending package — or a
-      # documented decision, per release-checklist.md section 8.
+      # Production dependencies only, matching ci.yml and release:check.
+      # continue-on-error lets the next step report the result; the last step
+      # still fails the run, so a red run remains a red run.
       - name: Production dependency audit
-        run: npm run audit:prod
+        id: audit
+        continue-on-error: true
+        env:
+          DRILL: ${{ inputs.drill }}
+        run: |
+          set -o pipefail
+          if [ "$DRILL" = "true" ]; then
+            echo "DRILL: the audit was not run; the failure path is being exercised deliberately." | tee audit.txt
+            exit 1
+          fi
+          npm run audit:prod 2>&1 | tee audit.txt
+
+      - name: Report to an issue
+        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OUTCOME: ${{ steps.audit.outcome }}
+          DRILL: ${{ inputs.drill }}
+          OWNER: ${{ github.repository_owner }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: bash .github/scripts/report-security-audit.sh
+
+      - name: Fail the run if the audit failed
+        if: ${{ steps.audit.outcome == 'failure' }}
+        run: |
+          echo "The production dependency audit failed. See the issue opened or updated above."
+          exit 1
