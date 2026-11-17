@@ -172,7 +172,7 @@ section 6, and the production dependency audit runs in three places:
 | Where | When | Blocking |
 |---|---|---|
 | `ci.yml` job `audit` | every pull request and push | no |
-| `security-audit.yml` | daily, 21:00 UTC | no |
+| `security-audit.yml` | daily, 21:00 UTC | no — **opens an issue on failure** |
 | `npm run release:check` | manually, at a release | yes, locally |
 
 **The `audit` job is deliberately not a required status check.** Adding it would
@@ -186,6 +186,23 @@ This is a change from the original arrangement, where the audit ran *only* at a
 release. A high-severity `nanoid` advisory consequently reached `production`
 through thirteen consecutive green CI runs and was found by hand on 2026-08-16.
 Visibility on every change was the gap; blocking every change was never the fix.
+
+**Visibility was not enough either.** From 2026-09-03 to 2026-11-15 the scheduled
+audit failed 69 days running while production ran Next.js under critical
+advisories, and nobody saw it: a failed scheduled workflow only sends an email.
+It was still correct to keep it non-blocking. What it lacked was a way to reach a
+person. A failure now opens a GitHub issue, labelled `security-audit` and assigned
+to the repository owner; later failures update the same issue in place and only
+comment when the set of advisories changes, and the first passing run closes it.
+It is the only workflow file in this repository that requests write access, and
+only to issues. (CodeQL default setup is configured by GitHub, not by a file here,
+and carries its own scopes.)
+
+**Prove it still works rather than assuming it.** Dispatch the workflow manually
+with `drill` checked: it skips the audit, forces the failure path, and opens an
+issue labelled `security-audit-drill`. Then dispatch it again without the drill:
+that run should close the drill issue. An alert that has never fired cannot be
+told apart from one that is broken.
 
 Randi remains the only merge authority by project policy, even when GitHub
 requires zero external approvals.
