@@ -8,7 +8,7 @@ skills, and an account of AI-assisted engineering practice — with the
 truthfulness and confidentiality rules enforced in code rather than left to
 review.
 
-**Live:** <https://developer-portfolio-delta-three.vercel.app/>
+**Live:** <https://randi-fajar-wicaksono.vercel.app/>
 
 **Status:** Production. Version 2 is deployed, indexed, and verified against
 [`docs/release-checklist.md`](docs/release-checklist.md) rather than inferred
