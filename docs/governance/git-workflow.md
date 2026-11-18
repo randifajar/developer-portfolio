@@ -18,10 +18,11 @@ The goals are:
 
 ## 2. Branch Model
 
-### Long-lived branch
+### Long-lived branches
 
 ```text
 production
+staging
 ```
 
 `production` is:
@@ -31,10 +32,26 @@ production
 - The source of the public production website
 - Protected from direct modification
 
-There is no permanent `main`, `develop`, `development`, or `dev-production`
-branch in Version 1.
+`staging` is:
 
-Vercel Preview Deployments cover non-production branches.
+- Pre-production: the next release, assembled from reviewed pull requests
+- Deployed by Vercel as a Preview Deployment at the branch's stable Preview URL
+- Invisible to the live site until a promotion pull request is merged
+  (section 11)
+- Never modified directly, except by the sync merge from `production`
+  (section 10)
+
+There is no permanent `main`, `develop`, `development`, or `dev-production`
+branch.
+
+> **`staging` added 2026-11-18, for V3.** Versions 1 and 2 had `production` as
+> the only long-lived branch, and every pull request improved the live site on
+> its own. V3 replaces the whole presentation, which cannot ship in pieces
+> without leaving the live site half old and half new between merges. Randi
+> asked for a pre-production environment so that the live site stays untouched
+> until the new version is ready as a whole.
+
+Vercel Preview Deployments cover every other branch as well.
 
 ### Short-lived task branches
 
@@ -102,17 +119,19 @@ Confirm:
 - No unexpected untracked or modified files
 - No confidential files inside the repository
 
-Create a task branch from current `production`:
+Create a task branch from current `staging`:
 
 ```bash
-git switch production
-git pull --ff-only origin production
+git switch staging
+git pull --ff-only origin staging
 git switch -c feat/example-scope
 ```
 
+Start from `production` only for a hotfix (section 12).
+
 Do not use `git pull` without an explicit strategy.
 
-Do not begin task work on `production`.
+Do not begin task work on `production` or `staging`.
 
 ---
 
@@ -264,8 +283,14 @@ Never:
 ```bash
 git push origin production
 git push --force origin production
+git push --force origin staging
 git push --no-verify
 ```
+
+`staging` receives exactly one kind of direct push: the sync merge from
+`production` (section 10), after the full gate has passed on the merged tree.
+Everything else reaches it through a pull request. Never rebase `staging`; it is
+shared.
 
 Remote history rewriting is exceptional.
 
@@ -281,7 +306,12 @@ Plain `--force` is forbidden.
 
 ## 9. Pull Request Rules
 
-Every production change uses a pull request targeting `production`.
+Every change uses a pull request. Task pull requests target `staging`. Only two
+kinds target `production`:
+
+- The promotion pull request, `staging` → `production`, which is a release
+  (section 11)
+- A `hotfix/` pull request (section 12)
 
 The pull request must contain:
 
@@ -337,6 +367,31 @@ When conflicts occur:
 A merge from `production` into the task branch may be used when branch-history
 rewriting is not approved.
 
+### Syncing `staging` with `production`
+
+Whenever `production` changes — a hotfix, a security or Dependabot fix, or a
+promotion — merge it into `staging`:
+
+```bash
+git switch staging
+git pull --ff-only origin staging
+git merge origin/production
+npm run check
+npm run test:e2e
+git push origin staging
+```
+
+This is the merge-from-production route above, applied to the long-lived
+branch. It is pushed rather than merged through a pull request because merge
+commits are disabled for pull requests (section 11), and a squash would leave
+`staging` permanently behind `production`: the next promotion would then repeat
+changes `production` already has. CI runs on the push.
+
+After a promotion, the sync introduces no file changes, because the promotion
+squash holds a tree `staging` already contains. It is still required: it records
+the promotion commit as an ancestor of `staging`, without which `staging` reads
+as out of date with `production` from then on.
+
 ---
 
 ## 11. Merge Rules
@@ -369,6 +424,25 @@ Before merge confirm:
 - Squash commit message is valid
 - Randi approved merge
 
+### Promotion
+
+The promotion pull request, `staging` → `production`, is a release. Before Randi
+merges it:
+
+- `staging` is in sync with `production` (section 10)
+- The staging Preview has been reviewed
+- `SITE_URL=https://<production-domain> npm run release:check` passes on the
+  `staging` tree
+
+After it merges, sync `production` back into `staging` (section 10) and verify
+production (section 13).
+
+Automatic deletion of merged branches would delete `staging` as the
+promotion's head branch. The `Protect staging` ruleset restricts its deletion
+(`github-configuration.md` section 4); configure it before the first
+promotion. If `staging` is deleted anyway, restore it from the pull request page
+and sync it.
+
 ---
 
 ## 12. Hotfix Workflow
@@ -388,6 +462,7 @@ Rules:
 - Run focused and relevant broader checks
 - Open a pull request to `production`
 - Use the same merge-approval boundary
+- After it merges, sync `production` into `staging` (section 10)
 - Perform unrelated cleanup later in separate branches
 
 Urgency never authorizes direct production changes or skipped verification.
@@ -396,7 +471,11 @@ Urgency never authorizes direct production changes or skipped verification.
 
 ## 13. Post-Merge Workflow
 
-After squash merge:
+After a squash merge into `staging`, confirm the staging Preview Deployment
+starts and verify the change there. Nothing reaches production; the steps below
+apply at promotion.
+
+After a squash merge into `production`:
 
 1. Confirm Vercel Production Deployment starts.
 2. Verify the affected production behavior.

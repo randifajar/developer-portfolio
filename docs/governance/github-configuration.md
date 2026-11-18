@@ -207,6 +207,35 @@ told apart from one that is broken.
 Randi remains the only merge authority by project policy, even when GitHub
 requires zero external approvals.
 
+### Protect `staging`
+
+Added 2026-11-18 with the `staging` branch (`git-workflow.md` section 2).
+Configure it before the first promotion:
+
+```text
+Name: Protect staging
+Target: staging
+Enforcement: Active
+```
+
+Enable:
+
+- Restrict deletions
+- Block force pushes
+
+Deliberately not enabled:
+
+- **Require a pull request, or require status checks.** The sync merge from
+  `production` is pushed directly (`git-workflow.md` section 10). A ruleset that
+  requires status checks only accepts commits whose checks already passed on
+  another ref, so either setting would reject that push. CI still runs on every
+  pull request into `staging` and on every push to it.
+- **Require linear history.** The sync merges are merge commits.
+
+Restricting deletion matters most at promotion. `staging` is the head branch of
+the promotion pull request, and automatic head-branch deletion would otherwise
+remove it.
+
 ---
 
 ## 5. GitHub Actions Configuration
@@ -330,6 +359,24 @@ Expected behavior:
 - Task branches create Preview Deployments
 - Pull requests display Preview URLs
 - GitHub Actions remains the required code-quality gate
+
+### `staging`
+
+To Vercel, `staging` is an ordinary branch: it builds Preview Deployments, and
+the branch's stable Preview URL always serves its latest commit. Nothing about
+it touches the Production Deployment.
+
+Observed on 2026-11-18 on this project's Preview Deployments: they redirect
+visitors to Vercel's login (Vercel Authentication) and are served with
+`X-Robots-Tag: noindex`. Staging is therefore visible to the account owner and
+kept out of search results without further configuration.
+
+Which `SITE_URL` a staging build sees depends on whether the variable is scoped
+to Preview as well as Production. Unset, it falls back to
+`http://localhost:3000` (`src/lib/environment.ts`), which leaves canonical and
+social URLs on staging pointing nowhere useful. Check once on the first staging
+deployment; setting `SITE_URL` for Preview, scoped to the `staging` branch,
+fixes it.
 
 Production environment:
 
