@@ -64,12 +64,18 @@ describe("every homepage section has content", () => {
    * The social card cannot be rendered here (it needs the edge image runtime).
    * It is guarded by the type instead: the field no longer exists, so code that
    * reads it does not compile.
+   *
+   * No leading word boundary, deliberately. textContent joins adjacent elements
+   * without a space, so the restored sentence reads "ContactOpen to backend…"
+   * after the section heading, and /\bopen to/ cannot match there. The first
+   * version of this test had that boundary and passed with the sentence put
+   * back; breaking it on purpose is how that was found.
    */
   it("states availability nowhere on the homepage", () => {
     for (const [name, Section] of [...sections, ["Contact", ContactSection] as const]) {
       const { container, unmount } = render(<Section />);
 
-      expect(container.textContent, name).not.toMatch(/\bopen to\b/i);
+      expect(container.textContent, name).not.toMatch(/open to/i);
       unmount();
     }
   });
@@ -225,7 +231,8 @@ describe("Hero presents the professional identity", () => {
     const { container } = render(<HeroSection />);
 
     expect(container.textContent).toContain("Yogyakarta, Indonesia");
-    expect(container.textContent).not.toMatch(/\bopen to\b/i);
+    // No word boundary: see "states availability nowhere on the homepage".
+    expect(container.textContent).not.toMatch(/open to/i);
   });
 
   it("renders the photograph with descriptive alternative text", () => {
