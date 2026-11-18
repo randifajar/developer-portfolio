@@ -10,11 +10,13 @@ import { defineSiteConfig } from "@/domain/content/define";
  */
 export const siteConfig = defineSiteConfig({
   name: "Randi Fajar Wicaksono",
-  defaultTitle: "Randi Fajar Wicaksono — Backend Developer",
+  // Positioning follows the profile title (SUP-010, 2026-11-18).
+  defaultTitle: "Randi Fajar Wicaksono — Software Engineer · Backend & Infrastructure",
   titleTemplate: "%s — Randi Fajar Wicaksono",
   defaultDescription:
-    "Backend Developer based in Yogyakarta, Indonesia. Node.js, GraphQL, and MongoDB services, " +
-    "system integration, and AI-assisted development with human accountability.",
+    "Software engineer across backend and infrastructure, based in Yogyakarta, Indonesia. " +
+    "Node.js, GraphQL, and MongoDB services, system integration, Jenkins CI/CD, and " +
+    "AI-assisted development with human accountability.",
   ownerName: "Randi Fajar Wicaksono",
   locale: "en",
   email: "randifajar2307@gmail.com",

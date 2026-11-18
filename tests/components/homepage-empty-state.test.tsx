@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { AboutSection } from "@/components/sections/about-section";
 import { AIWorkflowSection } from "@/components/sections/ai-workflow-section";
+import { ContactSection } from "@/components/sections/contact-section";
 import { ExperienceSection } from "@/components/sections/experience-section";
 import { HeroSection } from "@/components/sections/hero-section";
 import { ProjectsSection } from "@/components/sections/projects-section";
@@ -52,24 +53,50 @@ describe("every homepage section has content", () => {
       unmount();
     }
   });
+
+  /**
+   * SUP-011. Availability was stated in three places — hero, contact, and the
+   * social card — and the contact section's version was a hardcoded sentence
+   * rather than the profile field, so removing the field alone would have
+   * missed it. This checks rendered text, not the field, and adds Contact to
+   * the sections above because that is where the hardcoded sentence lived.
+   *
+   * The social card cannot be rendered here (it needs the edge image runtime).
+   * It is guarded by the type instead: the field no longer exists, so code that
+   * reads it does not compile.
+   */
+  it("states availability nowhere on the homepage", () => {
+    for (const [name, Section] of [...sections, ["Contact", ContactSection] as const]) {
+      const { container, unmount } = render(<Section />);
+
+      expect(container.textContent, name).not.toMatch(/\bopen to\b/i);
+      unmount();
+    }
+  });
 });
 
 describe("Work Experience presents the real employment history", () => {
-  it("renders all three roles", () => {
+  it("renders all four roles", () => {
     render(<ExperienceSection />);
 
+    expect(screen.getByText("AI Delivery Engineer, Infrastructure Team")).toBeVisible();
     expect(screen.getByText("Backend Developer")).toBeVisible();
     expect(screen.getByText("Backend Developer, Contract")).toBeVisible();
     expect(screen.getByText("Backend Developer Intern")).toBeVisible();
   });
 
-  it("puts the current role first and marks it current (FAC-EXP-001)", () => {
+  it("puts the current role first and marks only it current (FAC-EXP-001)", () => {
     const { container } = render(<ExperienceSection />);
     const text = container.textContent ?? "";
+    const current = text.indexOf("AI Delivery Engineer, Infrastructure Team");
 
+    expect(current).toBeGreaterThanOrEqual(0);
+    expect(current).toBeLessThan(text.indexOf("Backend Developer"));
     expect(text.indexOf("Backend Developer Intern")).toBeGreaterThan(
       text.indexOf("Backend Developer,"),
     );
+    // getByText throws on more than one match, so this also asserts that only
+    // one role is marked current.
     expect(screen.getByText("Current")).toBeVisible();
   });
 
@@ -180,8 +207,8 @@ describe("Hero presents the professional identity", () => {
   it("states the professional title and headline", () => {
     const { container } = render(<HeroSection />);
 
-    expect(container.textContent).toContain("Backend Developer");
-    expect(container.textContent).toMatch(/open to backend and software engineering/i);
+    expect(container.textContent).toContain("Software Engineer · Backend & Infrastructure");
+    expect(container.textContent).toContain("the Jenkins pipelines and AWS environments");
   });
 
   /**
@@ -189,15 +216,16 @@ describe("Hero presents the professional identity", () => {
    * photograph criterion. Corrected while amending the requirement itself.
    *
    * FAC-PROFILE-001 asked for "Remote-work availability" specifically. v1.1
-   * Issue 3 replaced remote-only wording with the neutral form, so the criterion
-   * now asks for availability without dictating which kind. What the assertion
-   * guards is unchanged: a recruiter can see where he is and that he is open.
+   * Issue 3 replaced remote-only wording with the neutral form. On 2026-11-18
+   * Randi asked for availability to be removed altogether (SUP-011), and the
+   * criterion was amended again: the hero states where he is, and no longer
+   * whether he is looking. The second assertion is the one that matters now.
    */
-  it("states location and availability (FAC-PROFILE-001)", () => {
+  it("states location and no availability (FAC-PROFILE-001)", () => {
     const { container } = render(<HeroSection />);
 
     expect(container.textContent).toContain("Yogyakarta, Indonesia");
-    expect(container.textContent).toMatch(/open to opportunities/i);
+    expect(container.textContent).not.toMatch(/\bopen to\b/i);
   });
 
   it("renders the photograph with descriptive alternative text", () => {

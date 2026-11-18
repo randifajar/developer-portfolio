@@ -54,8 +54,11 @@ export function ContactSection() {
            * place still offering it.
            *
            * Wording is Randi's decision, taken from the PRD proposal.
+           *
+           * 2026-11-18: the availability sentence was removed at his request,
+           * with the hero's (SUP-011). What remains is his own wording.
            */
-          description="Open to backend and software engineering opportunities. The fastest way to reach me is email."
+          description="The fastest way to reach me is email."
         />
 
         <div className="flex flex-wrap items-center gap-3">
@@ -83,11 +86,7 @@ export function ContactSection() {
           </p>
         ) : null}
 
-        {profile ? (
-          <p className="text-meta text-text-muted">
-            {profile.location} · {profile.availabilityStatement}
-          </p>
-        ) : null}
+        {profile ? <p className="text-meta text-text-muted">{profile.location}</p> : null}
       </div>
     </Section>
   );

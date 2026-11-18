@@ -11,6 +11,13 @@ import { RESUME_PATH } from "@/lib/constants";
  * publicationStatus, so the file becomes downloadable the moment it is
  * committed, not the moment it is Published.
  *
+ * Corrected 2026-11-18: the file does carry a phone number, and has since it
+ * was committed. Checked by extracting the PDF's text and matching the number
+ * pattern, without reproducing the number anywhere. The record above was wrong,
+ * not the file changed. Whether the number stays public is Randi's decision
+ * (V3 plan, D6). Until he makes it, the file is unchanged. It also still lists
+ * the Backend Developer role as current, which only a new PDF from him can fix.
+ *
  * The file arrived named resume.pdf.pdf. Left alone it would have 404'd, since
  * RESUME_PATH and every Resume action point at /resume.pdf.
  *
