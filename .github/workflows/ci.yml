@@ -1,12 +1,17 @@
 name: CI
 
-# `production` is the only long-lived branch (CLAUDE.md, git-workflow.md).
+# Two long-lived branches (CLAUDE.md, git-workflow.md section 2): `production`,
+# the live site, and `staging`, where the next release is assembled before a
+# single promotion pull request takes it live. Pull requests into either run
+# the full gate, and so does every push to either, so the merged tree is checked
+# as well as the branch — on `staging` that includes the sync merge from
+# `production`, which is pushed rather than merged through a pull request.
 # There is deliberately no `main` trigger — no such branch exists.
 on:
   pull_request:
-    branches: [production]
+    branches: [production, staging]
   push:
-    branches: [production]
+    branches: [production, staging]
 
 # Least privilege by default. A job needing more declares it itself.
 permissions:

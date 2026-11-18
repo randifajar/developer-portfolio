@@ -181,10 +181,12 @@ The third, `audit`, runs the production dependency audit and is deliberately
 every merge, including a revert needed during an unrelated incident. It reports
 on every change without holding the merge button hostage.
 
-`production` is the only long-lived branch. Work happens on short-lived task
-branches, merges by squash after review, and deploys automatically. Deployment
-success is not acceptance — production is verified manually against
-[`docs/release-checklist.md`](docs/release-checklist.md).
+`production` is the live site, and `staging` is pre-production: the next
+release, assembled from reviewed pull requests and checked on a Vercel Preview
+before one promotion pull request takes it live. Work happens on short-lived
+task branches and merges by squash after review; merges into `production`
+deploy automatically. Deployment success is not acceptance — production is
+verified manually against [`docs/release-checklist.md`](docs/release-checklist.md).
 
 `production` is protected by a branch ruleset with no bypass actors, so it
 applies to the repository owner too: pull request required, squash merge only,
@@ -205,8 +207,9 @@ green CI runs, because at the time the audit ran only at a release.
 
 ## Deployment
 
-Vercel Git integration: task branches produce Preview Deployments, `production`
-produces Production Deployments. Rollback is available through Vercel for urgent
+Vercel Git integration: `production` produces Production Deployments; `staging`
+and task branches produce Preview Deployments, which require a Vercel login and
+are not indexed. Rollback is available through Vercel for urgent
 recovery, followed by a source correction so the two never stay inconsistent.
 
 **Docker** is a post-launch enhancement for portability and is deliberately not
