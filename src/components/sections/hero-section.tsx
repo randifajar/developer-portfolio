@@ -51,9 +51,7 @@ export function HeroSection() {
             {profile.headline}
           </p>
 
-          <p className="text-body text-text-muted">
-            {profile.location} · {profile.availabilityStatement}
-          </p>
+          <p className="text-body text-text-muted">{profile.location}</p>
 
           <div className="mt-2 flex flex-wrap items-center gap-3">
             {/*

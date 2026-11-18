@@ -49,9 +49,7 @@ function cardText(): { name: string; title: string | null; location: string | nu
   return {
     name: getSiteConfig().ownerName,
     title: profile?.professionalTitle ?? null,
-    location: profile
-      ? [profile.location, profile.availabilityStatement].filter(Boolean).join(" · ")
-      : null,
+    location: profile?.location ?? null,
   };
 }
 

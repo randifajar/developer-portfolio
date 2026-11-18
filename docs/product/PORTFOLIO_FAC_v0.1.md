@@ -70,13 +70,18 @@ All criteria in this document are `P0` or `P1`.
   - The approved professional title
   - The approved headline
   - `Yogyakarta, Indonesia`
-  - Availability
+- The page does not state availability.
 
 > **Amended in v1.1 (Issue 3).** This bullet read "Remote-work availability".
 > The neutral wording adopted in SUP-004 states that Randi is open without
 > asserting a form of availability that has not been confirmed, so the criterion
 > now requires availability to be shown rather than requiring it to be remote.
 > The visitor-facing guarantee is unchanged.
+>
+> **Amended again on 2026-11-18 (SUP-011).** Randi asked for the availability
+> statement to be removed altogether. The criterion now forbids it instead of
+> requiring it, and the `availabilityStatement` field is gone from the schema,
+> so it cannot return without a schema change.
 
 **Acceptance evidence**
 - Homepage screenshot on desktop

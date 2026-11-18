@@ -23,7 +23,7 @@ import {
  * content record has now made that transition, and each one broke these tests
  * on the way through — which was the point.
  *
- * Current state: launch-ready. Both case studies, the profile, all three roles,
+ * Current state: launch-ready. Both case studies, the profile, all four roles,
  * skills, AI practices, and the resume are Published. isPubliclyLaunchReady()
  * returns true, so indexing is enabled.
  */
@@ -128,11 +128,27 @@ describe("the professional identity is public", () => {
 });
 
 describe("employment history and resume are public", () => {
-  it("exposes all three roles, current first (FAC-EXP-001)", () => {
+  it("exposes all four roles, the infrastructure role current and first (FAC-EXP-001)", () => {
     const roles = getPublishedExperience();
 
-    expect(roles).toHaveLength(3);
+    expect(roles).toHaveLength(4);
+    expect(roles[0]?.position).toBe("AI Delivery Engineer, Infrastructure Team");
     expect(roles[0]?.isCurrent).toBe(true);
+    expect(roles.filter((role) => role.isCurrent)).toHaveLength(1);
+  });
+
+  /**
+   * The dates Randi confirmed on 2026-11-18. The backend role ended the month
+   * before the infrastructure role began, so the timeline has no gap and no
+   * overlap.
+   */
+  it("ends the backend role the month before the infrastructure role starts", () => {
+    const roles = getPublishedExperience();
+    const backend = roles.find((role) => role.id === "experience-zettabyte-backend-developer");
+
+    expect(roles[0]?.startDate).toBe("2026-08-01");
+    expect(backend?.isCurrent).toBe(false);
+    expect(backend?.endDate).toBe("2026-07-01");
   });
 
   it("gives every non-current role an end date that does not precede its start", () => {

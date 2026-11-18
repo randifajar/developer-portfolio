@@ -15,7 +15,6 @@ const profile = {
   headline: "Building reliable backend systems and integrations.",
   summary: "A **real** professional summary.",
   location: "Yogyakarta, Indonesia",
-  availabilityStatement: "Open to opportunities",
   targetRoles: ["Backend Developer", "Software Engineer"],
   photoAssetId: "media-photo",
   publicationStatus: "published",
@@ -102,7 +101,7 @@ const { ProjectsSection } = await import("@/components/sections/projects-section
 const { SkillsSection } = await import("@/components/sections/skills-section");
 
 describe("Hero (FAC-PROFILE-001, FAC-HOME-002)", () => {
-  it("renders identity, title, headline, location, and availability", () => {
+  it("renders identity, title, headline, and location", () => {
     render(<HeroSection />);
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Randi Fajar Wicaksono");

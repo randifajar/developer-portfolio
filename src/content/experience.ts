@@ -21,10 +21,57 @@ import { defineExperience } from "@/domain/content/define";
  * (NFAC-SEC-002, NFAC-PRIV-004).
  *
  * Ordering is by sortOrder within the current-role-first rule the selector
- * applies, so the progression reads intern to contract to full-time in
- * reverse.
+ * applies, so the progression reads intern to contract to full-time to the
+ * infrastructure team in reverse.
+ *
+ * 2026-11-18 (V3 plan, P0). Randi confirmed that day that he has been an AI
+ * Delivery Engineer on the infrastructure team since August 2026, and that the
+ * Backend Developer role ran from April 2025 to July 2026. The new role's
+ * responsibilities and contribution are his infrastructure resume's bullets.
+ * Two pieces of system architecture are generalized ("reverse proxies" for the
+ * named proxies, "AWS email-event delivery" for the named AWS services), in
+ * keeping with the sanitized class below; how much infrastructure detail to
+ * publish is still his decision (V3 plan, I3). The new role's summary is the
+ * infrastructure description from the V3.1 mockup he approved. Company
+ * spelling is unchanged pending his decision (D12): the resume writes
+ * "Zettabyte".
  */
 export const experience = [
+  defineExperience({
+    id: "experience-zettabyte-ai-delivery-engineer",
+
+    companyName: "ZettaByte Pte Ltd",
+    position: "AI Delivery Engineer, Infrastructure Team",
+
+    startDate: "2026-08-01",
+    isCurrent: true,
+
+    locationOrArrangement: "Sleman, Yogyakarta, Indonesia",
+
+    summary:
+      "I work on Jenkins delivery pipelines, Linux and Docker environments on AWS, and the " +
+      "troubleshooting behind reliable releases.",
+
+    responsibilities: [
+      "Maintain and standardize Jenkins CI/CD pipelines across multiple repositories, incorporating security and quality checks, branch-based deployment workflows, and role-based access controls for staging, pre-production, and production environments.",
+      "Support Linux-hosted Docker Compose services behind reverse proxies, investigating TLS routing, environment variables, duplicate containers, failed deployments, and service connectivity.",
+      "Troubleshoot AWS email-event delivery, dead-letter routing, cloud-region mismatches, and application configuration issues across environments.",
+    ],
+
+    contributions: [
+      "Migrated Jenkins build execution to an Ubuntu-based AWS EC2 agent, configuring Docker Buildx, QEMU, AWS CLI, and headless Chrome. Resolved WebSocket connectivity, Nginx reverse-proxy, file-permission, and environment PATH issues.",
+    ],
+
+    // Only skills that already exist. Jenkins, Linux, and AWS have no skill
+    // records yet: adding them means classifying them, which is Randi's call
+    // (V3 plan, D9). Git is evidenced by the branch-based deployment workflows.
+    technologyIds: ["skill-docker", "skill-git"],
+
+    confidentialityClass: "sanitized",
+    publicationStatus: "published",
+    sortOrder: 1,
+  }),
+
   defineExperience({
     id: "experience-zettabyte-backend-developer",
 
@@ -32,15 +79,19 @@ export const experience = [
     position: "Backend Developer",
 
     startDate: "2025-04-01",
-    isCurrent: true,
+    endDate: "2026-07-01",
+    isCurrent: false,
 
     locationOrArrangement: "Sleman, Yogyakarta, Indonesia",
 
+    // Past tense since 2026-11-18; the final sentence states the move, in the
+    // same form the two earlier roles use for their progression.
     summary:
-      "I develop and maintain backend services and data-processing flows for academic and " +
-      "administrative applications. My work covers API and database design, service " +
+      "I developed and maintained backend services and data-processing flows for academic and " +
+      "administrative applications. My work covered API and database design, service " +
       "integrations, background processing, multi-environment troubleshooting, requirement " +
-      "analysis, regression assessment, and verification of changes before release.",
+      "analysis, regression assessment, and verification of changes before release. In " +
+      "August 2026 I moved to the infrastructure team as an AI Delivery Engineer.",
 
     responsibilities: [
       "Develop and maintain Node.js and GraphQL backend services and MongoDB data-processing flows for academic and administrative applications.",
@@ -67,7 +118,7 @@ export const experience = [
 
     confidentialityClass: "sanitized",
     publicationStatus: "published",
-    sortOrder: 1,
+    sortOrder: 2,
   }),
 
   defineExperience({
@@ -110,7 +161,7 @@ export const experience = [
 
     confidentialityClass: "sanitized",
     publicationStatus: "published",
-    sortOrder: 2,
+    sortOrder: 3,
   }),
 
   defineExperience({
@@ -145,6 +196,6 @@ export const experience = [
 
     confidentialityClass: "sanitized",
     publicationStatus: "published",
-    sortOrder: 3,
+    sortOrder: 4,
   }),
 ];
