@@ -1,28 +1,19 @@
 import { describe, expect, it } from "vitest";
 import { aiPractices } from "@/content/ai-practices";
 import { contactChannels, externalProfiles } from "@/content/contact";
+import { contentSet } from "@/content/content-set";
 import { experience } from "@/content/experience";
 import { mediaAssets } from "@/content/media";
 import { profile } from "@/content/profile";
 import { projects } from "@/content/projects";
 import { resume } from "@/content/resume";
-import { skills } from "@/content/skills";
 import type { ContentSet } from "@/domain/content/validation";
 import { formatValidationIssues, validateContentSet } from "@/domain/content/validation";
 
 /** The real content set, which must always validate cleanly. */
 function realContent(): ContentSet {
-  return {
-    profile,
-    experience,
-    projects,
-    skills,
-    aiPractices,
-    resumes: [resume],
-    contactChannels,
-    externalProfiles,
-    mediaAssets,
-  };
+  // A shallow copy, so a test that replaces one field cannot affect another test.
+  return { ...contentSet };
 }
 
 /** Rule names present in the result, for precise assertions. */

@@ -1,14 +1,22 @@
 import type {
   AIPractice,
+  CareerChapter,
+  Certification,
   ContactChannel,
+  Education,
+  EngineeringPractice,
   ExternalProfile,
+  Language,
   MediaAsset,
+  ModeIntro,
   ProfessionalProfile,
   ProjectCaseStudy,
   Resume,
   TechnicalSkill,
+  ToolkitGroup,
   WorkExperience,
 } from "@/domain/content/schemas";
+import { MODES } from "@/domain/content/types";
 
 /**
  * Cross-record validation.
@@ -43,6 +51,14 @@ export interface ContentSet {
   readonly contactChannels: readonly ContactChannel[];
   readonly externalProfiles: readonly ExternalProfile[];
   readonly mediaAssets: readonly MediaAsset[];
+  // V3 records (UX/UI specification v3.0).
+  readonly modeIntros: readonly ModeIntro[];
+  readonly careerChapters: readonly CareerChapter[];
+  readonly education: readonly Education[];
+  readonly certifications: readonly Certification[];
+  readonly languages: readonly Language[];
+  readonly engineeringPractices: readonly EngineeringPractice[];
+  readonly toolkitGroups: readonly ToolkitGroup[];
 }
 
 /** Sections a Published project must not leave empty (PRD 5.3). */
@@ -89,6 +105,13 @@ export function validateContentSet(content: ContentSet): ValidationIssue[] {
     ["Contact Channel", content.contactChannels],
     ["External Professional Profile", content.externalProfiles],
     ["Media Asset", content.mediaAssets],
+    ["Mode Intro", content.modeIntros],
+    ["Career Chapter", content.careerChapters],
+    ["Education", content.education],
+    ["Certification", content.certifications],
+    ["Language", content.languages],
+    ["Engineering Practice", content.engineeringPractices],
+    ["Toolkit Group", content.toolkitGroups],
   ];
 
   for (const [contentType, records] of idGroups) {
@@ -376,6 +399,81 @@ export function validateContentSet(content: ContentSet): ValidationIssue[] {
         contentType: "Media Asset",
         recordId: asset.id,
         message: `filePath "${asset.filePath}" must be a local path starting with "/".`,
+      });
+    }
+  }
+
+  /* Rule 16 — career chapters cite real roles, inside the chapter's year. -- */
+  // A chapter's year is editorial grouping; the roles it cites are the facts.
+  // So each cited id must resolve to an experience record, and the chapter's
+  // year must fall within that role's span — a current role is open-ended.
+  const experienceById = new Map(content.experience.map((role) => [role.id, role]));
+
+  for (const chapter of content.careerChapters) {
+    for (const experienceId of chapter.experienceIds) {
+      const role = experienceById.get(experienceId);
+
+      if (!role) {
+        add({
+          rule: "valid-experience-references",
+          contentType: "Career Chapter",
+          recordId: chapter.id,
+          message: `Cites experience "${experienceId}", which does not exist.`,
+        });
+        continue;
+      }
+
+      const startYear = Number(role.startDate.slice(0, 4));
+      const endYear = role.isCurrent ? Number.POSITIVE_INFINITY : Number(role.endDate?.slice(0, 4));
+
+      if (chapter.year < startYear || chapter.year > endYear) {
+        add({
+          rule: "chapter-year-within-roles",
+          contentType: "Career Chapter",
+          recordId: chapter.id,
+          message:
+            `Year ${chapter.year} falls outside "${experienceId}" (${role.startDate} – ` +
+            `${role.isCurrent ? "present" : role.endDate}). A chapter may only cite roles it spans.`,
+        });
+      }
+    }
+  }
+
+  /* Rule 17 — at most one Published intro per mode (UX3 7). --------------- */
+  // "At most", like Rule 6: a content set without V3 intros is valid while the
+  // v2 site is live. Requiring exactly one belongs to release validation, once
+  // the mode pages that render them exist.
+  for (const mode of MODES) {
+    const published = content.modeIntros.filter(
+      (intro) => intro.mode === mode && intro.publicationStatus === "published",
+    );
+
+    if (published.length > 1) {
+      add({
+        rule: "one-intro-per-mode",
+        contentType: "Mode Intro",
+        message:
+          `Mode "${mode}" has ${published.length} Published intros ` +
+          `(${published.map((intro) => intro.id).join(", ")}). Its hero needs one heading, not two.`,
+      });
+    }
+  }
+
+  /* Rule 18 — every Published intro names the engineer (V3-CONT-003). ----- */
+  // In the eyebrow or across the two heading lines; Overall does the latter.
+  for (const intro of content.modeIntros) {
+    if (intro.publicationStatus !== "published") continue;
+
+    const text = `${intro.eyebrow} ${intro.headingLines.join(" ")}`;
+
+    if (!text.includes(content.profile.fullName)) {
+      add({
+        rule: "intro-names-engineer",
+        contentType: "Mode Intro",
+        recordId: intro.id,
+        message:
+          `Neither the eyebrow nor the heading names "${content.profile.fullName}". Every ` +
+          "mode's hero must identify the engineer (V3-CONT-003).",
       });
     }
   }

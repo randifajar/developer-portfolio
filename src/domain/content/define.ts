@@ -1,14 +1,21 @@
 import type { z } from "zod";
 import {
   aiPracticeSchema,
+  careerChapterSchema,
+  certificationSchema,
   contactChannelSchema,
+  educationSchema,
+  engineeringPracticeSchema,
   externalProfileSchema,
+  languageSchema,
   mediaAssetSchema,
+  modeIntroSchema,
   professionalProfileSchema,
   projectCaseStudySchema,
   resumeSchema,
   siteConfigSchema,
   technicalSkillSchema,
+  toolkitGroupSchema,
   workExperienceSchema,
 } from "@/domain/content/schemas";
 
@@ -100,3 +107,15 @@ export const defineExternalProfile = createDefiner(
 );
 export const defineMediaAsset = createDefiner("Media Asset", mediaAssetSchema);
 export const defineSiteConfig = createDefiner("Site Configuration", siteConfigSchema);
+
+// V3 records (UX/UI specification v3.0).
+export const defineModeIntro = createDefiner("Mode Intro", modeIntroSchema);
+export const defineCareerChapter = createDefiner("Career Chapter", careerChapterSchema);
+export const defineEducation = createDefiner("Education", educationSchema);
+export const defineCertification = createDefiner("Certification", certificationSchema);
+export const defineLanguage = createDefiner("Language", languageSchema);
+export const defineEngineeringPractice = createDefiner(
+  "Engineering Practice",
+  engineeringPracticeSchema,
+);
+export const defineToolkitGroup = createDefiner("Toolkit Group", toolkitGroupSchema);

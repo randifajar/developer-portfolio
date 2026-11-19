@@ -1,8 +1,10 @@
 import { z } from "zod";
 import {
   CONFIDENTIALITY_CLASSIFICATIONS,
+  DISCIPLINES,
   EXTERNAL_PLATFORMS,
   MEDIA_TYPES,
+  MODES,
   PROJECT_DELIVERY_STATUSES,
   PROJECT_TYPES,
   PUBLICATION_STATUSES,
@@ -73,6 +75,9 @@ export const professionalProfileSchema = z.object({
   professionalTitle: nonEmptyText,
   headline: nonEmptyText,
   summary: nonEmptyText,
+  // The V3 Overall profile statement (UX3 7.1). Optional so the v2 site, which
+  // never reads it, is unaffected; V3 omits the section without it.
+  statement: nonEmptyText.optional(),
   location: nonEmptyText,
   photoAssetId: identifier.optional(),
   publicationStatus,
@@ -97,6 +102,9 @@ export const workExperienceSchema = z
     contributions: z.array(nonEmptyText).optional(),
     technologyIds: z.array(identifier).optional(),
     projectIds: z.array(identifier).optional(),
+    // Which V3 mode pages show the role (UX3 7.2, 7.3). Required, because a
+    // role tagged with nothing would silently vanish from both.
+    disciplines: z.array(z.enum(DISCIPLINES)).min(1),
     confidentialityClass,
     publicationStatus,
     sortOrder: z.number().int(),
@@ -316,6 +324,108 @@ export const mediaAssetSchema = z
   );
 
 /* ------------------------------------------------------------------------- */
+/* V3 records (UX/UI specification v3.0)                                       */
+/* ------------------------------------------------------------------------- */
+
+/**
+ * The hero copy for one mode (UX3 7). Content, not code, so that wording
+ * changes never touch a component. Two heading lines because the design sets
+ * them at two different sizes; a cross-record rule requires every published
+ * intro to name the engineer (V3-CONT-003).
+ */
+export const modeIntroSchema = z.object({
+  id: identifier,
+  mode: z.enum(MODES),
+  eyebrow: nonEmptyText,
+  headingLines: z.tuple([nonEmptyText, nonEmptyText]),
+  description: nonEmptyText.optional(),
+  action: z.object({
+    label: nonEmptyText,
+    // The id of the section the action scrolls to on the same page.
+    targetId: identifier,
+  }),
+  publicationStatus,
+});
+
+/**
+ * One chapter of the Overall career sequence (UX3 7.1, 8.4). The grouping by
+ * year is editorial, so a chapter points at real experience records instead of
+ * restating their dates; cross-record rules check that those records exist and
+ * that the year falls inside them.
+ */
+export const careerChapterSchema = z.object({
+  id: identifier,
+  year: z.number().int().min(2000).max(2100),
+  label: nonEmptyText,
+  headline: nonEmptyText,
+  body: nonEmptyText,
+  experienceIds: z.array(identifier).min(1),
+  publicationStatus,
+  sortOrder: z.number().int(),
+});
+
+export const educationSchema = z
+  .object({
+    id: identifier,
+    institution: nonEmptyText,
+    qualification: nonEmptyText,
+    // For example a grade point average. Stated only as the résumé states it.
+    detail: nonEmptyText.optional(),
+    location: nonEmptyText.optional(),
+    startDate: isoDate,
+    endDate: isoDate,
+    publicationStatus,
+    sortOrder: z.number().int(),
+  })
+  .refine((value) => value.endDate >= value.startDate, {
+    message: "endDate must not precede startDate.",
+    path: ["endDate"],
+  });
+
+export const certificationSchema = z.object({
+  id: identifier,
+  name: nonEmptyText,
+  issuer: nonEmptyText,
+  year: z.number().int().min(2000).max(2100),
+  publicationStatus,
+  sortOrder: z.number().int(),
+});
+
+export const languageSchema = z.object({
+  id: identifier,
+  name: nonEmptyText,
+  proficiency: nonEmptyText,
+  publicationStatus,
+  sortOrder: z.number().int(),
+});
+
+/**
+ * One item of "How I approach engineering" (UX3 7.1). Each must restate a line
+ * from Randi's résumés, which the content module records beside it.
+ */
+export const engineeringPracticeSchema = z.object({
+  id: identifier,
+  title: nonEmptyText,
+  description: nonEmptyText,
+  publicationStatus,
+  sortOrder: z.number().int(),
+});
+
+/**
+ * One group of a mode page's toolkit (UX3 7.2, 7.3). Plain tool names, with no
+ * level attached: classification belongs to the skills, and a toolkit only
+ * says what is used together.
+ */
+export const toolkitGroupSchema = z.object({
+  id: identifier,
+  discipline: z.enum(DISCIPLINES),
+  label: nonEmptyText,
+  items: z.array(nonEmptyText).min(1),
+  publicationStatus,
+  sortOrder: z.number().int(),
+});
+
+/* ------------------------------------------------------------------------- */
 /* Site configuration                                                         */
 /* ------------------------------------------------------------------------- */
 
@@ -346,3 +456,10 @@ export type ContactChannel = z.infer<typeof contactChannelSchema>;
 export type ExternalProfile = z.infer<typeof externalProfileSchema>;
 export type MediaAsset = z.infer<typeof mediaAssetSchema>;
 export type SiteConfig = z.infer<typeof siteConfigSchema>;
+export type ModeIntro = z.infer<typeof modeIntroSchema>;
+export type CareerChapter = z.infer<typeof careerChapterSchema>;
+export type Education = z.infer<typeof educationSchema>;
+export type Certification = z.infer<typeof certificationSchema>;
+export type Language = z.infer<typeof languageSchema>;
+export type EngineeringPractice = z.infer<typeof engineeringPracticeSchema>;
+export type ToolkitGroup = z.infer<typeof toolkitGroupSchema>;

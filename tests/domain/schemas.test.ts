@@ -104,6 +104,7 @@ describe("work experience schema", () => {
       isCurrent: false,
       summary: "Role overview.",
       responsibilities: ["Built and maintained backend services."],
+      disciplines: ["backend" as const],
       confidentialityClass: "sanitized" as const,
       publicationStatus: "published" as const,
       sortOrder: 1,

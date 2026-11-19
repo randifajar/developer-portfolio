@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { aiPractices } from "@/content/ai-practices";
 import { contactChannels, externalProfiles } from "@/content/contact";
+import { contentSet } from "@/content/content-set";
 import { experience } from "@/content/experience";
 import { mediaAssets } from "@/content/media";
 import { profile } from "@/content/profile";
@@ -27,17 +28,7 @@ function rulesFor(
 
 /** The real content set, exactly as it ships today. */
 function draftContent(): ContentSet {
-  return {
-    profile,
-    experience,
-    projects,
-    skills,
-    aiPractices,
-    resumes: [resume],
-    contactChannels,
-    externalProfiles,
-    mediaAssets,
-  };
+  return { ...contentSet };
 }
 
 /**
@@ -106,6 +97,15 @@ function releaseReadyContent(): ContentSet {
       ...publish,
       altText: "A real, descriptive alternative text.",
     })),
+    // The V3 records as they ship. They are release-ready already and are not
+    // the subject of these tests.
+    modeIntros: contentSet.modeIntros,
+    careerChapters: contentSet.careerChapters,
+    education: contentSet.education,
+    certifications: contentSet.certifications,
+    languages: contentSet.languages,
+    engineeringPractices: contentSet.engineeringPractices,
+    toolkitGroups: contentSet.toolkitGroups,
   };
 }
 
