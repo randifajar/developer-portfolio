@@ -263,3 +263,30 @@ test.describe("post-launch indexing posture", () => {
     expect(canonical).toMatch(/^https?:\/\//);
   });
 });
+
+/**
+ * V3 P9: the mode routes are discoverable and preview as themselves.
+ */
+test.describe("mode routes in the sitemap and link previews (V3 plan 3.9)", () => {
+  test("the sitemap lists both mode routes", async ({ request }) => {
+    const sitemap = await (await request.get("/sitemap.xml")).text();
+
+    for (const route of ["/backend", "/infrastructure"]) {
+      expect(sitemap, route).toMatch(new RegExp(`<loc>[^<]*${route}</loc>`));
+    }
+  });
+
+  test("each mode route has its own social card, and it is served", async ({ page, request }) => {
+    for (const route of ["/backend", "/infrastructure"]) {
+      await page.goto(route);
+      const image = await page.locator('meta[property="og:image"]').first().getAttribute("content");
+
+      expect(image, route).toContain(`${route}/opengraph-image`);
+
+      const { pathname, search } = new URL(image!);
+      const response = await request.get(`${pathname}${search}`);
+      expect(response.status(), route).toBe(200);
+      expect(response.headers()["content-type"], route).toContain("image/png");
+    }
+  });
+});

@@ -6,7 +6,8 @@ import { absoluteUrl } from "@/lib/environment";
 /**
  * Sitemap (TD 11.7).
  *
- * Home, Projects Index, and publicly eligible Project Detail routes only.
+ * The three mode routes (V3 P9), the Projects Index, and publicly eligible
+ * Project Detail routes only.
  *
  * Unpublished projects are absent because the selector never returns them —
  * there is no separate exclusion list to keep in sync, which is what makes
@@ -24,6 +25,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 1,
     },
+    // The Backend and Infrastructure modes (DEC-056).
+    ...[ROUTES.backend, ROUTES.infrastructure].map((route) => ({
+      url: absoluteUrl(route),
+      changeFrequency: "monthly" as const,
+      priority: 0.9,
+    })),
     {
       url: absoluteUrl(ROUTES.projects),
       changeFrequency: "monthly",
