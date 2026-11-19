@@ -816,6 +816,11 @@ All criteria in this document are `P0` or `P1`.
 **Then**
 - Publication fails until exactly one active Resume remains.
 
+> **Amended for V3 (DEC-059).** The rule now applies per variant. There are two
+> résumés, backend and infrastructure, and one active Published résumé of each
+> is the intended state. Two active Published résumés of the same variant still
+> fail. Implemented as cross-record rule 6.
+
 ---
 
 # 12. Contact and External Profiles

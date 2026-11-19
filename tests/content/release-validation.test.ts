@@ -106,6 +106,7 @@ function releaseReadyContent(): ContentSet {
     languages: contentSet.languages,
     engineeringPractices: contentSet.engineeringPractices,
     toolkitGroups: contentSet.toolkitGroups,
+    projectOverviews: contentSet.projectOverviews,
   };
 }
 

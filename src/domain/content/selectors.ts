@@ -7,6 +7,7 @@ import { mediaAssets } from "@/content/media";
 import { modeIntros } from "@/content/modes";
 import { engineeringPractices } from "@/content/practices";
 import { profile } from "@/content/profile";
+import { projectOverviews } from "@/content/project-overviews";
 import { projects } from "@/content/projects";
 import { resume } from "@/content/resume";
 import { siteConfig } from "@/content/site";
@@ -25,6 +26,7 @@ import type {
   ModeIntro,
   ProfessionalProfile,
   ProjectCaseStudy,
+  ProjectOverview,
   Resume,
   SiteConfig,
   TechnicalSkill,
@@ -315,4 +317,30 @@ export function getPublishedEngineeringPractices(): readonly EngineeringPractice
 /** A mode page's toolkit groups, in order (UX3 7.2, 7.3). */
 export function getPublishedToolkit(discipline: Discipline): readonly ToolkitGroup[] {
   return publishedInOrder(toolkitGroups.filter((group) => group.discipline === discipline));
+}
+
+/**
+ * Published project overviews, optionally for one discipline (DEC-060).
+ *
+ * Overviews have no slug, so nothing here can produce a route; the case-study
+ * selectors above never see them. While their titles are working titles
+ * (OPEN-011) they are Draft, and this returns an empty list.
+ */
+export function getPublishedProjectOverviews(discipline?: Discipline): readonly ProjectOverview[] {
+  const published = publishedInOrder(projectOverviews);
+
+  return discipline
+    ? published.filter((overview) => overview.disciplines.includes(discipline))
+    : published;
+}
+
+/**
+ * The Published résumé of one variant, or null (DEC-059).
+ *
+ * Null is a normal state: the V3 Résumé menu shows that variant as "PDF
+ * available after approval" instead of a link. The v2 `getActiveResume` above
+ * still returns the backend résumé, which is the only one today.
+ */
+export function getPublishedResumeFor(variant: Discipline): Resume | null {
+  return resume.variant === variant ? getActiveResume() : null;
 }

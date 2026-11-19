@@ -48,6 +48,8 @@ export const juryProcessManagement = defineProject({
     "application boundaries.",
 
   projectType: "professional",
+  // The V3 projects filter (UX3 7.4); the approved mockup tags it Backend.
+  disciplines: ["backend"],
   role: "Backend Developer — cross-application integration and workflow synchronization",
   deliveryStatus: "completed",
   period: "2026",

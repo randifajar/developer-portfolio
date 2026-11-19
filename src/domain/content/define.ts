@@ -12,6 +12,7 @@ import {
   modeIntroSchema,
   professionalProfileSchema,
   projectCaseStudySchema,
+  projectOverviewSchema,
   resumeSchema,
   siteConfigSchema,
   technicalSkillSchema,
@@ -119,3 +120,4 @@ export const defineEngineeringPractice = createDefiner(
   engineeringPracticeSchema,
 );
 export const defineToolkitGroup = createDefiner("Toolkit Group", toolkitGroupSchema);
+export const defineProjectOverview = createDefiner("Project Overview", projectOverviewSchema);

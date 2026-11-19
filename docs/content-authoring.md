@@ -186,13 +186,18 @@ pages will, through the selectors.
 | `credentials.ts` | Education, certifications, languages | Exactly as your résumés state them |
 | `practices.ts` | "How I approach engineering" | Each item restates a résumé line; the module says which |
 | `toolkits.ts` | The grouped tool lists on the two mode pages | Names only, no levels. Nothing that shows how an employer's systems are wired (DEC-064) |
+| `project-overviews.ts` | Six résumé projects shown briefly, with no case study and no route | General titles only, never an internal application name (DEC-060). A technology only where the project's résumé line names it. Draft until you confirm the titles (OPEN-011) |
 
-Two V3 fields sit on older records:
+Four V3 fields sit on older records:
 
 - **`statement`, on the profile.** The Overall profile statement.
 - **`disciplines`, on every experience record.** `backend`, `infrastructure`, or both. It
   decides which mode page shows the role, so it is required: a role tagged with
   nothing would vanish from both.
+- **`disciplines`, on a case study.** Optional. It drives the projects filter, and
+  a case study without one appears only under "All".
+- **`variant`, on a résumé.** `backend` or `infrastructure` (DEC-059). One
+  active Published résumé per variant (FAC-RESUME-004, amended).
 
 The validation scripts and tests read one shared set, `src/content/content-set.ts`.
 A new content type goes there, and the `ContentSet` type makes forgetting it a

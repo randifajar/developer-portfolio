@@ -35,8 +35,9 @@ import { defineExperience } from "@/domain/content/define";
  * systems are wired is not. The new role's summary is the infrastructure
  * description from the V3.1 mockup he approved.
  *
- * 2026-11-19 (V3 plan, P2). The company is spelled "Zettabyte Pte Ltd", as on
- * his résumés (DEC-063); the site said "ZettaByte". The backend role gained the
+ * 2026-11-19 (V3 plan, P2). The company is spelled "Zettabyte Pte Ltd", Randi's
+ * choice and the spelling of his infrastructure résumé (DEC-063); the site said
+ * "ZettaByte", and his backend résumé mixes the two. The backend role gained the
  * audit-log contribution, verbatim from his infrastructure résumé, so the site
  * and the résumé list the same work (NFAC-CONTENT-005).
  */

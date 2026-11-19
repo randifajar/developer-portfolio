@@ -156,6 +156,9 @@ export const projectCaseStudySchema = z
     title: nonEmptyText,
     summary: nonEmptyText,
     projectType: z.enum(PROJECT_TYPES),
+    // The V3 projects filter (UX3 7.4). Optional: a project with no discipline
+    // appears only under "All", as the personal portfolio does.
+    disciplines: z.array(z.enum(DISCIPLINES)).optional(),
     role: nonEmptyText,
     deliveryStatus: z.enum(PROJECT_DELIVERY_STATUSES),
     period: nonEmptyText.optional(),
@@ -260,6 +263,9 @@ export const resumeSchema = z.object({
     message: "The Resume public path must point to a .pdf file.",
   }),
   isActive: z.boolean(),
+  // DEC-059: two résumés, one per discipline. FAC-RESUME-004 now allows one
+  // active Published résumé per variant rather than one in total.
+  variant: z.enum(DISCIPLINES),
   // PRD 7.6: the active Resume is public by definition.
   confidentialityClass: z.literal("public"),
   publicationStatus,
@@ -425,6 +431,30 @@ export const toolkitGroupSchema = z.object({
   sortOrder: z.number().int(),
 });
 
+/**
+ * A project shown as a short overview: no case study and no route (DEC-060).
+ *
+ * A separate type rather than a flag on the case study. An overview has no
+ * slug, so "an overview never gets a route" holds by construction instead of
+ * by a rule someone has to remember, and nothing the v2 case-study pages read
+ * changes. Titles are working titles until Randi confirms them (OPEN-011).
+ *
+ * Technologies are optional on purpose: a technology is listed only where the
+ * résumé line for that project names it. Attaching the stack of the role to
+ * the project would be inventing a project-specific claim.
+ */
+export const projectOverviewSchema = z.object({
+  id: identifier,
+  title: nonEmptyText,
+  summary: nonEmptyText,
+  contribution: nonEmptyText,
+  technologies: z.array(nonEmptyText).optional(),
+  disciplines: z.array(z.enum(DISCIPLINES)).min(1),
+  confidentialityClass,
+  publicationStatus,
+  sortOrder: z.number().int(),
+});
+
 /* ------------------------------------------------------------------------- */
 /* Site configuration                                                         */
 /* ------------------------------------------------------------------------- */
@@ -463,3 +493,4 @@ export type Certification = z.infer<typeof certificationSchema>;
 export type Language = z.infer<typeof languageSchema>;
 export type EngineeringPractice = z.infer<typeof engineeringPracticeSchema>;
 export type ToolkitGroup = z.infer<typeof toolkitGroupSchema>;
+export type ProjectOverview = z.infer<typeof projectOverviewSchema>;

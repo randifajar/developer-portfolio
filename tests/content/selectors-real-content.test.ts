@@ -152,9 +152,10 @@ describe("employment history and resume are public", () => {
   });
 
   /**
-   * DEC-063, 2026-11-19. The site said "ZettaByte"; Randi's résumés say
-   * "Zettabyte", and he chose the résumés' spelling. Every role must agree, or
-   * the employer appears twice in the grouped Work Experience (DEC-055).
+   * DEC-063, 2026-11-19. The site said "ZettaByte"; Randi chose "Zettabyte",
+   * the spelling of his infrastructure résumé (his backend résumé mixes the
+   * two). Every role must agree, or the employer appears twice in the grouped
+   * Work Experience (DEC-055).
    */
   it("spells the employer as Randi's résumés do", () => {
     for (const role of getPublishedExperience()) {

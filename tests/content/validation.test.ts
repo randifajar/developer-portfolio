@@ -129,6 +129,30 @@ describe("rule: single active resume (FAC-RESUME-004)", () => {
 
     expect(rulesTriggeredBy(content)).not.toContain("single-active-resume");
   });
+
+  /**
+   * FAC-RESUME-004 as amended for V3 (DEC-059): one active Published résumé
+   * per variant. A backend and an infrastructure résumé together are the
+   * intended state; the rule must not fire on them.
+   */
+  it("allows one active Published resume of each variant", () => {
+    const content = {
+      ...realContent(),
+      resumes: [
+        { ...resume, isActive: true, publicationStatus: "published" as const },
+        {
+          ...resume,
+          id: "resume-infrastructure",
+          variant: "infrastructure" as const,
+          publicPath: "/resume/infrastructure.pdf",
+          isActive: true,
+          publicationStatus: "published" as const,
+        },
+      ],
+    };
+
+    expect(rulesTriggeredBy(content)).not.toContain("single-active-resume");
+  });
 });
 
 describe("rule: no published private or restricted content (FAC-PUBLISH-002)", () => {
