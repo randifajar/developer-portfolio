@@ -5,9 +5,9 @@
 - **Product Name:** Randi Fajar Wicaksono Developer Portfolio
 - **Document Type:** Decision Ledger
 - **Version:** 1.0
-- **Status:** Updated at the v2 release
+- **Status:** Updated for V3 decisions (approved 2026-11-18 and 2026-11-19; not yet released)
 - **Owner:** Randi Fajar Wicaksono
-- **Last Updated:** 2026-08-16
+- **Last Updated:** 2026-11-19
 
 ---
 
@@ -94,6 +94,26 @@ none of them mentioning a surface, a typeface, or a contrast floor.
 | DEC-054 | Project detail structure | **Two layers.** Layer A carries role, status, stack, problem and outcome above the deep content; Layer B is the existing sequence. Technology Stack moved from the deep sequence into Layer A. Asserted by measuring real vertical positions in a browser, not by DOM order. | Confirmed | v2 Phase 6 |
 | DEC-055 | Work Experience grouping | **Grouped by employer**, so an internship → contract → full-time progression at one employer reads as one relationship rather than three unrelated jobs. | Confirmed | v2 Phase 4 |
 
+### Version 3 decisions
+
+Approved by Randi on 2026-11-18, with the V3 implementation plan
+(`docs/plans/2026-11-18-v3-implementation-plan.md`, "approved, use your
+recommendations"), and on 2026-11-19 (DEC-063, SUP-017). **Approved is not
+implemented.** Unless a row says otherwise, the live site follows the decision a
+row extends or supersedes until the V3 release, and the pull request that
+implements a row cites it.
+
+| ID | Topic | Decision | Status | Source |
+|---|---|---|---|---|
+| DEC-056 | Routes (V3) | **`/` (Overall), `/backend`, `/infrastructure`, `/projects`, `/projects/[slug]`.** Only a project with a full case study gets a route; an overview and an unknown slug return the same not-found result (DEC-047). Each résumé is served at `/resume/backend.pdf` or `/resume/infrastructure.pdf` once approved for publication, and `/resume.pdf` becomes a permanent redirect to the backend résumé, so links already sent keep working. Extends DEC-024. | Confirmed | V3 plan D2 |
+| DEC-057 | Client component boundary (V3) | **Six client components:** `ModeSwitch`, `ResumeMenu`, `ModeHero`, `CareerJourney`, `ProjectFilter`, `CopyEmail`. The header and footer stay Server Components that compose them; the mode hero is the only state that persists across routes, and it is derived from the pathname. Amends Technical Design §13.4. | Confirmed | V3 plan D4 |
+| DEC-058 | Pre-production branch | **`staging` is the second long-lived branch.** The next release is assembled there from reviewed pull requests and reaches `production` through one promotion pull request. Vercel serves it as a Preview, behind Vercel login and marked noindex. In force since #100. | Confirmed | Randi, 2026-11-18 (V3 plan D5) |
+| DEC-059 | Résumé variants | **Two résumés, backend and infrastructure, with at most one active Published résumé per variant**; FAC-RESUME-004 is amended when this is implemented. Neither is published until the backend résumé shows the backend role ending Jul 2026 and Randi decides whether his phone number is public. | Confirmed | V3 plan D6 |
+| DEC-060 | Project overviews | **Six résumé projects ship as overviews:** general titles, no route, no case study. None becomes a case study without its own approval, and internal application names never appear. | Confirmed | V3 plan D7 |
+| DEC-061 | Type scale (V3) | The tokenised `clamp()` scale gains the display steps the V3 hero needs; raw Tailwind size utilities stay forbidden. Extends DEC-051. | Confirmed | V3 plan D8 |
+| DEC-062 | Motion (V3) | **A mode change animates the persistent hero** with the Web Animations API: exit about 220 ms, settled about 0.75 s after the click, and a later click cancels an earlier sequence. The career sequence pins only at 900 px and wider with motion allowed; section reveals are CSS scroll-driven animations; the pointer light runs only on a fine pointer. Under reduced motion all of it is off and every function remains. Extends DEC-053. | Confirmed | Approved V3.1 mockup, 2026-11-18 |
+| DEC-063 | Company name | **"Zettabyte Pte Ltd"**, as on Randi's résumés. The site's "ZettaByte" is corrected in the V3 content phase. | Confirmed | Randi, 2026-11-19 (V3 plan D12) |
+
 ---
 
 ## Remaining Content Decisions
@@ -105,13 +125,16 @@ the two easiest to overlook in a column of seven identical values.
 
 | ID | Topic | Status |
 |---|---|---|
-| OPEN-001 | Final professional headline | **Resolved** 2026-08-08 — supplied by Randi (`src/content/profile.ts`) |
-| OPEN-002 | Final professional summary | **Resolved** 2026-08-08 — supplied by Randi (`src/content/profile.ts`) |
+| OPEN-001 | Final professional headline | **Resolved** 2026-08-08 — supplied by Randi (`src/content/profile.ts`). **Reworded 2026-11-18** for the move to the infrastructure team (#99); the new wording awaits his confirmation |
+| OPEN-002 | Final professional summary | **Resolved** 2026-08-08 — supplied by Randi (`src/content/profile.ts`). **Reworded 2026-11-18** in the same pull request; awaits his confirmation |
 | OPEN-003 | Final third project | Open Decision — two published case studies; never a launch blocker (DEC-031) |
 | OPEN-004 | Final skill classification | **Resolved** 2026-08-08 — every classification confirmed as assigned (`src/content/skills.ts`) |
 | OPEN-005 | Final professional photograph | **Resolved** 2026-08-08 — supplied, converted to WebP at 400×400, live |
 | OPEN-006 | Safe project visuals | Open Decision — no diagram sanitised yet, which is also why Q9's schema field was not added |
 | OPEN-007 | Custom domain at launch | Open Decision — still the Vercel subdomain |
+| OPEN-008 | Docker, Linux and Jenkins classification (V3 plan D9) | Open Decision — SUP-008 (Docker as currently-learning) stands until Randi decides; Jenkins, Linux and AWS have no skill records until then |
+| OPEN-009 | Proposed V3 wording: profile statement, engineering headline, transition sentence (V3 plan I4) | Open Decision — proposed in the V3.1 mockup; stays Draft until Randi approves it |
+| OPEN-010 | V3 hero photograph (V3 plan I1) | Open Decision — the 400×400 portrait from OPEN-005 is too small for the V3 hero; a labelled placeholder stands in on `staging`, and release validation rejects it |
 
 ---
 
@@ -123,6 +146,12 @@ the two easiest to overlook in a column of seven identical values.
 | SUP-002 | DEC-003 — positioning as Backend-Focused Full-Stack Developer. | **Backend Developer.** Randi's positioning is now consistently Backend Developer across LinkedIn, CV, and applications; the portfolio was the last surface still saying otherwise. Full-stack capability remains stated where it is truthful — the case studies and the technologies list — but no longer competes with the primary identity. v1.1 Issue 2. |
 | SUP-003 | DEC-004 — target roles including Full-Stack Developer. | **Backend Developer, Backend Engineer, Software Engineer.** Follows SUP-002 for the same reason. v1.1 Issue 2. |
 | SUP-004 | Availability stated as "Open to remote opportunities". | **"Open to opportunities."** The remote-only wording excluded hybrid and onsite roles Randi would consider, and no onsite, hybrid, or relocation availability has been confirmed — so the neutral form states openness without inventing a form of it. v1.1 Issue 3. The `remoteAvailability` field name was left unchanged at the time; renaming it would have touched schema, selectors, components, and tests for no reader-visible gain, and was assigned to v2. **Renamed to `availabilityStatement` on 2026-08-25 (Q10)** — v2 deferred it a second time, and a field whose name says *remote* while its value does not is a small untruth in a repository built to argue against those. Reader-visible output is unchanged. |
+| SUP-017 | SUP-003 — target roles Backend Developer, Backend Engineer, Software Engineer. | **No target-roles list.** Removed at Randi's request on 2026-11-19, together with the field, in the V3 content phase. |
+| SUP-016 | DEC-049 — three surfaces, `light`, `neutral`, `dark`. | **Five:** `dark`, `navy`, `light`, `white`, and one `blue` accent section, from the approved V3.1 mockup. Takes effect with the V3 release. |
+| SUP-015 | DEC-013 — location "Yogyakarta, Indonesia". | **"Sleman, Yogyakarta, Indonesia"**, as in the experience records and on both résumés. V3 plan D11; applied in the V3 content phase. |
+| SUP-014 | SUP-007 and SUP-009 — how the AI-Assisted Engineering section is presented, and which tool it names. | **No AI section.** AI-assisted practice is stated in the engineering approach and in the AI-assisted development project overview. V3 plan D10; takes effect with the V3 release. |
+| SUP-013 | DEC-050 — Archivo for display, Geist Sans for body. | **Geist only**, with display sizes from the type scale (DEC-061): one font request fewer. V3 plan D8; takes effect with the V3 release. |
+| SUP-012 | SUP-005 — homepage order Navigation, Hero, About, Work Experience, Selected Projects, Technical Skills, AI Workflow, Contact, Footer. | **The V3.1 Overall order:** hero, profile, engineering focus, career (2024, 2025, 2026), selected work, how I approach engineering, education and credentials, explore further, contact. V3 plan D3; takes effect with the V3 release. |
 | SUP-011 | SUP-004 — availability stated as "Open to opportunities". | **No availability statement.** Removed at Randi's request on 2026-11-18, together with the `availabilityStatement` field, the contact section's separate "Open to backend and software engineering opportunities" sentence, and the social card's location suffix. FAC-PROFILE-001 now forbids the statement rather than requiring it. V3 plan, P0. |
 | SUP-010 | SUP-002 — positioning as Backend Developer. | **Software Engineer · Backend & Infrastructure.** Since August 2026 Randi has been an AI Delivery Engineer on the infrastructure team, so "Backend Developer" no longer described the present. The positioning names the span of the work; formal titles stay in the experience timeline. Approved by Randi on 2026-11-18 (V3 plan, D1). Target roles (SUP-003) are unchanged, pending his decision. |
 | SUP-009 | V2-P0-004 — whether AI practices should model Codex, Claude Code and ChatGPT rather than one tool. | **Claude Code is the representative tool; no change.** The About summary names three tools and every practice names Claude Code, which reads like an oversight and is not one. Confirmed by Randi 2026-08-16. PRD 13 forbids remodelling the content model to create visual symmetry: inventing per-tool practices to fill a grid would describe work that was not done that way. Recorded in `src/content/ai-practices.ts` so the asymmetry is not "fixed" later. |
