@@ -3,8 +3,8 @@ import {
   getActiveResume,
   getAdjacentPublishedProjects,
   getFeaturedProjects,
-  getPublishedAIPractices,
   getPublishedContactChannels,
+  getPublishedEngineeringPractices,
   getPublishedExperience,
   getPublishedExternalProfiles,
   getPublishedProfile,
@@ -227,21 +227,20 @@ describe("skills and AI practices are public", () => {
     }
   });
 
-  it("exposes the four workflow steps in order", () => {
-    expect(getPublishedAIPractices().map((practice) => practice.sortOrder)).toEqual([1, 2, 3, 4]);
-  });
-
   /**
-   * FAC-AI-002. The schema makes these required, so this guards the stronger
-   * claim: that no published practice leaves either one blank or unreviewed.
+   * FAC-AI-002, as V3 states it (SUP-014). The AI workflow section and its
+   * records went in V3 P5b; AI-assisted work is now one engineering practice,
+   * and it must still pair what the tools do with what stays Randi's. The v2
+   * schema enforced that pairing with two required fields; this does now.
    */
-  it("gives every practice a human responsibility and a verification method", () => {
-    for (const practice of getPublishedAIPractices()) {
-      expect(practice.humanResponsibility.trim().length, practice.id).toBeGreaterThan(0);
-      expect(practice.verificationMethod.trim().length, practice.id).toBeGreaterThan(0);
-      expect(practice.humanResponsibility, practice.id).not.toMatch(/DRAFT\s+PLACEHOLDER/);
-      expect(practice.verificationMethod, practice.id).not.toMatch(/DRAFT\s+PLACEHOLDER/);
-    }
+  it("keeps AI activity paired with human accountability (FAC-AI-002)", () => {
+    const practice = getPublishedEngineeringPractices().find(
+      (candidate) => candidate.id === "practice-own-the-ai-output",
+    );
+
+    expect(practice, "the AI practice is not published").toBeDefined();
+    expect(practice!.description).toMatch(/\bAI\b/);
+    expect(practice!.description).toMatch(/decisions and checks stay mine/);
   });
 });
 

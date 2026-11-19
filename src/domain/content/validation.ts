@@ -1,5 +1,4 @@
 import type {
-  AIPractice,
   CareerChapter,
   Certification,
   ContactChannel,
@@ -47,7 +46,6 @@ export interface ContentSet {
   readonly experience: readonly WorkExperience[];
   readonly projects: readonly ProjectCaseStudy[];
   readonly skills: readonly TechnicalSkill[];
-  readonly aiPractices: readonly AIPractice[];
   readonly resumes: readonly Resume[];
   readonly contactChannels: readonly ContactChannel[];
   readonly externalProfiles: readonly ExternalProfile[];
@@ -102,7 +100,6 @@ export function validateContentSet(content: ContentSet): ValidationIssue[] {
     ["Work Experience", content.experience],
     ["Project Case Study", content.projects],
     ["Technical Skill", content.skills],
-    ["AI-Assisted Engineering Practice", content.aiPractices],
     ["Resume", content.resumes],
     ["Contact Channel", content.contactChannels],
     ["External Professional Profile", content.externalProfiles],
@@ -210,19 +207,6 @@ export function validateContentSet(content: ContentSet): ValidationIssue[] {
     }
   }
 
-  for (const practice of content.aiPractices) {
-    for (const projectId of practice.relatedProjectIds ?? []) {
-      if (!projectIds.has(projectId)) {
-        add({
-          rule: "valid-project-references",
-          contentType: "AI-Assisted Engineering Practice",
-          recordId: practice.id,
-          message: `References unknown project "${projectId}".`,
-        });
-      }
-    }
-  }
-
   /* Rule 6 — at most one active Published Resume per variant (FAC-RESUME-004). */
   // Amended for V3 (DEC-059): one backend and one infrastructure résumé may both
   // be active, since the Résumé menu offers one of each. Two of the same variant
@@ -259,7 +243,6 @@ export function validateContentSet(content: ContentSet): ValidationIssue[] {
   ][] = [
     ["Work Experience", content.experience],
     ["Project Case Study", content.projects],
-    ["AI-Assisted Engineering Practice", content.aiPractices],
     ["Media Asset", content.mediaAssets],
     ["Project Overview", content.projectOverviews],
   ];

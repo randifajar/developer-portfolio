@@ -221,10 +221,8 @@ describe("the floors are the intended ones", () => {
  * so a later edit cannot drift the palette while staying legible.
  */
 describe("the V3 surfaces are the specified ones (UX3 2, 3)", () => {
-  it("declares all five V3 surfaces, plus v2's neutral", () => {
-    expect([...SURFACE_NAMES].sort()).toEqual(
-      ["blue", "dark", "light", "navy", "neutral", "white"].sort(),
-    );
+  it("declares the five V3 surfaces and nothing else", () => {
+    expect([...SURFACE_NAMES].sort()).toEqual(["blue", "dark", "light", "navy", "white"].sort());
   });
 
   it("paints each V3 surface its specified background", () => {

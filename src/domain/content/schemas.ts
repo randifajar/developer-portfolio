@@ -229,27 +229,6 @@ export const technicalSkillSchema = z.object({
 });
 
 /* ------------------------------------------------------------------------- */
-/* AI-Assisted Engineering Practice                                           */
-/* ------------------------------------------------------------------------- */
-
-export const aiPracticeSchema = z.object({
-  id: identifier,
-  toolName: nonEmptyText,
-  activity: nonEmptyText,
-  purpose: nonEmptyText,
-  // FAC-AI-002: human accountability is a required field, not an optional
-  // flourish, so a practice cannot be published without stating it.
-  humanResponsibility: nonEmptyText,
-  verificationMethod: nonEmptyText,
-  exampleOutcome: nonEmptyText.optional(),
-  correctedAssumption: nonEmptyText.optional(),
-  relatedProjectIds: z.array(identifier).optional(),
-  confidentialityClass,
-  publicationStatus,
-  sortOrder: z.number().int(),
-});
-
-/* ------------------------------------------------------------------------- */
 /* Resume                                                                     */
 /* ------------------------------------------------------------------------- */
 
@@ -480,7 +459,6 @@ export type ProfessionalProfile = z.infer<typeof professionalProfileSchema>;
 export type WorkExperience = z.infer<typeof workExperienceSchema>;
 export type ProjectCaseStudy = z.infer<typeof projectCaseStudySchema>;
 export type TechnicalSkill = z.infer<typeof technicalSkillSchema>;
-export type AIPractice = z.infer<typeof aiPracticeSchema>;
 export type Resume = z.infer<typeof resumeSchema>;
 export type ContactChannel = z.infer<typeof contactChannelSchema>;
 export type ExternalProfile = z.infer<typeof externalProfileSchema>;

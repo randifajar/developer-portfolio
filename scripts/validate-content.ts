@@ -24,8 +24,8 @@ function main(): void {
   console.log("Content validation passed.");
   console.log(
     `  ${contentSet.projects.length} project(s), ${contentSet.experience.length} experience ` +
-      `record(s), ${contentSet.skills.length} skill(s), ${contentSet.aiPractices.length} AI ` +
-      `practice(s), ${contentSet.careerChapters.length} career chapter(s), ` +
+      `record(s), ${contentSet.skills.length} skill(s), ${contentSet.engineeringPractices.length} ` +
+      `engineering practice(s), ${contentSet.careerChapters.length} career chapter(s), ` +
       `${contentSet.modeIntros.length} mode intro(s).`,
   );
 }

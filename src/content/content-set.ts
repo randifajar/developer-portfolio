@@ -1,4 +1,3 @@
-import { aiPractices } from "@/content/ai-practices";
 import { careerChapters } from "@/content/career";
 import { contactChannels, externalProfiles } from "@/content/contact";
 import { certifications, education, languages } from "@/content/credentials";
@@ -29,7 +28,6 @@ export const contentSet: ContentSet = {
   experience,
   projects,
   skills,
-  aiPractices,
   resumes: [resume],
   contactChannels,
   externalProfiles,

@@ -1,6 +1,5 @@
 import type { z } from "zod";
 import {
-  aiPracticeSchema,
   careerChapterSchema,
   certificationSchema,
   contactChannelSchema,
@@ -99,7 +98,6 @@ export const defineProfile = createDefiner("Professional Profile", professionalP
 export const defineExperience = createDefiner("Work Experience", workExperienceSchema);
 export const defineProject = createDefiner("Project Case Study", projectCaseStudySchema);
 export const defineSkill = createDefiner("Technical Skill", technicalSkillSchema);
-export const defineAIPractice = createDefiner("AI-Assisted Engineering Practice", aiPracticeSchema);
 export const defineResume = createDefiner("Resume", resumeSchema);
 export const defineContactChannel = createDefiner("Contact Channel", contactChannelSchema);
 export const defineExternalProfile = createDefiner(

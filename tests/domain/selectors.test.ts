@@ -107,29 +107,6 @@ vi.mock("@/content/skills", () => ({
   ],
 }));
 
-vi.mock("@/content/ai-practices", () => ({
-  aiPractices: [
-    {
-      id: "ai-2",
-      sortOrder: 2,
-      confidentialityClass: "public",
-      publicationStatus: "published",
-    },
-    {
-      id: "ai-1",
-      sortOrder: 1,
-      confidentialityClass: "public",
-      publicationStatus: "published",
-    },
-    {
-      id: "ai-draft",
-      sortOrder: 3,
-      confidentialityClass: "public",
-      publicationStatus: "draft",
-    },
-  ],
-}));
-
 vi.mock("@/content/resume", () => ({
   resume: { id: "resume-a", isActive: true, publicationStatus: "published" },
 }));
@@ -157,7 +134,6 @@ const {
   getActiveResume,
   getAdjacentPublishedProjects,
   getFeaturedProjects,
-  getPublishedAIPractices,
   getPublishedContactChannels,
   getPublishedExperience,
   getPublishedExternalProfiles,
@@ -194,10 +170,6 @@ describe("publication and confidentiality filtering", () => {
     const ids = getPublishedSkillGroups().flatMap((view) => view.skills.map((s) => s.id));
 
     expect(ids).not.toContain("s-draft");
-  });
-
-  it("excludes Draft AI practices", () => {
-    expect(getPublishedAIPractices().map((p) => p.id)).not.toContain("ai-draft");
   });
 
   it("excludes Draft contact channels and external profiles", () => {
@@ -314,12 +286,6 @@ describe("skill grouping (FAC-HOME-005)", () => {
 
   it("orders skills within a group by sortOrder", () => {
     expect(getPublishedSkillGroups()[0]?.skills.map((s) => s.id)).toEqual(["s-go", "s-ts"]);
-  });
-});
-
-describe("AI practices", () => {
-  it("orders by workflow sequence", () => {
-    expect(getPublishedAIPractices().map((p) => p.id)).toEqual(["ai-1", "ai-2"]);
   });
 });
 
