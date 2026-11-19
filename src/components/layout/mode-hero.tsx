@@ -40,7 +40,8 @@ import { ROUTES } from "@/lib/constants";
  *
  * - a page load or reload, so the browser keeps its position and nothing is
  *   focused that the visitor did not ask for;
- * - Back and Forward, so the browser's scroll restoration stands.
+ * - Back and Forward, so the browser's scroll restoration stands;
+ * - a link to an anchor on the new page, which the router scrolls to.
  */
 export interface ModeHeroIntro {
   readonly mode: Mode;
@@ -139,6 +140,10 @@ export function ModeHero({ intros, actionModes, children }: ModeHeroProps) {
 
     if (firstRun ? !createdByNavigation.current : !pathChanged) return;
     if (consumeHistoryTraversal()) return;
+    // A link to a place on the page, such as the projects page's "← Overall"
+    // to the selected work, is the router's to scroll to; going to the top
+    // would undo it.
+    if (window.location.hash) return;
 
     window.scrollTo({ top: 0, behavior: "instant" });
     headingRef.current?.focus({ preventScroll: true });

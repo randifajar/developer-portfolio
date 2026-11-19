@@ -24,7 +24,12 @@ test.describe("Projects Index (FAC-PROJECTS-001, 004)", () => {
    * Published. It remains covered by release validation, which is what refuses
    * a launch with too few case studies (FAC-PROJECTS-004).
    */
-  test("renders a card for every publicly reachable project", async ({ page, request }) => {
+  /*
+   * Rewritten for V3 P7: v2 rendered one card (an article) per project; V3
+   * lists rows (UX3 7.4). The guarantee is the same — every reachable case
+   * study is listed and linked, and nothing else is a case study.
+   */
+  test("lists and links every publicly reachable case study", async ({ page, request }) => {
     const reachable: string[] = [];
 
     for (const project of projects) {
@@ -33,10 +38,14 @@ test.describe("Projects Index (FAC-PROJECTS-001, 004)", () => {
       }
     }
 
-    await expect(page.getByRole("article")).toHaveCount(reachable.length);
+    const caseStudyLinks = page
+      .getByRole("region", { name: "Project list" })
+      .getByRole("link", { name: /^Read the case study: / });
+
+    await expect(caseStudyLinks).toHaveCount(reachable.length);
 
     for (const title of reachable) {
-      await expect(page.getByRole("link", { name: title })).toBeVisible();
+      await expect(page.getByRole("link", { name: `Read the case study: ${title}` })).toBeVisible();
     }
   });
 
@@ -99,5 +108,76 @@ test.describe("Resume (FAC-RESUME-002)", () => {
     expect(await action.getAttribute("target")).toBe("_blank");
     expect(rel).toContain("noopener");
     expect(rel).toContain("noreferrer");
+  });
+});
+
+/**
+ * The filter (UX3 7.4). Its state is the address, so it is checked where only
+ * a browser can: across a reload, Back from a case study, the case study's own
+ * back link, and with JavaScript off.
+ */
+test.describe("Projects filter (UX3 7.4, 7.5)", () => {
+  const list = (page: import("@playwright/test").Page) =>
+    page.getByRole("region", { name: "Project list" });
+
+  test("keeps the chosen discipline across a reload", async ({ page }) => {
+    await page.goto("/projects");
+    await page.waitForLoadState("networkidle");
+
+    await page.getByRole("button", { name: /^Backend/ }).click();
+    await expect(page).toHaveURL(/\?discipline=backend$/);
+    await expect(list(page).getByRole("heading", { level: 3 })).toHaveText([
+      "Jury Process Management Integration",
+    ]);
+
+    await page.reload();
+    await page.waitForLoadState("networkidle");
+    await expect(page.getByRole("button", { name: /^Backend/ })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    await expect(list(page).getByRole("heading", { level: 3 })).toHaveCount(1);
+  });
+
+  test("survives a visit to a case study, by Back and by the back link", async ({ page }) => {
+    await page.goto("/projects?discipline=backend");
+    await page.waitForLoadState("networkidle");
+
+    await page
+      .getByRole("link", { name: "Read the case study: Jury Process Management Integration" })
+      .click();
+    await expect(page).toHaveURL(/\/projects\/jury-process-management-integration$/);
+
+    await page.goBack();
+    await expect(page).toHaveURL(/\?discipline=backend$/);
+    await expect(list(page).getByRole("heading", { level: 3 })).toHaveCount(1);
+
+    await page.goForward();
+    // The case study's own back link, in the page — not the footer's Projects.
+    await page.getByRole("main").getByRole("link", { name: "Projects", exact: true }).click();
+    await expect(page).toHaveURL(/\/projects\?discipline=backend$/);
+  });
+
+  test("the index's way back lands on the selected work, not the top", async ({ page }) => {
+    await page.goto("/projects");
+    await page.waitForLoadState("networkidle");
+
+    // The page's own "← Overall", not the header's mode switch.
+    await page.getByRole("main").getByRole("link", { name: "Overall", exact: true }).click();
+
+    await expect(page).toHaveURL(/\/#work$/);
+    await expect(page.locator("#work")).toBeInViewport();
+  });
+});
+
+test.describe("Projects filter without JavaScript", () => {
+  test.use({ javaScriptEnabled: false });
+
+  test("shows every project, whatever the address says", async ({ page }) => {
+    await page.goto("/projects?discipline=infrastructure");
+
+    await expect(
+      page.getByRole("region", { name: "Project list" }).getByRole("heading", { level: 3 }),
+    ).toHaveCount(2);
   });
 });

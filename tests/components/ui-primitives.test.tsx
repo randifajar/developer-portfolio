@@ -3,7 +3,9 @@ import { describe, expect, it } from "vitest";
 import { ButtonLink } from "@/components/ui/button-link";
 import { ExternalLink } from "@/components/ui/external-link";
 import { MarkdownContent } from "@/components/ui/markdown-content";
-import { SectionHeader } from "@/components/ui/section-header";
+import { ArrowLink } from "@/components/ui/arrow-link";
+import { Eyebrow } from "@/components/ui/eyebrow";
+import { SectionTitle } from "@/components/ui/section-title";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { TechnologyTag } from "@/components/ui/technology-tag";
 import { PROJECT_DELIVERY_STATUSES } from "@/domain/content/types";
@@ -120,29 +122,56 @@ describe("TechnologyTag", () => {
   });
 });
 
-describe("SectionHeader", () => {
-  it("renders an h2 by default", () => {
-    render(<SectionHeader heading="Work Experience" />);
+/*
+ * V3 replaced SectionHeader with the three primitives below (V3 P7 removed it
+ * with its last user, the v2 projects index).
+ */
+describe("Eyebrow (UX3 4)", () => {
+  it("is a paragraph by default, and the section heading when it is the only title", () => {
+    const { rerender } = render(<Eyebrow>Career</Eyebrow>);
 
-    expect(screen.getByRole("heading", { level: 2, name: "Work Experience" })).toBeInTheDocument();
+    expect(screen.getByText("Career").tagName).toBe("P");
+
+    rerender(
+      <Eyebrow as="h2" id="profile-heading">
+        Profile
+      </Eyebrow>,
+    );
+
+    expect(screen.getByRole("heading", { level: 2, name: "Profile" })).toHaveAttribute(
+      "id",
+      "profile-heading",
+    );
+  });
+});
+
+describe("SectionTitle (UX3 4)", () => {
+  it("reads as one sentence, with the accent phrase inside the heading", () => {
+    render(<SectionTitle id="t" lead="Two disciplines, " accent="one way of working." />);
+
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Two disciplines, one way of working." }),
+    ).toBeInTheDocument();
+  });
+});
+
+describe("ArrowLink", () => {
+  it("names a repeated label by its destination, starting with the visible words", () => {
+    render(
+      <ArrowLink href="/projects/a" context="Alpha Project">
+        Read the case study
+      </ArrowLink>,
+    );
+
+    expect(
+      screen.getByRole("link", { name: "Read the case study: Alpha Project" }),
+    ).toHaveAttribute("href", "/projects/a");
   });
 
-  it("renders the requested level so hierarchy stays valid (NFAC-A11Y-003)", () => {
-    render(<SectionHeader heading="Challenges" level={3} />);
+  it("keeps the arrow out of the accessible name", () => {
+    render(<ArrowLink href="/backend">Backend</ArrowLink>);
 
-    expect(screen.getByRole("heading", { level: 3, name: "Challenges" })).toBeInTheDocument();
-  });
-
-  it("applies an anchor id for navigation targets (FAC-NAV-002)", () => {
-    render(<SectionHeader heading="Contact" id="contact" />);
-
-    expect(screen.getByRole("heading", { name: "Contact" })).toHaveAttribute("id", "contact");
-  });
-
-  it("omits the eyebrow and description when not supplied", () => {
-    const { container } = render(<SectionHeader heading="Skills" />);
-
-    expect(container.querySelectorAll("p")).toHaveLength(0);
+    expect(screen.getByRole("link", { name: "Backend" })).toBeInTheDocument();
   });
 });
 

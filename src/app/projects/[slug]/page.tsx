@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Section } from "@/components/layout/section";
+import { ProjectsBackLink } from "@/components/project/project-filter";
 import { ProjectNavigation } from "@/components/project/project-navigation";
 import { ProjectResponsibility } from "@/components/project/project-responsibility";
 import { ProjectSection } from "@/components/project/project-section";
@@ -18,7 +19,7 @@ import {
   getTechnologyNames,
 } from "@/domain/content/selectors";
 import { buildProjectMetadata } from "@/domain/metadata/build-metadata";
-import { ROUTES } from "@/lib/constants";
+import { DISCIPLINE_LABELS } from "@/lib/constants";
 
 /**
  * Only slugs returned by generateStaticParams may render. Any other slug
@@ -84,7 +85,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
        * previously the thirteenth of fifteen sections, which meant the single
        * most scannable fact on the page was also the least reachable.
        *
-       * Dark, matching the homepage hero: this is the page's opening statement.
+       * Dark, as every V3 page hero is (UX3 7.5): this is the page's opening
+       * statement. The eyebrow carries the disciplines and the type, and the
+       * back link returns to the projects index with its filter intact.
        *
        * What is deliberately NOT here: the problem and the outcome. PRD 34 asks
        * for both "in one or two sentences", and no such field exists — the
@@ -100,19 +103,18 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
        */}
       <Section surface="dark" className="pb-12">
         <header className="flex flex-col gap-6">
-          <a href={ROUTES.projects} className="text-meta text-accent hover:underline">
-            ← Back to Projects
-          </a>
+          <ProjectsBackLink className="w-fit text-meta font-semibold text-text-secondary hover:text-accent" />
 
           {/* UX 9.2: role and status appear near the top, not buried. */}
           <div className="flex flex-wrap items-center gap-3">
-            <span className="text-eyebrow font-medium tracking-wide text-text-muted uppercase">
-              {PROJECT_TYPE_LABEL[project.projectType]}
+            <span className="text-kicker font-semibold text-text-secondary uppercase">
+              {[
+                ...(project.disciplines ?? []).map((discipline) => DISCIPLINE_LABELS[discipline]),
+                PROJECT_TYPE_LABEL[project.projectType],
+                ...(project.period ? [project.period] : []),
+              ].join(" · ")}
             </span>
             <StatusBadge status={project.deliveryStatus} />
-            {project.period ? (
-              <span className="text-meta text-text-muted">{project.period}</span>
-            ) : null}
           </div>
 
           <h1 className="text-display-hero font-bold text-balance text-text-primary">
@@ -167,8 +169,8 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         </header>
       </Section>
 
-      {/* Layer B — the deep dive. UX 9.5 section order, unchanged. */}
-      <Section surface="light">
+      {/* Layer B — the deep dive. UX 9.5 section order, unchanged; on white (UX3 7.5). */}
+      <Section surface="white">
         <div className="flex flex-col gap-10">
           <ProjectSection heading="Context" body={project.context} />
           <ProjectSection heading="Problem" body={project.problem} />

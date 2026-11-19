@@ -12,7 +12,8 @@ release, `PORTFOLIO_UX_UI_SPEC_v2.0.md` describes the live site.
 | §6 Navigation: header, mode switch, Résumé menu; §7.7 Footer | Built in P4, with two differences noted in §6.1 and §6.2. The `/backend` and `/infrastructure` routes exist and show their intros |
 | §6.5 Focus and scroll on a mode change; §7 the persistent hero; §7.1 Overall | Built in P5, with the stacked career layout (§8.4 adds the pinned one in P8) and a labelled placeholder for the photograph (§7.6). §6.5 is amended: see the note there |
 | §7.2 Backend, §7.3 Infrastructure | Built in P6. See the as-built note under §7.3 |
-| §5, §7.4–§7.6, §8–§11 (layout, projects and case study, motion, responsive, accessibility, performance) | Not built yet; P7 onwards |
+| §7.4 Projects, §7.5 Case study | Built in P7. See the as-built note under §7.5 |
+| §5, §7.6, §8–§11 (layout, photograph, motion, responsive, accessibility, performance) | Not built yet; P8 onwards |
 
 **Will supersede:** `PORTFOLIO_UX_UI_SPEC_v2.0.md`, at the V3 release.
 
@@ -271,8 +272,8 @@ Each hero names the engineer, the focus and the next action (V3-CONT-003). Wordi
 - **Selected work.** Overviews are Draft until their titles are confirmed (OPEN-011), so for
   now the section lists the one case study with a discipline. Nothing is added to fill it.
 - **Explore further.** "Seven pieces of work, by discipline" was a count typed into the copy.
-  The count is now taken from what is published, and "by discipline" returns with the
-  projects filter in P7.
+  The count is now taken from what is published. "By discipline" returned in P7 with the
+  projects filter.
 
 ### 7.2 Backend (`/backend`)
 
@@ -343,6 +344,27 @@ differences:
   - The back link returns to the projects index with its filter intact.
 - **Not found.** An overview slug and an unknown slug return the same not-found result
   (DEC-047).
+
+**As built in P7 (§7.4, §7.5).** The pages follow the approved mockup, with these
+differences:
+
+- **Projects lead.** The mockup's first sentence, "Work from Zettabyte and one personal
+  project", stated counts that change as overviews are published. The lead is v2's
+  approved description of the case studies instead, with the mockup's sentence about
+  overviews added only when there are overviews to describe. The sanitization note stays
+  (UX 8.2).
+- **A filter with nothing published** says so ("Nothing is published under Infrastructure
+  yet.") rather than showing an empty list. Each filter change is announced to screen
+  readers.
+- **The way back.** The index links "← Overall" to the selected work, as the mockup does,
+  and the persistent hero now leaves a link to an anchor to the router (§6.5). The case
+  study's "← Projects" returns to the filtered view the visitor came from.
+- **Case-study sections** keep their names as headings, set as labels beside the text. The
+  mockup gave each section a new headline ("Two applications, one workflow."), which the
+  content does not have; writing them would be new claims, so it waits for Randi. The
+  mockup's Team fact is left out for the same reason: team work is a list, not a summary
+  line.
+- **v2's project card** and the shared section header, no longer used, were removed.
 
 ### 7.6 Photograph
 
