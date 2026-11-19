@@ -169,14 +169,26 @@ interface HeroBandProps {
 function HeroBand({ intro, showAction, showPhotograph, headingRef }: HeroBandProps) {
   const [first, second] = intro.headingLines;
 
+  /*
+   * The composition is the approved mockup's (UX3 7.6). The photograph is a
+   * layer behind the text, not a column beside it: on wide screens it fills
+   * the right 46% of the hero with its left edge masked into the dark, and the
+   * heading runs across that edge. A side-by-side column was tried first and
+   * left the name too little width — "WICAKSONO" broke at 1440 px.
+   *
+   * The hero fills the first screen below the header, with the text at the
+   * bottom, on all three modes.
+   */
   return (
     <section
       aria-labelledby={MODE_HERO_HEADING_ID}
       data-surface="dark"
-      className="bg-background text-text-primary"
+      className="relative isolate flex min-h-[calc(100svh-var(--spacing-header))] items-end overflow-hidden bg-background text-text-primary"
     >
-      <div className="mx-auto flex max-w-(--spacing-content) flex-col gap-10 px-5 py-14 sm:px-8 sm:py-20 md:flex-row md:items-end md:justify-between lg:px-12">
-        <div className="flex min-w-0 flex-col gap-6 md:max-w-[60%]">
+      {showPhotograph ? <PhotographPlaceholder /> : null}
+
+      <div className="relative mx-auto w-full max-w-(--spacing-content) px-5 pt-10 pb-[clamp(2.5rem,8vh,5.25rem)] sm:px-8 lg:px-12">
+        <div className="flex flex-col gap-5">
           <p className="text-kicker font-semibold text-text-secondary uppercase">{intro.eyebrow}</p>
           {/*
            * A space between the lines: they stack visually, but textContent
@@ -185,33 +197,39 @@ function HeroBand({ intro, showAction, showPhotograph, headingRef }: HeroBandPro
            *
            * Focusable from script only, for the mode change above. It is not
            * a control, so it takes no focus ring.
+           *
+           * The second line is one long word at display size — "APPLICATION.",
+           * "DEPLOYMENT." `wrap-anywhere` lets it break inside the word, and
+           * only when the word cannot fit on a line by itself; without it, 200%
+           * zoom pushed the word past the edge of the page (WCAG 1.4.4).
            */}
           <h1
             id={MODE_HERO_HEADING_ID}
             ref={headingRef}
             tabIndex={-1}
-            className="flex flex-col font-display uppercase focus:outline-none"
+            className="flex flex-col font-display uppercase wrap-anywhere focus:outline-none"
           >
             <span className="text-display-hero-line-1 font-medium">{first}</span>{" "}
             <span className="text-display-hero-line-2 font-bold text-accent">{second}</span>
           </h1>
           {intro.description ? (
-            <p className="max-w-(--spacing-prose) text-lead text-pretty text-text-secondary">
+            <p className="max-w-[44ch] text-lead text-pretty text-text-secondary">
               {intro.description}
             </p>
           ) : null}
           {showAction ? (
             <a
               href={`#${intro.action.targetId}`}
-              className="inline-flex min-h-11 w-fit items-center gap-2 rounded-full border border-border px-5 text-meta font-semibold text-text-primary hover:border-accent hover:text-accent"
+              className="group mt-2 inline-flex min-h-11 w-fit items-center gap-3.5 text-kicker font-semibold text-text-primary uppercase hover:text-accent"
             >
+              <span
+                aria-hidden="true"
+                className="h-px w-11 bg-border transition-colors group-hover:bg-accent"
+              />
               {intro.action.label}
-              <span aria-hidden="true">↓</span>
             </a>
           ) : null}
         </div>
-
-        {showPhotograph ? <PhotographPlaceholder /> : null}
       </div>
     </section>
   );
@@ -220,18 +238,25 @@ function HeroBand({ intro, showAction, showPhotograph, headingRef }: HeroBandPro
 /**
  * The Overall hero's photograph, until Randi supplies it (UX3 7.6, OPEN-010).
  *
- * Labelled as a placeholder rather than disguised as a photograph, so nobody
- * reviewing staging mistakes it for the finished design. Hidden from
- * assistive technology: it carries no information.
+ * Laid out as the photograph will be, and labelled as a placeholder rather
+ * than disguised as one, so nobody reviewing staging mistakes it for the
+ * finished design. Hidden from assistive technology: it carries no
+ * information. On phones it fills the top of the hero and fades downward; from
+ * 860 px it fills the right 46% and fades leftward. The label sits where the
+ * mask is fully opaque, so it is never faded.
  */
 function PhotographPlaceholder() {
   return (
     <div
       aria-hidden="true"
       data-photograph-placeholder=""
-      className="flex aspect-[4/5] w-full max-w-xs shrink-0 items-end rounded-2xl border border-dashed border-border bg-surface p-5 md:w-[34%]"
+      className="absolute inset-x-0 top-0 bottom-[40%] -z-10 mask-b-from-70% min-[860px]:inset-y-0 min-[860px]:right-0 min-[860px]:left-auto min-[860px]:w-[46%] min-[860px]:mask-b-from-100% min-[860px]:mask-l-from-78%"
     >
-      <p className="text-meta text-text-muted">Photograph · to be supplied</p>
+      <div className="flex h-full items-start bg-linear-to-b from-surface-muted to-surface px-6 pt-6 min-[860px]:items-end min-[860px]:pb-7 min-[860px]:pl-[30%]">
+        <p className="text-kicker font-semibold text-text-secondary uppercase">
+          Photograph · to be supplied
+        </p>
+      </div>
     </div>
   );
 }
