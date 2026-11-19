@@ -1,6 +1,7 @@
 import { careerChapters } from "@/content/career";
 import { contactChannels, externalProfiles } from "@/content/contact";
 import { certifications, education, languages } from "@/content/credentials";
+import { disciplineIntros, workAreas } from "@/content/discipline-pages";
 import { experience } from "@/content/experience";
 import { mediaAssets } from "@/content/media";
 import { modeIntros } from "@/content/modes";
@@ -40,4 +41,6 @@ export const contentSet: ContentSet = {
   engineeringPractices,
   toolkitGroups,
   projectOverviews,
+  disciplineIntros,
+  workAreas,
 };

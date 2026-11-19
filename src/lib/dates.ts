@@ -56,3 +56,26 @@ export function completedYearsSince(isoDate: string, now: Date = new Date()): nu
 
   return Math.max(0, Math.floor(months / 12));
 }
+
+const LONG_MONTH_NAMES = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+] as const;
+
+/** "2026-08-01" → "August 2026", for running text. An unparseable value is returned unchanged. */
+export function formatMonthYearLong(isoDate: string): string {
+  const [year, month] = isoDate.split("-");
+  const name = month ? LONG_MONTH_NAMES[Number(month) - 1] : undefined;
+
+  return year && name ? `${name} ${year}` : isoDate;
+}

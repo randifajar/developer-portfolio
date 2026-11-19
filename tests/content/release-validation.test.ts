@@ -99,6 +99,8 @@ function releaseReadyContent(): ContentSet {
     engineeringPractices: contentSet.engineeringPractices,
     toolkitGroups: contentSet.toolkitGroups,
     projectOverviews: contentSet.projectOverviews,
+    disciplineIntros: contentSet.disciplineIntros,
+    workAreas: contentSet.workAreas,
   };
 }
 

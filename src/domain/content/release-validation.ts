@@ -313,6 +313,8 @@ export function validateRelease(
     ["Engineering Practice", content.engineeringPractices.filter(isPubliclyEligible)],
     ["Toolkit Group", content.toolkitGroups.filter(isPubliclyEligible)],
     ["Project Overview", content.projectOverviews.filter(isPubliclyEligible)],
+    ["Discipline Intro", content.disciplineIntros.filter(isPubliclyEligible)],
+    ["Work Area", content.workAreas.filter(isPubliclyEligible)],
   ];
 
   for (const [contentType, records] of publiclyVisible) {

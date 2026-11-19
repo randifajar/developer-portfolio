@@ -102,9 +102,9 @@ const subscribeToNothing = () => () => {};
 interface ModeHeroProps {
   readonly intros: readonly ModeHeroIntro[];
   /**
-   * Modes whose page already contains the action's target. The others hide
-   * the action rather than offer a link that scrolls nowhere; the Backend and
-   * Infrastructure work sections arrive in V3 P6.
+   * Modes whose page renders the action's target. The others hide the action
+   * rather than offer a link that scrolls nowhere. The layout works this out
+   * from the content.
    */
   readonly actionModes: readonly Mode[];
   /** The page below the hero. */

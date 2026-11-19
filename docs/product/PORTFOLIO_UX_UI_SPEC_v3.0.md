@@ -11,7 +11,8 @@ release, `PORTFOLIO_UX_UI_SPEC_v2.0.md` describes the live site.
 | §2 Colour, §3 Surfaces, §4 Typography (tokens and type steps) | Built in P3. The v2 pages on `staging` already use them |
 | §6 Navigation: header, mode switch, Résumé menu; §7.7 Footer | Built in P4, with two differences noted in §6.1 and §6.2. The `/backend` and `/infrastructure` routes exist and show their intros |
 | §6.5 Focus and scroll on a mode change; §7 the persistent hero; §7.1 Overall | Built in P5, with the stacked career layout (§8.4 adds the pinned one in P8) and a labelled placeholder for the photograph (§7.6). §6.5 is amended: see the note there |
-| §5, §7.2–§7.6, §8–§11 (layout, the other pages, motion, responsive, accessibility, performance) | Not built yet; P6 onwards |
+| §7.2 Backend, §7.3 Infrastructure | Built in P6. See the as-built note under §7.3 |
+| §5, §7.4–§7.6, §8–§11 (layout, projects and case study, motion, responsive, accessibility, performance) | Not built yet; P7 onwards |
 
 **Will supersede:** `PORTFOLIO_UX_UI_SPEC_v2.0.md`, at the V3 release.
 
@@ -300,6 +301,24 @@ replaced for that reason (§12).
 How much infrastructure detail is public is Randi's decision (V3 plan, I3). Until he
 makes it, copy names the technology categories (Jenkins, Docker, Linux, AWS) but not how
 the employer's systems are wired together.
+
+**As built in P6 (§7.2, §7.3).** The pages follow the approved mockup, with these
+differences:
+
+- **Infrastructure detail (DEC-064).** The mockup's infrastructure blocks named the proxy
+  in front of hosted services and the AWS services of the email-event chain. They read as
+  the infrastructure experience record does: "reverse proxies" and "AWS email-event
+  delivery". A test holds the text to an approved list.
+- **Tense.** The infrastructure role is current, so its ongoing work is in the present
+  tense, as its experience record has it. The mockup used the past tense.
+- **Backend experience.** The mockup listed each role on one line. Each role now shows
+  its summary, its responsibilities and contributions as two lists, and its technologies,
+  which is what FAC-EXP-001 asks of an entry.
+- **Infrastructure selected work** is omitted until the overviews are published
+  (OPEN-011), because no infrastructure case study exists.
+- **Content source.** The pages' opening paragraphs and work areas are content, in
+  `src/content/discipline-pages.ts`, and each work area cites the roles it restates.
+  Section headings stay in the components, as elsewhere.
 
 ### 7.4 Projects (`/projects`)
 

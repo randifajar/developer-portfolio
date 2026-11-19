@@ -3,6 +3,7 @@ import {
   careerChapterSchema,
   certificationSchema,
   contactChannelSchema,
+  disciplineIntroSchema,
   educationSchema,
   engineeringPracticeSchema,
   externalProfileSchema,
@@ -16,6 +17,7 @@ import {
   siteConfigSchema,
   technicalSkillSchema,
   toolkitGroupSchema,
+  workAreaSchema,
   workExperienceSchema,
 } from "@/domain/content/schemas";
 
@@ -119,3 +121,5 @@ export const defineEngineeringPractice = createDefiner(
 );
 export const defineToolkitGroup = createDefiner("Toolkit Group", toolkitGroupSchema);
 export const defineProjectOverview = createDefiner("Project Overview", projectOverviewSchema);
+export const defineDisciplineIntro = createDefiner("Discipline Intro", disciplineIntroSchema);
+export const defineWorkArea = createDefiner("Work Area", workAreaSchema);
