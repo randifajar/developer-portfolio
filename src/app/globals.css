@@ -472,6 +472,42 @@
 }
 
 /*
+ * The pinned career sequence (UX3 8.4). CareerJourney sets data-pinned only on
+ * wide screens with motion allowed, after hydration; everywhere else these
+ * rules never match and the chapters stay a plain stacked list.
+ *
+ * The chapters are stacked on one stage and only the active one shows. The
+ * others are transparent and inert to the pointer, but stay in the document,
+ * so a screen reader reads every chapter and nothing exists only here.
+ */
+[data-pinned] [data-career-list] {
+  position: relative;
+  height: calc(100svh - var(--spacing-header) - 9rem);
+}
+
+[data-pinned] [data-chapter] {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  border-top-width: 0;
+  padding-block: 0;
+  transition:
+    opacity 400ms var(--motion-ease),
+    transform 500ms var(--motion-ease);
+}
+
+[data-pinned] [data-chapter] > article {
+  width: 100%;
+}
+
+[data-pinned] [data-chapter]:not([data-active]) {
+  opacity: 0;
+  transform: translateY(1.5rem);
+  pointer-events: none;
+}
+
+/*
  * Reduced motion.
  *
  * NFAC-A11Y-006 requires every animation to be non-essential and to respect the

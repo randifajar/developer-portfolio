@@ -14,7 +14,8 @@ release, `PORTFOLIO_UX_UI_SPEC_v2.0.md` describes the live site.
 | §7.2 Backend, §7.3 Infrastructure | Built in P6. See the as-built note under §7.3 |
 | §7.4 Projects, §7.5 Case study | Built in P7. See the as-built note under §7.5 |
 | §8.1–§8.3, §8.5, §8.6 (entrance, mode change, pointer light, reveal, reduced motion) | Built in P8. See the as-built note under §8.6 |
-| §5, §7.6, §8.4, §9–§11 (layout, photograph, career pinning, responsive, accessibility, performance) | Not built yet; P8b onwards |
+| §8.4 Career sequence | Built in P8. See the as-built note under §8.6 |
+| §5, §7.6, §9–§11 (layout, photograph, responsive, accessibility, performance) | P9 and P10 |
 
 **Will supersede:** `PORTFOLIO_UX_UI_SPEC_v2.0.md`, at the V3 release.
 
@@ -266,10 +267,11 @@ Each hero names the engineer, the focus and the next action (V3-CONT-003). Wordi
 - **Profile.** The statement is the approved two paragraphs (OPEN-009). The mockup's third
   paragraph, on AI tools, is not repeated here: AI-assisted practice is stated in the
   engineering approach (SUP-014).
-- **Career.** The stacked layout follows the mockup's phone layout, which lists each
-  chapter's roles and nothing else. The desktop panel's extra line, "Not an SRE title · A
-  delivery and infrastructure role", belongs to the pinned layout and is decided with it in
-  P8. Nothing on the site calls the role SRE (§7.3).
+- **Career.** Each chapter lists its roles and nothing else, in the stacked layout and the
+  pinned one alike (P8 kept the two to the same content, so nothing exists only when
+  pinned). The mockup's desktop panel added "Not an SRE title · A delivery and
+  infrastructure role"; that line is not shown, and the Infrastructure page's Scope fact
+  says the same (§7.3). Nothing on the site calls the role SRE.
 - **Selected work.** Overviews are Draft until their titles are confirmed (OPEN-011), so for
   now the section lists the one case study with a discipline. Nothing is added to fill it.
 - **Explore further.** "Seven pieces of work, by discipline" was a count typed into the copy.
@@ -484,6 +486,14 @@ navigation (V3-MOT-006).
   entering a case study has no transition.
 
 Without the Web Animations API the copy swaps at once, as under reduced motion.
+
+**The career sequence (§8.4), as built.** `CareerJourney` pins the stacked chapters on a
+track `70svh` per chapter (210 svh for three), from 900 px, with motion allowed, after
+hydration. The scroll position chooses the chapter; the arrows scroll to one; a counter
+reads "02 / 03" and announces the year. Inactive chapters are transparent and inert to the
+pointer but stay in the document, and focus reaching one scrolls to it. Two differences:
+the year changes with its chapter rather than rolling on a strip of its own, and the year
+tabs for phones were not built; on a phone the stacked chapters are a short scroll.
 
 ---
 
