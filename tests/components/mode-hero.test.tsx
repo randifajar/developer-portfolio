@@ -308,16 +308,20 @@ describe("ModeHero mode change with motion (UX3 8.2)", () => {
     ).toBe(true);
   });
 
-  it("settles on the last of several quick changes", async () => {
+  it("settles on the last of several quick changes, even if an older exit ends last", async () => {
     const { rerender } = hydrateHero();
 
     navigation.pathname = "/backend";
     rerender(hero());
+    const olderExit = [...created];
     navigation.pathname = "/infrastructure";
     rerender(hero());
+    const newerExit = created.filter((animation) => !olderExit.includes(animation));
 
-    await finishExits();
-    await finishExits();
+    // The newer change's exit ends first, the older one's after it. Only the
+    // ticket stops the older change from swapping its copy back in.
+    await act(async () => newerExit.forEach((animation) => animation.finish()));
+    await act(async () => olderExit.forEach((animation) => animation.finish()));
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveAccessibleName("Beyond Deployment.");
   });
