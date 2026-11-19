@@ -211,7 +211,7 @@ describe("the 2026-11-19 profile decisions hold", () => {
  * classifications and the workflow wording. Neither required new copy — the
  * review was what was missing, not the content.
  */
-describe("skills and AI practices are public", () => {
+describe("skills and the AI-assisted practice are public", () => {
   it("exposes every skill, grouped", () => {
     const groups = getPublishedSkillGroups();
 

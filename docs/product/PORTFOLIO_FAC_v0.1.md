@@ -760,10 +760,11 @@ All criteria in this document are `P0` or `P1`.
   - Review process
   - Testing and verification
 
-> **To be superseded in V3 (SUP-014).** V3 has no AI section; AI-assisted
-> practice is stated in the engineering approach ("Own the AI's output") and
-> in a project overview. The section left `staging` with the v2 homepage in
-> V3 P5; the records, schema, and release rule follow in P5b.
+> **Superseded in V3 (SUP-014).** V3 has no AI section; AI-assisted practice
+> is stated in the engineering approach ("Own the AI's output") and in a
+> project overview. The section left `staging` with the v2 homepage in V3 P5,
+> and its records, schema, and release rule in P5b. On the live site until the
+> V3 release.
 
 ---
 
@@ -777,6 +778,11 @@ All criteria in this document are `P0` or `P1`.
 **Then**
 - The content does not present AI as the owner of final technical decisions.
 - Randi remains explicitly responsible for review and validation.
+
+> **Still in force in V3.** With the AI records gone (V3 P5b), the schema no
+> longer enforces the pairing; a test does instead, on the engineering practice
+> that states it: "AI tools speed up analysis and testing; the decisions and
+> checks stay mine." (`tests/content/selectors-real-content.test.ts`).
 
 ---
 

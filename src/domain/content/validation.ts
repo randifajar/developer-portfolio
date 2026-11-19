@@ -435,9 +435,9 @@ export function validateContentSet(content: ContentSet): ValidationIssue[] {
   }
 
   /* Rule 17 — at most one Published intro per mode (UX3 7). --------------- */
-  // "At most", like Rule 6: a content set without V3 intros is valid while the
-  // v2 site is live. Requiring exactly one belongs to release validation, once
-  // the mode pages that render them exist.
+  // "At most", like Rule 6, so content can be drafted a mode at a time.
+  // Requiring one for every mode is release validation's job
+  // (published-mode-intros-required, added in V3 P5b with the mode pages).
   for (const mode of MODES) {
     const published = content.modeIntros.filter(
       (intro) => intro.mode === mode && intro.publicationStatus === "published",
