@@ -15,7 +15,11 @@ test.beforeEach(async ({ page }) => {
 test.describe("homepage structure", () => {
   test("responds and identifies the site", async ({ page }) => {
     await expect(page.getByRole("banner")).toBeVisible();
-    await expect(page.getByRole("link", { name: "Randi Fajar Wicaksono" }).first()).toBeVisible();
+    // V3: the header holds only the modes and the Résumé menu (UX3 6.1), so
+    // the name is the page heading here and in the footer on every page
+    // (FAC-NAV-004), no longer a header link.
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Randi Fajar Wicaksono");
+    await expect(page.getByRole("contentinfo")).toContainText("Randi Fajar Wicaksono");
   });
 
   test("declares the document language (NFAC-A11Y-003)", async ({ page }) => {

@@ -66,6 +66,14 @@ export function ResumeMenu({ items }: { readonly items: readonly ResumeMenuItem[
       <button
         type="button"
         popoverTarget={MENU_ID}
+        /*
+         * WebKit does not focus a button on click, so after a mouse open the
+         * popover would record the page body as the element to restore, and
+         * Escape would leave focus there. Focusing the button first makes it
+         * the restore target in every engine; the native behaviour does the
+         * rest. Found by the end-to-end suite in WebKit.
+         */
+        onClick={(event) => event.currentTarget.focus()}
         className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border px-4 text-meta font-semibold text-text-primary hover:border-accent hover:text-accent"
       >
         Résumé
