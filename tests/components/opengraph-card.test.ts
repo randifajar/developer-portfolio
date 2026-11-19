@@ -33,7 +33,6 @@ const baseProfile = {
   headline: "A headline.",
   summary: "A summary.",
   location: "Yogyakarta, Indonesia",
-  targetRoles: ["Backend Developer"],
   publicationStatus: "published",
   updatedAt: "2026-08-11",
 };

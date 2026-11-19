@@ -15,7 +15,6 @@ const profile = {
   headline: "Building reliable backend systems and integrations.",
   summary: "A **real** professional summary.",
   location: "Yogyakarta, Indonesia",
-  targetRoles: ["Backend Developer", "Software Engineer"],
   photoAssetId: "media-photo",
   publicationStatus: "published",
   updatedAt: "2026-08-04",
@@ -149,10 +148,12 @@ describe("About (FAC-PROFILE-003)", () => {
     expect(screen.getByText("real").tagName).toBe("STRONG");
   });
 
-  it("lists the target roles", () => {
+  // SUP-017: the target-roles list was removed on 2026-11-19, with its field.
+  it("lists no target roles", () => {
     render(<AboutSection />);
 
-    expect(screen.getByText("Backend Developer")).toBeInTheDocument();
+    expect(screen.queryByText(/target roles/i)).toBeNull();
+    expect(screen.queryByRole("list")).toBeNull();
   });
 });
 

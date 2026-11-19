@@ -69,7 +69,7 @@ All criteria in this document are `P0` or `P1`.
   - `Randi Fajar Wicaksono`
   - The approved professional title
   - The approved headline
-  - `Yogyakarta, Indonesia`
+  - `Sleman, Yogyakarta, Indonesia`
 - The page does not state availability.
 
 > **Amended in v1.1 (Issue 3).** This bullet read "Remote-work availability".
@@ -82,6 +82,10 @@ All criteria in this document are `P0` or `P1`.
 > statement to be removed altogether. The criterion now forbids it instead of
 > requiring it, and the `availabilityStatement` field is gone from the schema,
 > so it cannot return without a schema change.
+>
+> **Location amended on 2026-11-19 (SUP-015).** "Sleman, Yogyakarta, Indonesia",
+> as in the experience records and on both résumés; it was `Yogyakarta,
+> Indonesia` (DEC-013).
 
 **Acceptance evidence**
 - Homepage screenshot on desktop
