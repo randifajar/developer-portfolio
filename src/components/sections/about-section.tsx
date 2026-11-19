@@ -13,6 +13,9 @@ import { SECTION_IDS } from "@/lib/constants";
  * The summary is rendered through MarkdownContent because it is long-form
  * prose that may use emphasis and lists, and that component has raw HTML
  * disabled.
+ *
+ * A "Target roles" list used to follow the summary. It was removed on
+ * 2026-11-19 at Randi's request, together with the profile field (SUP-017).
  */
 export function AboutSection() {
   const profile = getPublishedProfile();
@@ -38,24 +41,6 @@ export function AboutSection() {
 
         <div className="flex flex-col gap-6 md:w-2/3">
           <MarkdownContent>{profile.summary}</MarkdownContent>
-
-          {profile.targetRoles.length > 0 ? (
-            <div className="flex flex-col gap-2">
-              <h3 className="text-meta font-semibold tracking-wide text-text-muted uppercase">
-                Target roles
-              </h3>
-              <ul className="flex flex-wrap gap-2">
-                {profile.targetRoles.map((role) => (
-                  <li
-                    key={role}
-                    className="rounded-(--radius-badge) border border-border bg-surface px-3 py-1 text-meta text-text-secondary"
-                  >
-                    {role}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
         </div>
       </div>
     </Section>

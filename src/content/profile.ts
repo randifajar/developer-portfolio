@@ -88,25 +88,23 @@ export const profile = defineProfile({
     "validation, technical decisions, code review, regression checking, security, and final " +
     "verification.",
 
-  // Confirmed: DEC-013.
-  location: "Yogyakarta, Indonesia",
+  // SUP-015, 2026-11-19: as in the experience records and on both résumés.
+  // DEC-013 had "Yogyakarta, Indonesia".
+  location: "Sleman, Yogyakarta, Indonesia",
 
   // There is no availability field any more. "Open to opportunities" (SUP-004,
   // renamed availabilityStatement in Q10) was removed on 2026-11-18 at Randi's
   // request, together with the field, so that it cannot quietly return
   // (SUP-011, FAC-PROFILE-001 amended).
-
-  // DEC-004 listed Full-Stack Developer second. Removed in v1.1 for the same
-  // reason as the title: it competed with the backend-first identity.
   //
-  // Unchanged on 2026-11-18 although the title moved: target roles are Randi's
-  // job-search intent, which nobody else can state. Open question for him.
-  targetRoles: ["Backend Developer", "Backend Engineer", "Software Engineer"],
+  // Nor is there a target-roles field. The list (SUP-003) was removed on
+  // 2026-11-19 at Randi's request, with the field, for the same reason
+  // (SUP-017).
 
   // DEC-019. The image was supplied on 2026-08-08, so the asset it points at
   // is Published too and the Hero renders with a photograph.
   photoAssetId: "media-profile-photograph",
 
   publicationStatus: "published",
-  updatedAt: "2026-11-18",
+  updatedAt: "2026-11-19",
 });

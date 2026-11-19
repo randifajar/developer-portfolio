@@ -113,6 +113,7 @@ implements a row cites it.
 | DEC-061 | Type scale (V3) | The tokenised `clamp()` scale gains the display steps the V3 hero needs; raw Tailwind size utilities stay forbidden. Extends DEC-051. | Confirmed | V3 plan D8 |
 | DEC-062 | Motion (V3) | **A mode change animates the persistent hero** with the Web Animations API: exit about 220 ms, settled about 0.75 s after the click, and a later click cancels an earlier sequence. The career sequence pins only at 900 px and wider with motion allowed; section reveals are CSS scroll-driven animations; the pointer light runs only on a fine pointer. Under reduced motion all of it is off and every function remains. Extends DEC-053. | Confirmed | Approved V3.1 mockup, 2026-11-18 |
 | DEC-063 | Company name | **"Zettabyte Pte Ltd"**, as on Randi's résumés. The site's "ZettaByte" is corrected in the V3 content phase. | Confirmed | Randi, 2026-11-19 (V3 plan D12) |
+| DEC-064 | Infrastructure detail | **Tools are named; how the employer's systems are wired is not.** Jenkins, EC2, Ubuntu, Docker Buildx and Nginx appear as on the résumé; the proxy layer in front of hosted services and the AWS email-event service chain are described generically. This is the level P0 shipped, now the rule for the whole site. | Confirmed | Randi, 2026-11-19 (V3 plan I3) |
 
 ---
 
@@ -132,8 +133,9 @@ the two easiest to overlook in a column of seven identical values.
 | OPEN-005 | Final professional photograph | **Resolved** 2026-08-08 — supplied, converted to WebP at 400×400, live |
 | OPEN-006 | Safe project visuals | Open Decision — no diagram sanitised yet, which is also why Q9's schema field was not added |
 | OPEN-007 | Custom domain at launch | Open Decision — still the Vercel subdomain |
-| OPEN-008 | Docker, Linux and Jenkins classification (V3 plan D9) | Open Decision — SUP-008 (Docker as currently-learning) stands until Randi decides; Jenkins, Linux and AWS have no skill records until then |
-| OPEN-009 | Proposed V3 wording: profile statement, engineering headline, transition sentence (V3 plan I4) | Open Decision — proposed in the V3.1 mockup; stays Draft until Randi approves it |
+| OPEN-008 | Docker, Linux and Jenkins classification (V3 plan D9) | **Resolved** 2026-11-19 — all four, with AWS, are professional experience (SUP-018) |
+| OPEN-009 | Proposed V3 wording: profile statement, engineering headline, transition sentence (V3 plan I4) | **Resolved** 2026-11-19 — Randi approved all three as proposed in the V3.1 mockup |
+| OPEN-011 | Titles of the six project overviews (DEC-060) | Open Decision — working titles. Randi, 2026-11-19: "all in here is draft, we can revise it later". The overviews stay Draft until he confirms or renames them |
 | OPEN-010 | V3 hero photograph (V3 plan I1) | Open Decision — the 400×400 portrait from OPEN-005 is too small for the V3 hero; a labelled placeholder stands in on `staging`, and release validation rejects it |
 
 ---
@@ -146,6 +148,7 @@ the two easiest to overlook in a column of seven identical values.
 | SUP-002 | DEC-003 — positioning as Backend-Focused Full-Stack Developer. | **Backend Developer.** Randi's positioning is now consistently Backend Developer across LinkedIn, CV, and applications; the portfolio was the last surface still saying otherwise. Full-stack capability remains stated where it is truthful — the case studies and the technologies list — but no longer competes with the primary identity. v1.1 Issue 2. |
 | SUP-003 | DEC-004 — target roles including Full-Stack Developer. | **Backend Developer, Backend Engineer, Software Engineer.** Follows SUP-002 for the same reason. v1.1 Issue 2. |
 | SUP-004 | Availability stated as "Open to remote opportunities". | **"Open to opportunities."** The remote-only wording excluded hybrid and onsite roles Randi would consider, and no onsite, hybrid, or relocation availability has been confirmed — so the neutral form states openness without inventing a form of it. v1.1 Issue 3. The `remoteAvailability` field name was left unchanged at the time; renaming it would have touched schema, selectors, components, and tests for no reader-visible gain, and was assigned to v2. **Renamed to `availabilityStatement` on 2026-08-25 (Q10)** — v2 deferred it a second time, and a field whose name says *remote* while its value does not is a small untruth in a repository built to argue against those. Reader-visible output is unchanged. |
+| SUP-018 | SUP-008 — Docker kept as currently-learning although used professionally. | **Docker, Linux, Jenkins and AWS are professional experience.** Randi, 2026-11-19 (V3 plan D9), asked with the August reasoning in front of him: his infrastructure role now centres on them. Jenkins, Linux and AWS gained skill records the same day. |
 | SUP-017 | SUP-003 — target roles Backend Developer, Backend Engineer, Software Engineer. | **No target-roles list.** Removed at Randi's request on 2026-11-19, together with the field, in the V3 content phase. |
 | SUP-016 | DEC-049 — three surfaces, `light`, `neutral`, `dark`. | **Five:** `dark`, `navy`, `light`, `white`, and one `blue` accent section, from the approved V3.1 mockup. Takes effect with the V3 release. |
 | SUP-015 | DEC-013 — location "Yogyakarta, Indonesia". | **"Sleman, Yogyakarta, Indonesia"**, as in the experience records and on both résumés. V3 plan D11; applied in the V3 content phase. |

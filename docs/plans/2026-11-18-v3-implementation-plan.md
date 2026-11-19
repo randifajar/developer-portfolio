@@ -5,7 +5,7 @@
 | Field | Value |
 |---|---|
 | Date | 2026-11-18 |
-| Status | **Approved 2026-11-18** ("approved, use your recommendations"). Randi also asked for a pre-production environment, so the integration branch is `staging` (D5, section 6). On 2026-11-19 he settled D12 (Zettabyte) and asked for the target-roles list to be removed. D9 is still open. P0 is merged into `staging` (#100, #99); P1 is this document's pull request |
+| Status | **Approved 2026-11-18** ("approved, use your recommendations"). Randi also asked for a pre-production environment, so the integration branch is `staging` (D5, section 6). On 2026-11-19 he settled D12 (Zettabyte), D9 (professional experience), the infrastructure detail level (DEC-064) and the proposed wording (approved), and asked for the target-roles list to be removed. P0 and P1 are merged into `staging` (#100, #99, #101). The overview titles are working titles (OPEN-011) |
 | Approved design | V3.1 review mockup, approved 2026-11-18. It stays on Randi's machine by his decision (2026-11-19); `docs/product/PORTFOLIO_UX_UI_SPEC_v3.0.md` records the design |
 | Inputs | V3 master requirements v1.0, the V3.1 improvement brief, the backend and infrastructure résumés, the repository at `25a31d5` |
 | Decision and merge authority | Randi Fajar Wicaksono, per pull request |
@@ -289,7 +289,7 @@ explicit yes.
 | D6 | Résumé publication | Publish both only after two things: (a) the backend résumé shows Backend Developer ending Jul 2026, and (b) Randi approves the phone number being public or supplies versions without it | Changes FAC-RESUME-004 |
 | D7 | Project overviews | Six résumé projects as overviews under the general titles. None becomes a case study without its own approval | New |
 | D8 | Display typeface | Geist only (the mockup default) | Supersedes DEC-050; extends DEC-051 |
-| D9 | Skill classification | **Randi's call; no recommendation. Still open (OPEN-008).** SUP-008 deliberately kept Docker as currently-learning (confirmed 2026-08-16), although it was used professionally. The infrastructure role now puts Docker, Linux and Jenkins at the centre of the résumé. Keep that line, or reclassify? | Keeps or supersedes SUP-008 |
+| D9 | Skill classification | **Decided 2026-11-19: Docker, Linux, Jenkins and AWS are professional experience.** SUP-008 had deliberately kept Docker as currently-learning (confirmed 2026-08-16), although it was used professionally; the infrastructure role now centres on them | Supersedes SUP-008 (SUP-018) |
 | D10 | AI section | Retire it. AI-assisted practice appears in the engineering approach and in the AI-assisted development project | Retires SUP-007 and SUP-009, which both govern the AI section |
 | D11 | Location wording | "Sleman, Yogyakarta, Indonesia", as in the experience records and on both résumés | Supersedes DEC-013 ("Yogyakarta, Indonesia") |
 | D12 | Company name spelling | **Decided 2026-11-19: "Zettabyte Pte Ltd"**, as on his résumés. The site's "ZettaByte" is corrected in the content phase | DEC-063 |
@@ -303,8 +303,8 @@ explicit yes.
 |---|---|---|---|
 | I1 | The photograph | Release (P11) | A labelled placeholder on the integration branch; release validation rejects it |
 | I2 | An updated backend résumé (role dates) and the publication decision (D6) | Live résumé links | The Résumé menu lists only approved variants |
-| I3 | Approval of the general project titles and of the level of AWS and Jenkins detail | Publishing the overviews | Overviews stay Draft |
-| I4 | Approval of the proposed wording: profile statement, engineering headline, transition sentence | Publishing those sections | Draft |
+| I3 | Approval of the general project titles and of the level of AWS and Jenkins detail | Publishing the overviews | **Detail level decided 2026-11-19** (DEC-064). The titles are working titles (OPEN-011), so the overviews stay Draft |
+| I4 | Approval of the proposed wording: profile statement, engineering headline, transition sentence | Publishing those sections | **Approved 2026-11-19** |
 | I5 | Optional: for each infrastructure item, what the team owned and how the result was verified | Richer infrastructure copy | Résumé wording only |
 | I6 | Optional: learning topics actually being studied | A learning section | Section omitted |
 

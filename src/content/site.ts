@@ -5,8 +5,8 @@ import { defineSiteConfig } from "@/domain/content/define";
  *
  * The public contact values here are Confirmed decisions, not placeholders:
  * DEC-014 (email), DEC-015 (GitHub), DEC-016 (LinkedIn), DEC-012 (public name),
- * DEC-013 (location). NFAC-PRIV-002 permits exactly this email to appear
- * publicly.
+ * SUP-015 (location, which replaced DEC-013). NFAC-PRIV-002 permits exactly
+ * this email to appear publicly.
  */
 export const siteConfig = defineSiteConfig({
   name: "Randi Fajar Wicaksono",
@@ -14,7 +14,8 @@ export const siteConfig = defineSiteConfig({
   defaultTitle: "Randi Fajar Wicaksono — Software Engineer · Backend & Infrastructure",
   titleTemplate: "%s — Randi Fajar Wicaksono",
   defaultDescription:
-    "Software engineer across backend and infrastructure, based in Yogyakarta, Indonesia. " +
+    "Software engineer across backend and infrastructure, based in Sleman, Yogyakarta, " +
+    "Indonesia. " +
     "Node.js, GraphQL, and MongoDB services, system integration, Jenkins CI/CD, and " +
     "AI-assisted development with human accountability.",
   ownerName: "Randi Fajar Wicaksono",

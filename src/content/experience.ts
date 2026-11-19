@@ -30,17 +30,21 @@ import { defineExperience } from "@/domain/content/define";
  * responsibilities and contribution are his infrastructure resume's bullets.
  * Two pieces of system architecture are generalized ("reverse proxies" for the
  * named proxies, "AWS email-event delivery" for the named AWS services), in
- * keeping with the sanitized class below; how much infrastructure detail to
- * publish is still his decision (V3 plan, I3). The new role's summary is the
- * infrastructure description from the V3.1 mockup he approved. Company
- * spelling is unchanged pending his decision (D12): the resume writes
- * "Zettabyte".
+ * keeping with the sanitized class below. On 2026-11-19 Randi set that as the
+ * level for the whole site (DEC-064): tools are named, and how the employer's
+ * systems are wired is not. The new role's summary is the infrastructure
+ * description from the V3.1 mockup he approved.
+ *
+ * 2026-11-19 (V3 plan, P2). The company is spelled "Zettabyte Pte Ltd", as on
+ * his résumés (DEC-063); the site said "ZettaByte". The backend role gained the
+ * audit-log contribution, verbatim from his infrastructure résumé, so the site
+ * and the résumé list the same work (NFAC-CONTENT-005).
  */
 export const experience = [
   defineExperience({
     id: "experience-zettabyte-ai-delivery-engineer",
 
-    companyName: "ZettaByte Pte Ltd",
+    companyName: "Zettabyte Pte Ltd",
     position: "AI Delivery Engineer, Infrastructure Team",
 
     startDate: "2026-08-01",
@@ -62,10 +66,10 @@ export const experience = [
       "Migrated Jenkins build execution to an Ubuntu-based AWS EC2 agent, configuring Docker Buildx, QEMU, AWS CLI, and headless Chrome. Resolved WebSocket connectivity, Nginx reverse-proxy, file-permission, and environment PATH issues.",
     ],
 
-    // Only skills that already exist. Jenkins, Linux, and AWS have no skill
-    // records yet: adding them means classifying them, which is Randi's call
-    // (V3 plan, D9). Git is evidenced by the branch-based deployment workflows.
-    technologyIds: ["skill-docker", "skill-git"],
+    // Jenkins, Linux, and AWS gained skill records on 2026-11-19, when Randi
+    // classified them, with Docker, as professional experience (SUP-018). Git is
+    // evidenced by the branch-based deployment workflows.
+    technologyIds: ["skill-jenkins", "skill-docker", "skill-linux", "skill-aws", "skill-git"],
 
     confidentialityClass: "sanitized",
     publicationStatus: "published",
@@ -75,7 +79,7 @@ export const experience = [
   defineExperience({
     id: "experience-zettabyte-backend-developer",
 
-    companyName: "ZettaByte Pte Ltd",
+    companyName: "Zettabyte Pte Ltd",
     position: "Backend Developer",
 
     startDate: "2025-04-01",
@@ -104,6 +108,7 @@ export const experience = [
     contributions: [
       "Built GraphQL queries and reusable MongoDB aggregation pipelines for dynamic fields, filtering, sorting, pagination, and Excel export while reducing duplicated retrieval logic.",
       "Contributed to email, notification, Excel, PDF, and document-processing integrations, including background jobs, delivery-status handling, environment configuration, and cross-service troubleshooting.",
+      "Built a Node.js audit-log service using Redis and BullMQ to record actors, business actions, affected entities, request context, and failures for traceability.",
     ],
 
     technologyIds: [
@@ -124,7 +129,7 @@ export const experience = [
   defineExperience({
     id: "experience-zettabyte-backend-developer-contract",
 
-    companyName: "ZettaByte Pte Ltd",
+    companyName: "Zettabyte Pte Ltd",
     position: "Backend Developer, Contract",
 
     startDate: "2024-11-01",
@@ -167,7 +172,7 @@ export const experience = [
   defineExperience({
     id: "experience-zettabyte-backend-developer-intern",
 
-    companyName: "ZettaByte Pte Ltd",
+    companyName: "Zettabyte Pte Ltd",
     position: "Backend Developer Intern",
 
     startDate: "2024-07-01",

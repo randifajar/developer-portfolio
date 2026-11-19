@@ -151,6 +151,17 @@ describe("employment history and resume are public", () => {
     expect(backend?.endDate).toBe("2026-07-01");
   });
 
+  /**
+   * DEC-063, 2026-11-19. The site said "ZettaByte"; Randi's résumés say
+   * "Zettabyte", and he chose the résumés' spelling. Every role must agree, or
+   * the employer appears twice in the grouped Work Experience (DEC-055).
+   */
+  it("spells the employer as Randi's résumés do", () => {
+    for (const role of getPublishedExperience()) {
+      expect(role.companyName, role.id).toBe("Zettabyte Pte Ltd");
+    }
+  });
+
   it("gives every non-current role an end date that does not precede its start", () => {
     for (const role of getPublishedExperience()) {
       if (role.isCurrent) {
@@ -170,6 +181,30 @@ describe("employment history and resume are public", () => {
   });
 });
 
+describe("the 2026-11-19 profile decisions hold", () => {
+  // SUP-015: the location the experience records and both résumés use.
+  it("states the location as Sleman, Yogyakarta, Indonesia", () => {
+    expect(getPublishedProfile()?.location).toBe("Sleman, Yogyakarta, Indonesia");
+  });
+
+  /**
+   * SUP-018. Docker had been "currently learning" since launch on purpose
+   * (SUP-008); Randi reclassified it, and classified Jenkins, Linux, and AWS,
+   * as professional experience. Asserted so that a later edit cannot quietly
+   * move any of the four back, or drop one.
+   */
+  it("classifies Docker, Jenkins, Linux, and AWS as professional experience", () => {
+    const published = getPublishedSkillGroups().flatMap((view) => view.skills);
+
+    for (const id of ["skill-docker", "skill-jenkins", "skill-linux", "skill-aws"]) {
+      const skill = published.find((candidate) => candidate.id === id);
+
+      expect(skill, id).toBeDefined();
+      expect(skill?.classification, id).toBe("professional-experience");
+    }
+  });
+});
+
 /**
  * Skills and AI practices went public on 2026-08-08, when Randi confirmed the
  * classifications and the workflow wording. Neither required new copy — the
@@ -180,7 +215,8 @@ describe("skills and AI practices are public", () => {
     const groups = getPublishedSkillGroups();
 
     expect(groups.length).toBeGreaterThan(0);
-    expect(groups.flatMap((group) => group.skills)).toHaveLength(12);
+    // Twelve at launch; Jenkins, Linux, and AWS added 2026-11-19 (SUP-018).
+    expect(groups.flatMap((group) => group.skills)).toHaveLength(15);
   });
 
   it("omits no group it returns", () => {
