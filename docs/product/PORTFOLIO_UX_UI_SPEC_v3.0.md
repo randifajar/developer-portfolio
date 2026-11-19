@@ -263,8 +263,10 @@ Each hero names the engineer, the focus and the next action (V3-CONT-003). Wordi
 - **Profile.** The statement is the approved two paragraphs (OPEN-009). The mockup's third
   paragraph, on AI tools, is not repeated here: AI-assisted practice is stated in the
   engineering approach (SUP-014).
-- **Career.** The mockup's "Not an SRE title" line was a reviewer's note, not content. The
-  role's own title says what it is, and nothing on the site calls it SRE (§7.3).
+- **Career.** The stacked layout follows the mockup's phone layout, which lists each
+  chapter's roles and nothing else. The desktop panel's extra line, "Not an SRE title · A
+  delivery and infrastructure role", belongs to the pinned layout and is decided with it in
+  P8. Nothing on the site calls the role SRE (§7.3).
 - **Selected work.** Overviews are Draft until their titles are confirmed (OPEN-011), so for
   now the section lists the one case study with a discipline. Nothing is added to fill it.
 - **Explore further.** "Seven pieces of work, by discipline" was a count typed into the copy.
