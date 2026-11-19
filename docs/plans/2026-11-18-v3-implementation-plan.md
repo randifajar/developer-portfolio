@@ -5,7 +5,7 @@
 | Field | Value |
 |---|---|
 | Date | 2026-11-18 |
-| Status | **Approved 2026-11-18** ("approved, use your recommendations"). Randi also asked for a pre-production environment, so the integration branch is `staging` (D5, section 6). On 2026-11-19 he settled D12 (Zettabyte), D9 (professional experience), the infrastructure detail level (DEC-064) and the proposed wording (approved), and asked for the target-roles list to be removed. P0 to P7 are merged into `staging` (#99 to #110); P8 onwards is in progress. The overview titles are working titles (OPEN-011) |
+| Status | **Approved 2026-11-18** ("approved, use your recommendations"). Randi also asked for a pre-production environment, so the integration branch is `staging` (D5, section 6). On 2026-11-19 he settled D12 (Zettabyte), D9 (professional experience), the infrastructure detail level (DEC-064) and the proposed wording (approved), and asked for the target-roles list to be removed. P0 to P8 are merged into `staging` (#99 to #112); P9 onwards is in progress. The overview titles are working titles (OPEN-011) |
 | Approved design | V3.1 review mockup, approved 2026-11-18. It stays on Randi's machine by his decision (2026-11-19); `docs/product/PORTFOLIO_UX_UI_SPEC_v3.0.md` records the design |
 | Inputs | V3 master requirements v1.0, the V3.1 improvement brief, the backend and infrastructure résumés, the repository at `25a31d5` |
 | Decision and merge authority | Randi Fajar Wicaksono, per pull request |
@@ -277,6 +277,13 @@ Measures:
 - **Per-route metadata.** Titles, descriptions, canonical URLs and Open Graph images for `/`,
   `/backend`, `/infrastructure`, `/projects` and each case study.
 - **Sitemap.** Adds the two mode routes.
+
+**As built in P9.** The sitemap lists `/backend` and `/infrastructure`, and each mode route
+has its own Open Graph card: its hero's eyebrow, heading, and description, with the site's card
+as the fallback. The cards share one renderer, which reads its palette from the stylesheet.
+Two items wait on the résumés (D6): the `/resume.pdf` redirect is tied to moving the file to
+`/resume/backend.pdf`, which happens with the approved PDFs, so it is not done yet; and
+per-route titles and descriptions already existed from P4.
 - **Unchanged.** Robots. Canonical URLs keep coming from `SITE_URL` (`src/lib/environment.ts`).
 
 ---
