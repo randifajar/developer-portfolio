@@ -9,7 +9,7 @@ interface ProjectSectionProps {
 }
 
 /**
- * One numbered section of a case study.
+ * One section of a case study.
  *
  * Renders nothing when it has no body and no children, which is how optional
  * sections such as Architecture or AI-Assisted Engineering disappear cleanly
@@ -17,6 +17,11 @@ interface ProjectSectionProps {
  *
  * Headings are h2: the page h1 is the project title, so case-study sections sit
  * one level below it (NFAC-A11Y-003).
+ *
+ * V3 sets the heading as a label in its own column from 900 px, with the text
+ * beside it, as the approved mockup's case study does (UX3 7.5). Below that it
+ * stacks. Only the presentation changed: the sections, their order, and their
+ * words are as they were (DEC-054).
  */
 export function ProjectSection({ heading, body, children }: ProjectSectionProps) {
   if (!body && !children) {
@@ -24,10 +29,14 @@ export function ProjectSection({ heading, body, children }: ProjectSectionProps)
   }
 
   return (
-    <section className="flex flex-col gap-4 border-t border-border pt-8">
-      <h2 className="text-project-title font-semibold text-text-primary">{heading}</h2>
-      {body ? <MarkdownContent>{body}</MarkdownContent> : null}
-      {children}
+    <section className="grid gap-4 border-t border-border pt-8 min-[900px]:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] min-[900px]:gap-10">
+      <h2 className="text-kicker font-semibold text-accent uppercase min-[900px]:pt-1">
+        {heading}
+      </h2>
+      <div className="flex min-w-0 flex-col gap-4">
+        {body ? <MarkdownContent>{body}</MarkdownContent> : null}
+        {children}
+      </div>
     </section>
   );
 }

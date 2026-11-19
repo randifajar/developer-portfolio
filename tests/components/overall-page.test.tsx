@@ -187,7 +187,7 @@ describe("Overall content (UX3 7.1)", () => {
       "/infrastructure",
     );
     expect(explore.getByRole("link", { name: "All projects" })).toHaveAccessibleDescription(
-      /^\w+ pieces? of work\.$/,
+      /^\w+ pieces? of work, by discipline\.$/,
     );
 
     const resumes = explore.getByRole("button", { name: "Résumés" });

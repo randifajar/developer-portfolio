@@ -17,7 +17,7 @@ import { countedNoun } from "@/lib/numbers";
  *
  * The descriptions are the approved mockup's, with one change: its "Seven
  * pieces of work, by discipline" is a count, so it is counted here from what
- * is published. "By discipline" returns with the projects filter in V3 P7.
+ * is published.
  *
  * Résumés opens the header's menu rather than repeating it, so the two can
  * never list different résumés.
@@ -54,7 +54,7 @@ export function ExploreSection() {
       id: "projects",
       href: ROUTES.projects,
       label: "All projects",
-      description: `${countedNoun(workCount, "piece")} of work.`,
+      description: `${countedNoun(workCount, "piece")} of work, by discipline.`,
     },
   ];
 

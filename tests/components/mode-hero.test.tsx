@@ -212,3 +212,18 @@ describe("ModeHero scroll and focus (UX3 6.5)", () => {
     expect(scrollTo).not.toHaveBeenCalled();
   });
 });
+
+describe("ModeHero and in-page anchors (UX3 6.5)", () => {
+  afterEach(() => {
+    window.history.replaceState(null, "", "/");
+  });
+
+  it("leaves a navigation to an anchor on the new page to the router", () => {
+    // Arriving from the projects page's "← Overall", which links to /#work.
+    window.history.replaceState(null, "", "/#work");
+    render(hero());
+
+    expect(scrollTo).not.toHaveBeenCalled();
+    expect(screen.getByRole("heading", { level: 1 })).not.toHaveFocus();
+  });
+});
