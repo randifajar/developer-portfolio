@@ -32,6 +32,17 @@ async function waitUntilRendered(page: Page): Promise<void> {
   await page.waitForLoadState("domcontentloaded");
   await page.evaluate(() => document.fonts.ready);
   await page.waitForLoadState("networkidle");
+  // V3 P8: let time-based animations, such as the hero entrance, finish, so
+  // the scan sees the page at rest. Scroll-driven ones never finish without
+  // scrolling, so they are left out; they move content, never fade it.
+  await page.evaluate(() =>
+    Promise.all(
+      document
+        .getAnimations()
+        .filter((animation) => animation.timeline === document.timeline)
+        .map((animation) => animation.finished.catch(() => undefined)),
+    ),
+  );
 }
 
 /**

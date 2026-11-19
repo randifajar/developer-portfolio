@@ -13,7 +13,8 @@ release, `PORTFOLIO_UX_UI_SPEC_v2.0.md` describes the live site.
 | §6.5 Focus and scroll on a mode change; §7 the persistent hero; §7.1 Overall | Built in P5, with the stacked career layout (§8.4 adds the pinned one in P8) and a labelled placeholder for the photograph (§7.6). §6.5 is amended: see the note there |
 | §7.2 Backend, §7.3 Infrastructure | Built in P6. See the as-built note under §7.3 |
 | §7.4 Projects, §7.5 Case study | Built in P7. See the as-built note under §7.5 |
-| §5, §7.6, §8–§11 (layout, photograph, motion, responsive, accessibility, performance) | Not built yet; P8 onwards |
+| §8.1–§8.3, §8.5, §8.6 (entrance, mode change, pointer light, reveal, reduced motion) | Built in P8. See the as-built note under §8.6 |
+| §5, §7.6, §8.4, §9–§11 (layout, photograph, career pinning, responsive, accessibility, performance) | Not built yet; P8b onwards |
 
 **Will supersede:** `PORTFOLIO_UX_UI_SPEC_v2.0.md`, at the V3 release.
 
@@ -467,6 +468,22 @@ Under reduced motion:
 
 Every function remains (V3-MOT-005), and animation failure never blocks content or
 navigation (V3-MOT-006).
+
+**As built in P8 (§8.1–§8.3, §8.5).** The timings are as specified, with three differences:
+
+- **Movement without fades, for anything a contrast check reads.** The first-load entrance
+  (§8.1) moves the text and does not fade it. The section reveal (§8.5) rises 22 px and does
+  not start at 30% opacity. A section below the fold would otherwise sit at 30% opacity until
+  it is scrolled to, and that is what an accessibility scan, which runs with motion allowed,
+  measures. The mode change still fades the copy out and in, because it runs only after a
+  click and finishes in under a second.
+- **Focus waits for the new copy.** During the exit the old heading is still on screen, so
+  focus moves to the heading when the new copy arrives. A screen reader never announces the
+  heading that is leaving. The route and the scroll change at once.
+- **No shared-element transition.** The optional case-study spike (V3 plan 3.3) was not run;
+  entering a case study has no transition.
+
+Without the Web Animations API the copy swaps at once, as under reduced motion.
 
 ---
 

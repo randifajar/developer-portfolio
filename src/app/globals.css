@@ -398,14 +398,75 @@
  * readable one and the animation only adds arrival.
  */
 @media (prefers-reduced-motion: no-preference) {
-  .motion-rise {
-    animation: motion-rise var(--motion-slow) var(--motion-ease) both;
+  /*
+   * The hero's entrance on first load (UX3 8.1). The heading lines rise out
+   * of their clipped line boxes in sequence; the eyebrow, description, and
+   * action follow; the photograph rises behind them. Only until the first
+   * mode change, when the attribute goes and mode-hero-motion.ts takes over.
+   *
+   * Movement only, no fade (V3 P8): text is at full contrast from its first
+   * frame, so a contrast check can never catch it half-drawn. v2's
+   * `.motion-rise`, which faded from 0, had no users left and went with it.
+   */
+  [data-hero-entrance] [data-hero-line] > span {
+    animation: hero-line-rise 950ms cubic-bezier(0.2, 0.75, 0.2, 1) both;
   }
 
-  @keyframes motion-rise {
+  [data-hero-entrance] [data-hero-line]:nth-of-type(2) > span {
+    animation-delay: 80ms;
+  }
+
+  [data-hero-entrance] [data-hero-rest] {
+    animation: hero-rest-rise 800ms 350ms cubic-bezier(0.2, 0.75, 0.2, 1) both;
+  }
+
+  [data-hero-entrance] [data-photograph-placeholder] {
+    animation: hero-photo-rise 1.6s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+  }
+
+  @keyframes hero-line-rise {
     from {
-      opacity: 0;
-      transform: translateY(0.5rem);
+      transform: translateY(106%);
+    }
+  }
+
+  @keyframes hero-rest-rise {
+    from {
+      transform: translateY(14px);
+    }
+  }
+
+  @keyframes hero-photo-rise {
+    from {
+      transform: translateY(30px);
+    }
+  }
+
+  /*
+   * Section reveal (UX3 8.5): each section rises 22 px as it enters the
+   * viewport, driven by scrolling itself, with no JavaScript. An engine
+   * without scroll-driven animation shows the sections as they are.
+   *
+   * Movement only. UX3 8.5 also had the sections start at 30% opacity, which
+   * leaves every section below the fold at 30% opacity until it is scrolled
+   * to, and that is what an accessibility scan measures: the contrast of
+   * those sections would fail it, in exactly the motion mode the scan runs
+   * in. Recorded in UX3 8.5.
+   *
+   * The reduced-motion block below sets animation-timeline to none, which is
+   * what stops a scroll-driven animation; a short duration does not.
+   */
+  @supports (animation-timeline: view()) {
+    [data-reveal] {
+      animation: section-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+    }
+  }
+
+  @keyframes section-rise {
+    from {
+      transform: translateY(22px);
     }
   }
 }

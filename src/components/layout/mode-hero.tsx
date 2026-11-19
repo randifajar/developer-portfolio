@@ -5,10 +5,18 @@ import {
   useEffect,
   useLayoutEffect,
   useRef,
+  useState,
   useSyncExternalStore,
   type ReactNode,
   type Ref,
 } from "react";
+import {
+  cancelHeroMotion,
+  enterHero,
+  exitHero,
+  motionAllowed,
+  usePointerLight,
+} from "@/components/layout/mode-hero-motion";
 import type { Mode } from "@/domain/content/types";
 import { ROUTES } from "@/lib/constants";
 
@@ -17,8 +25,11 @@ import { ROUTES } from "@/lib/constants";
  *
  * It lives in the `(modes)` route group's layout, so Next.js keeps it mounted
  * when the visitor switches between Overall, Backend, and Infrastructure: only
- * the page below it is replaced. That is what lets V3 P8 animate the heading
- * from one mode to the next. Until then the copy swaps instantly.
+ * the page below it is replaced. That is what lets the heading animate from
+ * one mode to the next (UX3 8.2): the current copy leaves, the new copy
+ * renders, and it enters. The route itself changes at once; only the hero's
+ * copy takes its time. Under reduced motion, or without the Web Animations
+ * API, the copy swaps at once.
  *
  * It also owns scroll and focus when the mode changes (UX3 6.5). The installed
  * Next.js (16.4.6) handles neither the way this layout needs. After a
@@ -27,7 +38,8 @@ import { ROUTES } from "@/lib/constants";
  * hero, so on a phone, where the hero is taller than the viewport, it jumps
  * straight past the hero — and it leaves focus on the link that was pressed.
  * So the hero puts the scroll back at the top and moves focus to the new
- * heading.
+ * heading. Focus waits for the new copy, so a screen reader never announces
+ * the heading that is leaving.
  *
  * The page is passed in as `children` for one reason: ordering. React runs
  * layout effects children first, so the router's scroll handler for the page
@@ -115,8 +127,18 @@ interface ModeHeroProps {
 export function ModeHero({ intros, actionModes, children }: ModeHeroProps) {
   const pathname = usePathname();
   const mode = MODE_FOR_PATH[pathname] ?? "overall";
-  const intro = intros.find((candidate) => candidate.mode === mode);
+
+  /*
+   * The mode whose copy the hero shows. It trails the route by the length of
+   * the exit animation, then catches up; without motion it never trails.
+   */
+  const [shownMode, setShownMode] = useState(mode);
+  const intro = intros.find((candidate) => candidate.mode === shownMode);
+
+  const bandRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const haloRef = useRef<HTMLDivElement>(null);
+  usePointerLight(bandRef, haloRef);
 
   /*
    * True on the first render when React is hydrating server HTML — a page
@@ -131,12 +153,36 @@ export function ModeHero({ intros, actionModes, children }: ModeHeroProps) {
   const createdByNavigation = useRef(!hydrating);
   const renderedPath = useRef<string | null>(null);
 
+  /** Each mode change takes a ticket; a later change makes earlier tickets void. */
+  const transition = useRef(0);
+  const focusOnSwap = useRef(false);
+  /** The first-load entrance belongs to CSS, until the first mode change. */
+  const [entrance, setEntrance] = useState(true);
+
   useEffect(installTraversalTracking, []);
 
   useLayoutEffect(() => {
     const firstRun = renderedPath.current === null;
     const pathChanged = renderedPath.current !== pathname;
     renderedPath.current = pathname;
+
+    // The copy follows the route: at once, or after the current copy leaves.
+    if (!firstRun && pathChanged) {
+      const ticket = ++transition.current;
+      const band = bandRef.current;
+      setEntrance(false);
+
+      if (!band || !motionAllowed()) {
+        setShownMode(mode);
+      } else {
+        cancelHeroMotion(band);
+        void exitHero(band).then(() => {
+          if (ticket === transition.current) {
+            setShownMode(mode);
+          }
+        });
+      }
+    }
 
     if (firstRun ? !createdByNavigation.current : !pathChanged) return;
     if (consumeHistoryTraversal()) return;
@@ -146,17 +192,47 @@ export function ModeHero({ intros, actionModes, children }: ModeHeroProps) {
     if (window.location.hash) return;
 
     window.scrollTo({ top: 0, behavior: "instant" });
-    headingRef.current?.focus({ preventScroll: true });
-  }, [pathname]);
+
+    if (firstRun) {
+      headingRef.current?.focus({ preventScroll: true });
+    } else {
+      // Focus follows the new copy, so the old heading is never announced.
+      focusOnSwap.current = true;
+    }
+  }, [pathname, mode]);
+
+  // After the copy swaps: the new copy enters, and focus follows it.
+  const swapped = useRef(false);
+  useLayoutEffect(() => {
+    if (!swapped.current) {
+      swapped.current = true;
+      return;
+    }
+
+    const band = bandRef.current;
+
+    if (band && motionAllowed()) {
+      cancelHeroMotion(band);
+      enterHero(band);
+    }
+
+    if (focusOnSwap.current) {
+      focusOnSwap.current = false;
+      headingRef.current?.focus({ preventScroll: true });
+    }
+  }, [shownMode]);
 
   return (
     <>
       {intro ? (
         <HeroBand
           intro={intro}
-          showAction={actionModes.includes(mode)}
-          showPhotograph={mode === "overall"}
+          showAction={actionModes.includes(shownMode)}
+          showPhotograph={shownMode === "overall"}
+          entrance={entrance}
+          bandRef={bandRef}
           headingRef={headingRef}
+          haloRef={haloRef}
         />
       ) : null}
       {children}
@@ -168,10 +244,28 @@ interface HeroBandProps {
   readonly intro: ModeHeroIntro;
   readonly showAction: boolean;
   readonly showPhotograph: boolean;
+  readonly entrance: boolean;
+  readonly bandRef: Ref<HTMLElement>;
   readonly headingRef: Ref<HTMLHeadingElement>;
+  readonly haloRef: Ref<HTMLDivElement>;
 }
 
-function HeroBand({ intro, showAction, showPhotograph, headingRef }: HeroBandProps) {
+/*
+ * Each heading line sits in its own clipped line box, so it can rise into
+ * view. The padding and matching negative margin give the box room for
+ * accents and descenders without moving the line.
+ */
+const LINE_BOX = "block overflow-hidden pt-[0.1em] -mt-[0.1em] pb-[0.06em] -mb-[0.06em]";
+
+function HeroBand({
+  intro,
+  showAction,
+  showPhotograph,
+  entrance,
+  bandRef,
+  headingRef,
+  haloRef,
+}: HeroBandProps) {
   const [first, second] = intro.headingLines;
 
   /*
@@ -186,15 +280,30 @@ function HeroBand({ intro, showAction, showPhotograph, headingRef }: HeroBandPro
    */
   return (
     <section
+      ref={bandRef}
       aria-labelledby={MODE_HERO_HEADING_ID}
       data-surface="dark"
+      data-hero-entrance={entrance ? "" : undefined}
       className="relative isolate flex min-h-[calc(100svh-var(--spacing-header))] items-end overflow-hidden bg-background text-text-primary"
     >
+      {/* The pointer light (UX3 8.3). Decoration, driven from mode-hero-motion.ts. */}
+      <div
+        ref={haloRef}
+        aria-hidden="true"
+        className="pointer-events-none absolute top-0 left-0 -z-20 size-[38.75rem] rounded-full opacity-0 transition-opacity duration-700"
+        style={{
+          background:
+            "radial-gradient(closest-side, color-mix(in srgb, var(--color-accent) 22%, transparent), color-mix(in srgb, var(--color-accent) 8%, transparent) 55%, transparent)",
+        }}
+      />
+
       {showPhotograph ? <PhotographPlaceholder /> : null}
 
       <div className="relative mx-auto w-full max-w-(--spacing-content) px-5 pt-10 pb-[clamp(2.5rem,8vh,5.25rem)] sm:px-8 lg:px-12">
         <div className="flex flex-col gap-5">
-          <p className="text-kicker font-semibold text-text-secondary uppercase">{intro.eyebrow}</p>
+          <p data-hero-rest="" className="text-kicker font-semibold text-text-secondary uppercase">
+            {intro.eyebrow}
+          </p>
           {/*
            * A space between the lines: they stack visually, but textContent
            * joins adjacent elements without one, and the heading's accessible
@@ -214,16 +323,21 @@ function HeroBand({ intro, showAction, showPhotograph, headingRef }: HeroBandPro
             tabIndex={-1}
             className="flex flex-col font-display uppercase wrap-anywhere focus:outline-none"
           >
-            <span className="text-display-hero-line-1 font-medium">{first}</span>{" "}
-            <span className="text-display-hero-line-2 font-bold text-accent">{second}</span>
+            <span data-hero-line="" className={LINE_BOX}>
+              <span className="block text-display-hero-line-1 font-medium">{first}</span>
+            </span>{" "}
+            <span data-hero-line="" className={LINE_BOX}>
+              <span className="block text-display-hero-line-2 font-bold text-accent">{second}</span>
+            </span>
           </h1>
           {intro.description ? (
-            <p className="max-w-[44ch] text-lead text-pretty text-text-secondary">
+            <p data-hero-rest="" className="max-w-[44ch] text-lead text-pretty text-text-secondary">
               {intro.description}
             </p>
           ) : null}
           {showAction ? (
             <a
+              data-hero-rest=""
               href={`#${intro.action.targetId}`}
               className="group mt-2 inline-flex min-h-11 w-fit items-center gap-3.5 text-kicker font-semibold text-text-primary uppercase hover:text-accent"
             >
