@@ -118,11 +118,22 @@ The placeholder scan skips non-rendered keys such as ids, because an id like
 
 ## Client JavaScript
 
-Exactly one Client Component: `src/components/layout/mobile-navigation.tsx`.
+V3 allows six Client Components (DEC-057, Technical Design 13.4). Three exist
+on `staging` since V3 P4, all in `src/components/layout/`:
 
-Everything else is a Server Component. `Header` composes the mobile menu but
-stays server-rendered — marking it `"use client"` would pull the whole
-navigation tree into the browser bundle for one toggle.
+| Component | Why it runs in the browser |
+|---|---|
+| `mode-switch.tsx` | The current mode comes from the pathname |
+| `resume-menu.tsx` | Arrow keys, focus on open, and the "this page" marker. Open, close, and Escape are the native Popover API, so the menu works without JavaScript |
+| `copy-email.tsx` | Clipboard access; it renders nothing where the browser cannot copy |
+
+`ModeHero`, `CareerJourney`, and `ProjectFilter` arrive with the pages that
+need them (P5–P7). v2's `mobile-navigation.tsx` was removed in P4 with the
+mobile menu: the V3 header has no menu.
+
+Everything else is a Server Component. `Header` and `Footer` compose the
+islands but stay server-rendered — marking them `"use client"` would pull the
+whole chrome and everything it imports into the browser bundle.
 
 Markdown rendering has raw HTML **disabled** and it stays that way. Enabling
 `rehype-raw` would turn every content field into an injection surface. Three

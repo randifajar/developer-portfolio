@@ -9,7 +9,8 @@ release, `PORTFOLIO_UX_UI_SPEC_v2.0.md` describes the live site.
 | Section | On `staging` |
 |---|---|
 | §2 Colour, §3 Surfaces, §4 Typography (tokens and type steps) | Built in P3. The v2 pages on `staging` already use them |
-| §5–§11 (layout, navigation, pages, motion, responsive, accessibility, performance) | Not built yet; P4 onwards |
+| §6 Navigation: header, mode switch, Résumé menu; §7.7 Footer | Built in P4, with two differences noted in §6.1 and §6.2. The `/backend` and `/infrastructure` routes exist and show their intros |
+| §5, §7.1–§7.6, §8–§11 (layout, pages, motion, responsive, accessibility, performance) | Not built yet; P5 onwards |
 
 **Will supersede:** `PORTFOLIO_UX_UI_SPEC_v2.0.md`, at the V3 release.
 
@@ -154,12 +155,17 @@ There is no identity lockup, no menu and no burger. This differs from the requir
 (§12, row 1).
 
 - **Background.**
-  - At the top of the page, the header is transparent.
-  - Once the page has scrolled more than 24 px, it becomes solid: `rgba(7, 11, 18, 0.78)`
-    with an 18 px backdrop blur and a hairline. The threshold is deliberately small, so the
-    header is legible over light sections almost at once.
+  - Opaque near-black (the dark surface, `#070B12`) with a hairline, at all times.
   - It looks the same on every route (V3-NAV-005).
+  - **Amended in P4.** The approved mockup's header was transparent at the top and became a
+    translucent `rgba(7, 11, 18, 0.78)` with an 18 px backdrop blur after 24 px of scroll.
+    That was not adopted. Text on a translucent surface sits on a colour that no contrast
+    gate can measure, the class of pairing that hid one of v1's contrast failures (UX2
+    records why the v2 header is opaque). Over the dark hero, where the mockup showed
+    transparency, the difference is hard to see.
 - **Skip link.** A skip link is first in the tab order.
+- **Narrow screens.** The header wraps to two rows below about 375 px rather than overflowing
+  or hiding the switch (§5, V3-NAV-010).
 
 ### 6.2 Mode switch
 
@@ -168,7 +174,8 @@ There is no identity lockup, no menu and no burger. This differs from the requir
 - **Active mode.**
   - It carries `aria-current="page"`.
   - A pill marks it, so the state is shown by shape as well as colour.
-  - The pill moves at once on click (V3-NAV-003).
+  - The pill moves at once on click (V3-NAV-003). In P4 it appears on the new mode without
+    moving; the movement is motion, and arrives with P8.
 - **Clicking the current mode** does nothing. It does not replay the transition.
 - **Target size.** Links are at least 40 px high, and the Résumé button 44 px.
 

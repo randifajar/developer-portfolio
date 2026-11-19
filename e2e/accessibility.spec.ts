@@ -82,6 +82,9 @@ const [firstPublished] = publishedProjects;
 
 const PAGE_TYPES = [
   { name: "Home", path: "/" },
+  // V3 mode routes (DEC-056).
+  { name: "Backend", path: "/backend" },
+  { name: "Infrastructure", path: "/infrastructure" },
   { name: "Projects Index", path: "/projects" },
   {
     /*
@@ -115,16 +118,20 @@ test("Home passes an accessibility scan at mobile width", async ({ page }) => {
   expect(await blockingViolations(page)).toEqual([]);
 });
 
-test("the open mobile menu passes an accessibility scan", async ({ page }) => {
+test("the open Résumé menu passes an accessibility scan", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
-  await page.goto("/");
+  await page.goto("/backend");
   await waitUntilRendered(page);
 
-  // The only interactive state in the application. Scanning only the closed
-  // page would leave the drawer, its focus handling, and its contrast
-  // unverified.
-  await page.getByRole("button", { name: /open menu/i }).click();
-  await expect(page.getByRole("navigation", { name: /site navigation/i })).toBeVisible();
+  // The header's one interactive state since V3 replaced the mobile menu with
+  // it (UX3 6.3). Scanning only the closed page would leave the popover, its
+  // items, and its contrast unverified. On /backend, so the "this page" marker
+  // is part of the scan.
+  await page
+    .getByRole("banner")
+    .getByRole("button", { name: /résumé/i })
+    .click();
+  await expect(page.locator("#resume-menu")).toBeVisible();
 
   expect(await blockingViolations(page)).toEqual([]);
 });

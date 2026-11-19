@@ -15,7 +15,11 @@ test.beforeEach(async ({ page }) => {
 test.describe("homepage structure", () => {
   test("responds and identifies the site", async ({ page }) => {
     await expect(page.getByRole("banner")).toBeVisible();
-    await expect(page.getByRole("link", { name: "Randi Fajar Wicaksono" }).first()).toBeVisible();
+    // V3: the header holds only the modes and the Résumé menu (UX3 6.1), so
+    // the name is the page heading here and in the footer on every page
+    // (FAC-NAV-004), no longer a header link.
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Randi Fajar Wicaksono");
+    await expect(page.getByRole("contentinfo")).toContainText("Randi Fajar Wicaksono");
   });
 
   test("declares the document language (NFAC-A11Y-003)", async ({ page }) => {
@@ -150,30 +154,94 @@ test.describe("responsive behaviour (NFAC-RESP-001)", () => {
   });
 });
 
-test.describe("mobile navigation (UX 6.2)", () => {
-  test.beforeEach(async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 812 });
-  });
+/**
+ * The Résumé menu (UX3 6.3) replaced the v2 mobile menu: the V3 header has no
+ * menu button, only the mode switch and this. It is a native popover, so the
+ * browser owns opening, Escape, outside click, and returning focus.
+ */
+test.describe("Résumé menu (UX3 6.3)", () => {
+  test("opens, offers the published résumé, and closes with Escape back on its button", async ({
+    page,
+  }) => {
+    const button = page.getByRole("banner").getByRole("button", { name: /résumé/i });
+    const menu = page.locator("#resume-menu");
 
-  test("opens, reports expanded state, and closes with Escape", async ({ page }) => {
-    const trigger = page.getByRole("button", { name: /open menu/i });
-
-    await expect(trigger).toHaveAttribute("aria-expanded", "false");
-    await trigger.click();
-    await expect(trigger).toHaveAttribute("aria-expanded", "true");
-    await expect(page.getByRole("navigation", { name: /site navigation/i })).toBeVisible();
+    await expect(menu).toBeHidden();
+    await button.click();
+    await expect(menu).toBeVisible();
+    await expect(menu.getByRole("link", { name: /backend résumé/i })).toHaveAttribute(
+      "href",
+      "/resume.pdf",
+    );
+    await expect(menu.getByText("PDF available after approval")).toBeVisible();
 
     await page.keyboard.press("Escape");
-    await expect(page.getByRole("navigation", { name: /site navigation/i })).toBeHidden();
+    await expect(menu).toBeHidden();
+    await expect(button).toBeFocused();
   });
 
-  test("closes when a destination is selected", async ({ page }) => {
-    await page.getByRole("button", { name: /open menu/i }).click();
+  test("closes on a click outside it", async ({ page }) => {
     await page
-      .getByRole("navigation", { name: /site navigation/i })
-      .getByRole("link", { name: "Projects" })
+      .getByRole("banner")
+      .getByRole("button", { name: /résumé/i })
+      .click();
+    await expect(page.locator("#resume-menu")).toBeVisible();
+
+    await page.mouse.click(5, 400);
+    await expect(page.locator("#resume-menu")).toBeHidden();
+  });
+});
+
+test.describe("Résumé menu without JavaScript", () => {
+  test.use({ javaScriptEnabled: false });
+
+  test("still opens and offers the résumé, because the popover is native", async ({ page }) => {
+    await page.goto("/");
+    await page
+      .getByRole("banner")
+      .getByRole("button", { name: /résumé/i })
       .click();
 
-    await expect(page).toHaveURL(/\/projects/);
+    await expect(page.locator("#resume-menu")).toBeVisible();
+    await expect(
+      page.locator("#resume-menu").getByRole("link", { name: /backend résumé/i }),
+    ).toBeVisible();
+  });
+});
+
+test.describe("mode switch (UX3 6.2, V3-NAV-001, 002, 007)", () => {
+  test("moves between the three modes by real URL, marking the current one", async ({ page }) => {
+    const modes = page.getByRole("navigation", { name: "Modes" });
+
+    await expect(modes.getByRole("link", { name: "Overall" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+
+    await modes.getByRole("link", { name: "Backend" }).click();
+    await expect(page).toHaveURL(/\/backend$/);
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Behind the");
+    await expect(modes.getByRole("link", { name: "Backend" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+
+    await modes.getByRole("link", { name: "Infrastructure" }).click();
+    await expect(page).toHaveURL(/\/infrastructure$/);
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Beyond");
+
+    await page.goBack();
+    await expect(page).toHaveURL(/\/backend$/);
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Behind the");
+  });
+
+  test("stays reachable on a phone, never behind a menu (V3-NAV-010)", async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 800 });
+
+    for (const name of ["Overall", "Backend", "Infrastructure"]) {
+      await expect(
+        page.getByRole("navigation", { name: "Modes" }).getByRole("link", { name }),
+      ).toBeVisible();
+    }
   });
 });
