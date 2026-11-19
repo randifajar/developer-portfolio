@@ -1,10 +1,15 @@
 # Developer Portfolio — UX/UI Specification v3.0
 
-**Status:** Approved design, **not yet implemented.** Randi approved the V3.1 review
-mockup on 2026-11-18. The mockup stays on his machine by his decision (2026-11-19), so
-this document is the repository's record of that design. It is built phase by phase on
-`staging` (V3 implementation plan, P3–P10). Until the V3 release,
-`PORTFOLIO_UX_UI_SPEC_v2.0.md` describes the live site.
+**Status:** Approved design, **partly built on `staging`, nothing released.** Randi
+approved the V3.1 review mockup on 2026-11-18. The mockup stays on his machine by his
+decision (2026-11-19), so this document is the repository's record of that design. It
+is built phase by phase on `staging` (V3 implementation plan, P3–P10). Until the V3
+release, `PORTFOLIO_UX_UI_SPEC_v2.0.md` describes the live site.
+
+| Section | On `staging` |
+|---|---|
+| §2 Colour, §3 Surfaces, §4 Typography (tokens and type steps) | Built in P3. The v2 pages on `staging` already use them |
+| §5–§11 (layout, navigation, pages, motion, responsive, accessibility, performance) | Not built yet; P4 onwards |
 
 **Will supersede:** `PORTFOLIO_UX_UI_SPEC_v2.0.md`, at the V3 release.
 

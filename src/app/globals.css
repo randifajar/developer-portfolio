@@ -26,41 +26,35 @@
  * running `npm run check:contrast`.
  */
 @theme static {
-  /* Surfaces and text — UX2 2 */
-  --color-background: #f8fafc;
+  /*
+   * Surfaces and text — the V3 light surface (UX3 2, 3), which is also the
+   * default. The v2 values and the measurements behind them are in git history
+   * and UX2 2; each V3 value below is measured by the contrast suite.
+   */
+  --color-background: #f5f7fa;
   --color-surface: #ffffff;
-  /*
-   * Lightened from #F1F5F9 in v2.
-   *
-   * At #F1F5F9 the accent measured 4.72:1 here — passing WCAG AA, failing the
-   * 4.8 internal floor, and already live in the footer's hover state where the
-   * axe scan cannot see it, because axe does not scan hover.
-   *
-   * #F5F8FB brings it to 4.85 and leaves the accent hex untouched, which is the
-   * v1 continuity PRD section 16 asks for. This is the only visible change in
-   * this release, and it is roughly 1.5% of luminance.
-   */
-  --color-surface-muted: #f5f8fb;
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #475569;
-  /*
-   * UX 4.4 recommends #64748B here, but that measures 4.34:1 against
-   * --color-surface-muted (#F1F5F9) — below the 4.5:1 WCAG AA threshold for
-   * normal text, confirmed by an axe scan on the footer.
-   *
-   * UX 4.4 also states that all final combinations must pass WCAG AA, and
-   * NFAC-A11Y-005 is a P0 launch requirement, so the contrast rule governs the
-   * exact hex. Darkened to #5B6A7D, which measures 5.04:1 on the muted surface
-   * and stays visibly lighter than --color-text-secondary, preserving the
-   * intended hierarchy.
-   */
-  --color-text-muted: #5b6a7d;
-  --color-border: #cbd5e1;
+  /* Kept visibly distinct from the off-white background; every text token
+     clears the floor on it (the lowest, text-muted, at 5.62). */
+  --color-surface-muted: #edf1f6;
+  --color-text-primary: #111827;
+  --color-text-secondary: #4b5563;
+  /* 5.62 on the muted surface, 5.94 on the background; lighter than secondary
+     (6.66), so the hierarchy survives. */
+  --color-text-muted: #556070;
+  --color-border: #e2e7ee;
 
-  /* Action and focus */
-  --color-accent: #2563eb;
-  --color-accent-hover: #1d4ed8;
-  --color-focus: #3b82f6;
+  /*
+   * Action and focus.
+   *
+   * Accent text is the darker blue on light surfaces, as UX3 2 requires where
+   * the margin is tight. The identity blue #2563EB measures 4.82 on the
+   * off-white background and only 4.56 on the muted surface, under the 4.8
+   * floor; #1D4ED8 measures 6.24 and 5.91. The identity blue is still the focus
+   * ring here (4.82 against the 3.3 non-text floor) and the blue surface's fill.
+   */
+  --color-accent: #1d4ed8;
+  --color-accent-hover: #1e40af;
+  --color-focus: #2563eb;
 
   /*
    * Solid replacements for the alpha modifiers (UX2 2.3).
@@ -85,7 +79,13 @@
   /* Typography — UX2 3 */
   --font-sans:
     var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  /*
+   * Geist only in V3 (SUP-013): the display role remains, so call sites keep
+   * asking for "display", but it resolves to the same family as the body. One
+   * font request fewer. Archivo (DEC-050) served v2.
+   */
+  --font-display:
+    var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
   /*
    * The scale — nine steps, one per level of the UX2 3.1 hierarchy.
@@ -135,6 +135,23 @@
   --text-eyebrow: 0.8125rem;
   --text-eyebrow--line-height: 1.4;
   --text-eyebrow--letter-spacing: 0.12em;
+
+  /*
+   * V3 display steps (UX3 4, DEC-061). The hero heading is two lines at two
+   * sizes; both keep a rem term in the preferred value, so browser text
+   * scaling still applies. The kicker is V3's eyebrow: smaller, wider-tracked.
+   */
+  --text-display-hero-line-1: clamp(1.9rem, 1rem + 2.8vw, 3.8rem);
+  --text-display-hero-line-1--line-height: 1.04;
+  --text-display-hero-line-1--letter-spacing: -0.012em;
+
+  --text-display-hero-line-2: clamp(2.6rem, 0.8rem + 7vw, 8.6rem);
+  --text-display-hero-line-2--line-height: 0.94;
+  --text-display-hero-line-2--letter-spacing: -0.012em;
+
+  --text-kicker: 0.74rem;
+  --text-kicker--line-height: 1.4;
+  --text-kicker--letter-spacing: 0.2em;
 
   /* Layout — UX 5.1 */
   --spacing-content: 75rem; /* 1200px main layout width */
@@ -192,16 +209,16 @@
    * light region nested inside a dark section resolves correctly.
    */
   [data-surface="light"] {
-    --color-background: #f8fafc;
+    --color-background: #f5f7fa;
     --color-surface: #ffffff;
-    --color-surface-muted: #f5f8fb;
-    --color-text-primary: #0f172a;
-    --color-text-secondary: #475569;
-    --color-text-muted: #5b6a7d;
-    --color-border: #cbd5e1;
-    --color-accent: #2563eb;
-    --color-accent-hover: #1d4ed8;
-    --color-focus: #3b82f6;
+    --color-surface-muted: #edf1f6;
+    --color-text-primary: #111827;
+    --color-text-secondary: #4b5563;
+    --color-text-muted: #556070;
+    --color-border: #e2e7ee;
+    --color-accent: #1d4ed8;
+    --color-accent-hover: #1e40af;
+    --color-focus: #2563eb;
     --color-on-accent: #ffffff;
     --color-accent-subtle: #dbeafe;
     --color-on-accent-subtle: #1e3a8a;
@@ -211,6 +228,7 @@
     --color-status-error: #b91c1c;
   }
 
+  /* v2 only: the Skills section. Removed with that section in V3 P5. */
   [data-surface="neutral"] {
     --color-background: #eaeff5;
     --color-surface: #ffffff;
@@ -231,34 +249,108 @@
     --color-status-error: #a31616;
   }
 
+  /* The V3 near-black (UX3 2, 3): hero, Explore further, footer, page heroes. */
   [data-surface="dark"] {
-    --color-background: #0b0f14;
-    --color-surface: #131a22;
-    --color-surface-muted: #1b242e;
+    --color-background: #070b12;
+    --color-surface: #0f151f;
+    --color-surface-muted: #161e2a;
     --color-text-primary: #f8fafc;
-    --color-text-secondary: #c3cdd9;
-    --color-text-muted: #96a3b2;
-    --color-border: #2a3542;
+    /* UX3 fg-2: 7.71 on the muted surface. */
+    --color-text-secondary: #a3b1c6;
+    --color-text-muted: #93a1b6;
+    --color-border: #292c33;
     /*
-     * The v1 accent measures 3.72:1 on #0B0F14 and cannot carry text here.
-     * #60A5FA measures 7.56 on the base and 6.89 on the elevated surface.
-     *
-     * #3B82F6 was the first candidate and reached only 4.76 on the elevated
-     * surface — under the floor, and exactly the margin that caught v1 out
-     * twice. It is also the v1 focus colour, which is why the dark focus ring
-     * moves with the accent rather than staying put.
+     * The blue accents measure too low on near-black to carry text, so the
+     * accent is sky: 7.75 on the base and 7.20 on the elevated surface. (In v2,
+     * #3B82F6 reached only 4.76 on its elevated surface — the margin that
+     * caught v1 out twice — which is why the focus ring moves with the accent.)
      */
     --color-accent: #60a5fa;
     --color-accent-hover: #93c5fd;
     --color-focus: #60a5fa;
     /* Inverted: the accent fill is light here, so its label must be dark. */
-    --color-on-accent: #0b0f14;
+    --color-on-accent: #070b12;
     --color-accent-subtle: #16273d;
     --color-on-accent-subtle: #bfd7fe;
     --color-status-success: #4ade80;
     --color-status-warning: #fbbf24;
     --color-status-neutral: #cbd5e1;
     --color-status-error: #f87171;
+  }
+
+  /* V3 navy (UX3 3): Engineering focus, toolkits. */
+  [data-surface="navy"] {
+    --color-background: #0a1931;
+    --color-surface: #0f2142;
+    --color-surface-muted: #14294f;
+    --color-text-primary: #f8fafc;
+    /* 6.62 on the muted surface. */
+    --color-text-secondary: #a3b1c6;
+    /* 5.49 on the muted surface, the lowest text pair here besides status. */
+    --color-text-muted: #93a1b6;
+    --color-border: #2b394d;
+    /* Sky: 6.90 on the base, 5.66 on the muted surface. */
+    --color-accent: #60a5fa;
+    --color-accent-hover: #93c5fd;
+    --color-focus: #60a5fa;
+    --color-on-accent: #0a1931;
+    --color-accent-subtle: #1a3260;
+    --color-on-accent-subtle: #bfd7fe;
+    --color-status-success: #4ade80;
+    --color-status-warning: #fbbf24;
+    --color-status-neutral: #cbd5e1;
+    --color-status-error: #f87171;
+  }
+
+  /* V3 white (UX3 3): Career, Education, the case-study body. */
+  [data-surface="white"] {
+    --color-background: #ffffff;
+    --color-surface: #ffffff;
+    --color-surface-muted: #f5f7fa;
+    --color-text-primary: #111827;
+    --color-text-secondary: #4b5563;
+    --color-text-muted: #556070;
+    --color-border: #e2e7ee;
+    --color-accent: #1d4ed8;
+    --color-accent-hover: #1e40af;
+    --color-focus: #2563eb;
+    --color-on-accent: #ffffff;
+    --color-accent-subtle: #dbeafe;
+    --color-on-accent-subtle: #1e3a8a;
+    --color-status-success: #166534;
+    --color-status-warning: #92400e;
+    --color-status-neutral: #334155;
+    --color-status-error: #b91c1c;
+  }
+
+  /*
+   * V3 blue (UX3 3): "How I approach engineering" only.
+   *
+   * Every text token is white. On #2563EB white measures 5.17, and a tint
+   * leaves almost no margin: the near-white #F5F8FF measures 4.86, barely over
+   * the 4.8 floor, and #EEF3FF falls under it at 4.65. So hierarchy on this
+   * surface comes from weight and size, not colour. The accent is white too, which inverts the
+   * fill: its label is the darker blue, 6.70. Statuses are white because no
+   * status badge belongs on this surface, and the matrix still requires them.
+   */
+  [data-surface="blue"] {
+    --color-background: #2563eb;
+    --color-surface: #2563eb;
+    --color-surface-muted: #2563eb;
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #ffffff;
+    --color-text-muted: #ffffff;
+    --color-border: #6692f1;
+    --color-accent: #ffffff;
+    --color-accent-hover: #ffffff;
+    --color-focus: #ffffff;
+    --color-on-accent: #1d4ed8;
+    --color-accent-subtle: #dbeafe;
+    --color-on-accent-subtle: #1e3a8a;
+    --color-status-success: #ffffff;
+    --color-status-warning: #ffffff;
+    --color-status-neutral: #ffffff;
+    --color-status-error: #ffffff;
   }
 }
 

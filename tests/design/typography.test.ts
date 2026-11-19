@@ -71,6 +71,10 @@ describe("the type scale is the only source of size", () => {
       "body",
       "meta",
       "eyebrow",
+      // V3 (UX3 4, DEC-061)
+      "display-hero-line-1",
+      "display-hero-line-2",
+      "kicker",
     ]) {
       expect(CSS, `--text-${step} is not declared`).toContain(`--text-${step}:`);
     }
@@ -101,6 +105,15 @@ describe("the display face is applied structurally", () => {
   it("declares both font roles", () => {
     expect(CSS).toContain("--font-display:");
     expect(CSS).toContain("--font-sans:");
+  });
+
+  // SUP-013: V3 is Geist only. The display role stays so call sites keep
+  // asking for it, but it must resolve to the body family, not a second face.
+  it("resolves the display role to Geist", () => {
+    const declaration = CSS.match(/--font-display:\s*([^;]+);/)?.[1] ?? "";
+
+    expect(declaration).toContain("var(--font-geist-sans)");
+    expect(declaration).not.toMatch(/archivo/i);
   });
 
   it("sets headings in the display face without asking call sites to remember", () => {

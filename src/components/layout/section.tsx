@@ -13,7 +13,7 @@ import type { ReactNode } from "react";
  * place rather than repeating `py-16` across seven files.
  */
 
-export type SectionSurface = "light" | "neutral" | "dark";
+export type SectionSurface = "light" | "neutral" | "dark" | "navy" | "white" | "blue";
 
 /**
  * Surface emphasis, most to least (UX2 4.4).
@@ -25,9 +25,14 @@ export type SectionSurface = "light" | "neutral" | "dark";
  * SUP-007 has never had a test until now.
  */
 export const SURFACE_RANK: Record<SectionSurface, number> = {
+  // V3 (UX3 3): the one blue section carries the most emphasis; navy weighs
+  // the same as dark, and white the same as light.
+  blue: 4,
   dark: 3,
+  navy: 3,
   neutral: 2,
   light: 1,
+  white: 1,
 };
 
 interface SectionProps {
