@@ -69,3 +69,38 @@ describe("a Backend or Infrastructure section with nothing publicly eligible ren
     });
   }
 });
+
+/**
+ * The other side of omission: when a page's first section is omitted, the
+ * hero must not offer an action that scrolls to it. Against the real content
+ * every intro is published, so only an emptied registry shows whether the
+ * layout's condition and the section's agree.
+ */
+const navigation = vi.hoisted(() => ({ pathname: "/backend" }));
+vi.mock("next/navigation", () => ({ usePathname: () => navigation.pathname }));
+
+describe("the hero offers no action whose target is omitted", () => {
+  for (const [pathname, pageModule] of [
+    ["/backend", "@/app/(modes)/backend/page"],
+    ["/infrastructure", "@/app/(modes)/infrastructure/page"],
+  ] as const) {
+    it(`on ${pathname}, with no published intro for the page`, async () => {
+      vi.resetModules();
+      vi.doMock("@/content/discipline-pages", () => ({ disciplineIntros: [], workAreas: [] }));
+      navigation.pathname = pathname;
+
+      const { default: ModesLayout } = await import("@/app/(modes)/layout");
+      const { default: Page } = (await import(pageModule)) as {
+        default: () => React.ReactElement;
+      };
+      const { container } = render(
+        <ModesLayout>
+          <Page />
+        </ModesLayout>,
+      );
+
+      expect(container.querySelector("h1"), "the hero is still there").not.toBeNull();
+      expect(container.querySelector('section a[href^="#"]'), "an action was offered").toBeNull();
+    });
+  }
+});
