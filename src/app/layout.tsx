@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Archivo, Geist } from "next/font/google";
+import { Geist } from "next/font/google";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { buildRootMetadata } from "@/domain/metadata/build-metadata";
@@ -7,9 +7,14 @@ import { MAIN_CONTENT_ID } from "@/lib/constants";
 import "./globals.css";
 
 /**
- * Two typefaces, two roles (UX2 3).
+ * One typeface, two roles (UX3 4, SUP-013).
  *
- * Both are served by next/font, which self-hosts the files at build time. No
+ * V3 sets display and body in Geist; the stylesheet keeps both roles, so call
+ * sites still ask for "display". v2 paired Geist with Archivo for display
+ * (DEC-050); the reasoning below about fallbacks and preloading came from that
+ * pairing and still applies to the one face that remains.
+ *
+ * Served by next/font, which self-hosts the files at build time. No
  * third-party origin, no preconnect, and nothing for a future CSP to allow.
  *
  * `adjustFontFallback` defaults to true and must stay that way. It generates a
@@ -34,23 +39,6 @@ const geistSans = Geist({
   display: "swap",
 });
 
-/**
- * Archivo, for display only: hero, section statements, page and project titles.
- *
- * Variable, so one file covers the whole weight range. SIL Open Font License.
- *
- * Chosen over an editorial serif because it reads as deliberate engineering
- * rather than as decoration, which is what V2-DP-001 asks for. Ultra-condensed
- * faces were excluded rather than compared: PRD 17.3 warns against them for
- * long text and against picking a face because it resembles motorsport
- * branding.
- */
-const archivo = Archivo({
-  variable: "--font-archivo",
-  subsets: ["latin"],
-  display: "swap",
-});
-
 export const metadata: Metadata = buildRootMetadata();
 
 export default function RootLayout({
@@ -59,7 +47,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${archivo.variable}`}>
+    <html lang="en" className={geistSans.variable}>
       <body>
         {/*
          * Skip-to-content must be the first focusable element on the page so a

@@ -77,11 +77,12 @@ export const contentType = "image/png";
  * Colours come from the dark surface in globals.css — see cardPalette above for
  * why they are read rather than copied.
  *
- * The typeface stays the renderer's default sans. Archivo is loaded through
- * next/font, which applies to the document and not to ImageResponse; using it
- * here would mean fetching and embedding the font file on every render. That is
- * a real cost for a difference nobody sees at thumbnail size in a link preview,
- * so it is deliberately not done.
+ * The typeface stays the renderer's default sans. The site's face (Geist since
+ * V3; Archivo for display in v2) is loaded through next/font, which applies to
+ * the document and not to ImageResponse; using it here would mean fetching and
+ * embedding the font file on every render. That is a real cost for a
+ * difference nobody sees at thumbnail size in a link preview, so it is
+ * deliberately not done.
  */
 export default function OpenGraphImage() {
   const { name, title, location } = cardText();

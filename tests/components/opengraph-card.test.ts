@@ -113,8 +113,9 @@ describe("the social card palette follows the stylesheet", () => {
 
     expect(renderer.match(/#[0-9a-fA-F]{6}/g) ?? [], "the renderer hardcodes a colour").toEqual([]);
 
-    // And the values it will resolve to are the real dark surface.
-    expect(dark["color-background"]).toBe("#0b0f14");
+    // And the values it will resolve to are the real dark surface: the V3
+    // near-black since P3 (UX3 2), sky for the accent.
+    expect(dark["color-background"]).toBe("#070b12");
     expect(dark["color-accent"]).toBe("#60a5fa");
   });
 });

@@ -163,7 +163,7 @@ describe("every declared colour pair clears its floor", () => {
  * of fourteen tokens: nothing errors, the colour is simply wrong in one place.
  */
 describe("the surfaces declare the same tokens", () => {
-  it("every token is present in all three surfaces", () => {
+  it("every token is present in every surface", () => {
     const required = requiredTokenNames(TOKENS);
 
     expect(required.length).toBeGreaterThan(10);
@@ -200,5 +200,48 @@ describe("the floors are the intended ones", () => {
 
     expect(ratio).toBeGreaterThan(4.5);
     expect(ratio).toBeLessThan(CONTRAST_FLOOR.text);
+  });
+
+  /**
+   * The V3 reason the light accent is the darker blue (UX3 2): the identity
+   * blue on the light muted surface passes WCAG and fails this floor, the same
+   * shape as the v2 footer pairing above.
+   */
+  it("would catch the identity blue as text on the V3 light muted surface", () => {
+    const ratio = contrastRatio("#2563EB", "#EDF1F6");
+
+    expect(ratio).toBeGreaterThan(4.5);
+    expect(ratio).toBeLessThan(CONTRAST_FLOOR.text);
+  });
+});
+
+/**
+ * The V3 surfaces resolve to the values UX3 2 and 3 specify. The contrast
+ * matrix proves they are readable; this proves they are the approved design,
+ * so a later edit cannot drift the palette while staying legible.
+ */
+describe("the V3 surfaces are the specified ones (UX3 2, 3)", () => {
+  it("declares all five V3 surfaces, plus v2's neutral", () => {
+    expect([...SURFACE_NAMES].sort()).toEqual(
+      ["blue", "dark", "light", "navy", "neutral", "white"].sort(),
+    );
+  });
+
+  it("paints each V3 surface its specified background", () => {
+    expect(TOKENS.dark["color-background"]).toBe("#070b12");
+    expect(TOKENS.navy["color-background"]).toBe("#0a1931");
+    expect(TOKENS.light["color-background"]).toBe("#f5f7fa");
+    expect(TOKENS.white["color-background"]).toBe("#ffffff");
+    expect(TOKENS.blue["color-background"]).toBe("#2563eb");
+  });
+
+  it("uses the darker blue for accent text on light surfaces", () => {
+    expect(TOKENS.light["color-accent"]).toBe("#1d4ed8");
+    expect(TOKENS.white["color-accent"]).toBe("#1d4ed8");
+  });
+
+  it("uses sky for the accent on dark and navy", () => {
+    expect(TOKENS.dark["color-accent"]).toBe("#60a5fa");
+    expect(TOKENS.navy["color-accent"]).toBe("#60a5fa");
   });
 });
