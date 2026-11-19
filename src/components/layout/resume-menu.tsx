@@ -1,7 +1,13 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useRef, type KeyboardEvent, type ToggleEvent } from "react";
+import {
+  useRef,
+  type ComponentProps,
+  type KeyboardEvent,
+  type MouseEvent,
+  type ToggleEvent,
+} from "react";
 import { ROUTES } from "@/lib/constants";
 
 /**
@@ -27,6 +33,28 @@ export interface ResumeMenuItem {
 }
 
 const MENU_ID = "resume-menu";
+
+/**
+ * Focusing the button before the popover opens. WebKit does not focus a
+ * button on click, so after a mouse open the popover would record the page
+ * body as the element to restore, and Escape would leave focus there.
+ * Focusing the button first makes it the restore target in every engine; the
+ * native behaviour does the rest. Found by the end-to-end suite in WebKit.
+ */
+function focusInvoker(event: MouseEvent<HTMLButtonElement>) {
+  event.currentTarget.focus();
+}
+
+/**
+ * Another way to open the header's Résumé menu, from elsewhere on a page —
+ * "Résumés" in the Overall page's Explore further (UX3 7.1). The menu stays
+ * the one in the header; this button only points at it.
+ */
+export function ResumeMenuTrigger(
+  props: Omit<ComponentProps<"button">, "type" | "popoverTarget" | "onClick">,
+) {
+  return <button {...props} type="button" popoverTarget={MENU_ID} onClick={focusInvoker} />;
+}
 
 const VARIANT_FOR_PATH: Record<string, ResumeMenuItem["variant"]> = {
   [ROUTES.backend]: "backend",
@@ -66,14 +94,7 @@ export function ResumeMenu({ items }: { readonly items: readonly ResumeMenuItem[
       <button
         type="button"
         popoverTarget={MENU_ID}
-        /*
-         * WebKit does not focus a button on click, so after a mouse open the
-         * popover would record the page body as the element to restore, and
-         * Escape would leave focus there. Focusing the button first makes it
-         * the restore target in every engine; the native behaviour does the
-         * rest. Found by the end-to-end suite in WebKit.
-         */
-        onClick={(event) => event.currentTarget.focus()}
+        onClick={focusInvoker}
         className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border px-4 text-meta font-semibold text-text-primary hover:border-accent hover:text-accent"
       >
         Résumé

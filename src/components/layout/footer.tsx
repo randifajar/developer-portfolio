@@ -8,7 +8,7 @@ import {
   getPublishedResumeFor,
   getSiteConfig,
 } from "@/domain/content/selectors";
-import { MAIN_CONTENT_ID, ROUTES } from "@/lib/constants";
+import { MAIN_CONTENT_ID, ROUTES, SECTION_IDS } from "@/lib/constants";
 
 interface FooterProps {
   /**
@@ -48,7 +48,11 @@ export function Footer({ year = new Date().getFullYear() }: FooterProps) {
   const siteConfig = getSiteConfig();
 
   return (
-    <footer data-surface="dark" className="border-t border-border bg-background text-text-primary">
+    <footer
+      id={SECTION_IDS.contact}
+      data-surface="dark"
+      className="border-t border-border bg-background text-text-primary"
+    >
       <div className="mx-auto grid max-w-(--spacing-content) gap-10 px-5 py-14 sm:px-8 md:grid-cols-[2fr_1fr_1fr] lg:px-12">
         <div className="flex flex-col gap-5">
           <h2 className="text-display-section font-semibold">Get in touch.</h2>

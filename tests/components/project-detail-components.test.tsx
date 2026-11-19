@@ -207,12 +207,12 @@ describe("ProjectNavigation", () => {
     );
   });
 
-  it("falls back to the contact section when no channel is Published", () => {
+  it("falls back to the footer's contact section when no channel is Published", () => {
     render(<ProjectNavigation previous={null} next={null} resumeHref={null} contactHref={null} />);
 
     expect(screen.getByRole("link", { name: /^contact$/i })).toHaveAttribute(
       "href",
-      `${ROUTES.home}#${SECTION_IDS.contact}`,
+      `#${SECTION_IDS.contact}`,
     );
   });
 

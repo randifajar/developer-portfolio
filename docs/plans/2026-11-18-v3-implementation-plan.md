@@ -5,7 +5,7 @@
 | Field | Value |
 |---|---|
 | Date | 2026-11-18 |
-| Status | **Approved 2026-11-18** ("approved, use your recommendations"). Randi also asked for a pre-production environment, so the integration branch is `staging` (D5, section 6). On 2026-11-19 he settled D12 (Zettabyte), D9 (professional experience), the infrastructure detail level (DEC-064) and the proposed wording (approved), and asked for the target-roles list to be removed. P0 and P1 are merged into `staging` (#100, #99, #101). The overview titles are working titles (OPEN-011) |
+| Status | **Approved 2026-11-18** ("approved, use your recommendations"). Randi also asked for a pre-production environment, so the integration branch is `staging` (D5, section 6). On 2026-11-19 he settled D12 (Zettabyte), D9 (professional experience), the infrastructure detail level (DEC-064) and the proposed wording (approved), and asked for the target-roles list to be removed. P0 to P4 are merged into `staging` (#99 to #106); P5 is in progress. The overview titles are working titles (OPEN-011) |
 | Approved design | V3.1 review mockup, approved 2026-11-18. It stays on Randi's machine by his decision (2026-11-19); `docs/product/PORTFOLIO_UX_UI_SPEC_v3.0.md` records the design |
 | Inputs | V3 master requirements v1.0, the V3.1 improvement brief, the backend and infrastructure résumés, the repository at `25a31d5` |
 | Decision and merge authority | Randi Fajar Wicaksono, per pull request |
@@ -134,7 +134,7 @@ phase leaves a working site. Reusable primitives are kept and restyled: `externa
 
 | Step | Implementation |
 |---|---|
-| Click a mode | `next/link` client navigation to the real route, with `scroll={false}`; the pill moves at once (CSS transition) |
+| Click a mode | `next/link` client navigation to the real route; the pill moves at once (CSS transition). No `scroll={false}` is needed (UX3 6.5, amended in P5): `ModeHero` wraps the page, so its reset runs after the router's own scroll |
 | Exit | `ModeHero` sees the pathname change and runs a Web Animations exit on the current heading lines and text (about 220 ms) |
 | Swap | New hero copy renders; the page below is the new route's server output |
 | Entrance | Heading lines rise, then the description and the action. Everything settles roughly 0.75 s after the click, as in the approved mockup |
@@ -148,12 +148,19 @@ changed segment into view whenever that element's top edge is outside the viewpo
 untouched.
 
 Here the changed segment is the page below the persistent hero. The default behaviour would
-therefore jump straight past the hero, and keyboard focus would stay on the mode link. The P4
-skeleton confirms both behaviours for every entry path before motion is layered on:
-- mode to mode;
-- from `/projects`;
-- back and forward;
-- reload.
+therefore jump straight past the hero, and keyboard focus would stay on the mode link. P5
+confirms the hero's handling for every entry path before motion is layered on
+(`e2e/mode-change.spec.ts`, `tests/components/mode-hero.test.tsx`):
+- mode to mode, from mid-page, at desktop and phone widths: top, focus on the new `h1`;
+- from `/projects`: the same;
+- back and forward: left to the browser;
+- reload: left alone.
+
+**As built in P5,** the hero wraps the page rather than sitting beside it. React runs layout effects
+children first, so the router's handler for the page runs before the hero's reset, and the reset has
+the last word. Beside the page, the hero's effect would run first and the router could still scroll
+past it. The P4 skeleton, which this section originally gave the check to, rendered a static hero
+per route, so the check moved to P5 with the persistent hero.
 
 **Shared-element transition (optional).** A shared-element move from a project row into its case
 study would need React's `<ViewTransition>`. Whether that works with App Router navigations in this
@@ -463,7 +470,7 @@ five page types, and bundle sizes per route.
 | Risk | Mitigation |
 |---|---|
 | `staging` drifts from `production` | Merge `production` into `staging` after every production change; keep phase pull requests small |
-| Next.js scroll and focus defaults conflict with the persistent hero | `scroll={false}` on mode links, with `ModeHero` owning scroll and focus; verified for every entry path in P4 before motion is added |
+| Next.js scroll and focus defaults conflict with the persistent hero | `ModeHero` owns scroll and focus, and wraps the page so its reset runs after the router's (P5). Verified for every entry path in `e2e/mode-change.spec.ts` before motion is added |
 | Client JavaScript grows | Six components only; bundle sizes recorded at each phase |
 | Content approvals lag behind code | Unapproved content stays Draft; release validation blocks shipping it |
 | Internal names or the phone number leak | Briefs kept out of git; review of every content pull request; résumés published only on approval |

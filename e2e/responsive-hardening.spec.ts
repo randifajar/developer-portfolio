@@ -18,11 +18,17 @@ import { expect, test } from "@playwright/test";
  * would be the more dangerous kind of green.
  */
 
-/** PRD 64's six widths, plus 320 — the narrowest the project supports. */
-const WIDTHS = [320, 375, 390, 768, 1024, 1280, 1440] as const;
+/**
+ * PRD 64's six widths, plus 320 — the narrowest the project supports — and
+ * 360, where the V3 header wraps to two rows (UX3 5).
+ */
+const WIDTHS = [320, 360, 375, 390, 768, 1024, 1280, 1440] as const;
 
 const ROUTES = [
   { name: "Home", path: "/" },
+  // The V3 mode routes (DEC-056).
+  { name: "Backend", path: "/backend" },
+  { name: "Infrastructure", path: "/infrastructure" },
   { name: "Projects Index", path: "/projects" },
   { name: "Project Detail", path: "/projects/jury-process-management-integration" },
   { name: "Not Found", path: "/this-route-does-not-exist" },

@@ -72,7 +72,9 @@ test.describe("Resume (FAC-RESUME-002)", () => {
   test("the Resume action resolves to a real PDF", async ({ page, request }) => {
     await page.goto("/");
 
-    const action = page.getByRole("link", { name: /view resume/i }).first();
+    // The footer's link, on every page (UX3 7.7). The header's menu offers
+    // the same file and is covered in home.spec.ts.
+    const action = page.getByRole("contentinfo").getByRole("link", { name: /résumé/i });
 
     await expect(action).toBeVisible();
 
@@ -89,7 +91,9 @@ test.describe("Resume (FAC-RESUME-002)", () => {
   test("opens in a new tab without handing the opener away", async ({ page }) => {
     await page.goto("/");
 
-    const action = page.getByRole("link", { name: /view resume/i }).first();
+    // The footer's link, on every page (UX3 7.7). The header's menu offers
+    // the same file and is covered in home.spec.ts.
+    const action = page.getByRole("contentinfo").getByRole("link", { name: /résumé/i });
     const rel = (await action.getAttribute("rel")) ?? "";
 
     expect(await action.getAttribute("target")).toBe("_blank");

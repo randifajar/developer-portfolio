@@ -27,7 +27,8 @@ const PROJECT_TYPE_LABEL: Record<ProjectCaseStudy["projectType"], string> = {
 };
 
 /**
- * A project card, used on both the homepage and the Projects Index (UX 7.5).
+ * A project card, on the Projects Index (UX 7.5). The v2 homepage used it too,
+ * until V3 P5; the V3 index replaces it in P7.
  *
  * The whole card is not a single anchor. Wrapping everything in one link would
  * force the status badge's accessible description and every technology tag

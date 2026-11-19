@@ -1,7 +1,6 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { ProjectCard } from "@/components/project/project-card";
-import { ProjectModule } from "@/components/project/project-module";
 import type { ProjectCaseStudy } from "@/domain/content/schemas";
 
 /**
@@ -16,15 +15,12 @@ import type { ProjectCaseStudy } from "@/domain/content/schemas";
  * So this compares document positions. It is the assertion that fails when
  * someone moves a line, which a presence test never will.
  *
- * As of v2 there are two formats. The homepage presents editorial modules and
- * the Projects Index presents cards, because PRD 20 warns against presenting
- * every project identically and a catalogue and a feature are different jobs.
- *
- * Both are asserted here, from one table, deliberately. SUP-006 was decided
- * about a card; PRD 32 lists the identical order for tiles, so the decision
- * travels rather than being reopened. Testing the two formats separately would
- * let them drift apart one careless edit at a time — and the whole point of the
- * decision is that a recruiter meets the same sequence wherever they land.
+ * v2 had two formats: editorial modules on the homepage and cards on the
+ * Projects Index, asserted here from one table. V3 P5 replaced the homepage, and
+ * its Selected work lists rows that carry no role (UX3 7.1), so the module went
+ * with it. The card stays until the V3 projects index (P7), and the table stays
+ * too: a format added later without an entry here is the drift this file
+ * exists to prevent.
  */
 
 const project = {
@@ -62,17 +58,13 @@ function positionOf(container: HTMLElement, text: string | RegExp): number {
 }
 
 /**
- * Both formats, one table. A new presentation added later without an entry here
+ * Every format, one table. A new presentation added later without an entry here
  * would be the drift this file exists to prevent.
  */
 const FORMATS = [
   [
     "card (Projects Index)",
     () => render(<ProjectCard project={project} technologyNames={TECHNOLOGIES} />).container,
-  ],
-  [
-    "editorial module (homepage)",
-    () => render(<ProjectModule project={project} technologyNames={TECHNOLOGIES} />).container,
   ],
 ] as const;
 
