@@ -285,6 +285,12 @@ All criteria in this document are `P0` or `P1`.
   8. Contact
   9. Footer
 
+> **Superseded by the V3 Overall page (SUP-012, UX3 7.1).** Hero, profile,
+> engineering focus, career, selected work, how I approach engineering,
+> education and credentials, explore further, then the footer. On `staging`
+> since V3 P5, asserted by `tests/components/overall-page.test.tsx`; on the
+> live site from the V3 release.
+
 ---
 
 ## FAC-HOME-002 — Show primary calls to action
@@ -297,6 +303,11 @@ All criteria in this document are `P0` or `P1`.
 **Then**
 - A `View Projects` action is available.
 - A Resume action is available when an active Resume exists.
+
+> **Amended for V3 (UX3 6.3, 7.1).** The Overall hero's one action is
+> "Explore the journey", into the profile. The Résumé moved to the header,
+> one click away on every page, and projects are reached from selected work,
+> Explore further, and the footer (UX3 6.4). On `staging` since V3 P5.
 
 ---
 
@@ -335,6 +346,12 @@ All criteria in this document are `P0` or `P1`.
 - Two project cards are shown.
 - No empty placeholder card is shown.
 - No fake `Coming Soon` project is shown.
+
+> **Amended for V3 (UX3 7.1).** The Overall page's selected work lists
+> featured case studies that have a discipline, then published overviews, as
+> rows. The personal portfolio has no discipline, so it is listed on the
+> projects page only. The rule against filler stands: with one case study and
+> no published overview, the section shows one row. On `staging` since V3 P5.
 
 ---
 
@@ -391,6 +408,12 @@ All criteria in this document are `P0` or `P1`.
   - Selected responsibilities
   - Selected contributions when available
   - Relevant technologies
+
+> **V3.** The Overall page shows each role's title and dates in the career
+> chapters, and the current role and company in the profile. Summaries,
+> responsibilities, contributions, and technologies move to the Backend and
+> Infrastructure pages (UX3 7.2, 7.3), built in V3 P6. Between P5 and P6,
+> `staging` shows them nowhere; the live site is unaffected until the release.
 
 ---
 
@@ -670,6 +693,11 @@ All criteria in this document are `P0` or `P1`.
 **Then**
 - Skills are organized into approved practical groups.
 
+> **V3.** Skills are grouped per discipline as the toolkits of the Backend and
+> Infrastructure pages (UX3 7.2, 7.3), built in V3 P6. v2's Technical Skills
+> section left `staging` with the v2 homepage in P5, so until P6 `staging`
+> shows no skills; the live site is unaffected until the release.
+
 ---
 
 ## FAC-SKILL-002 — Display evidence-oriented classifications
@@ -731,6 +759,11 @@ All criteria in this document are `P0` or `P1`.
   - Human responsibilities
   - Review process
   - Testing and verification
+
+> **To be superseded in V3 (SUP-014).** V3 has no AI section; AI-assisted
+> practice is stated in the engineering approach ("Own the AI's output") and
+> in a project overview. The section left `staging` with the v2 homepage in
+> V3 P5; the records, schema, and release rule follow in P5b.
 
 ---
 

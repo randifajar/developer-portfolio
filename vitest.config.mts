@@ -20,9 +20,11 @@ export default defineConfig({
     // Some tests must load a module by a name computed at runtime, so they call
     // vi.resetModules() and await import() inside the test body. That puts a
     // full re-transform and re-evaluation of a component subgraph on the clock.
-    // homepage-section-omission.test.tsx does it six times, worst case 573ms.
+    // overall-omission.test.tsx does it six times; its v2 predecessor,
+    // homepage-section-omission.test.tsx, measured 573ms at worst.
     //
-    // experience-grouping.test.tsx used to do the same at ~1100ms — a margin of
+    // experience-grouping.test.tsx (removed with the v2 homepage in V3 P5) did
+    // the same at ~1100ms — a margin of
     // about 4.5x — and on 2026-08-17 that margin ran out twice under full-suite
     // parallelism. It has since been restructured to import once, but the files
     // that genuinely need a computed module name cannot be, so they get real

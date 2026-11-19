@@ -24,22 +24,22 @@ import { SECTION_IDS } from "../src/lib/constants";
  */
 test.use({ contextOptions: { reducedMotion: "reduce" } });
 
-const HOMEPAGE_SECTIONS = [
-  SECTION_IDS.about,
-  SECTION_IDS.experience,
-  SECTION_IDS.projects,
-  SECTION_IDS.skills,
-  SECTION_IDS.aiWorkflow,
+// The Overall page's linked sections and the footer (UX3 7.1, 7.7).
+const OVERALL_TARGETS = [
+  SECTION_IDS.profile,
+  SECTION_IDS.career,
+  SECTION_IDS.work,
+  SECTION_IDS.education,
   SECTION_IDS.contact,
 ] as const;
 
-test("every homepage section is visible with motion disabled", async ({ page }) => {
+test("every Overall section is visible with motion disabled", async ({ page }) => {
   await page.goto("/");
 
   // The h1 is in the hero, which carries no id of its own.
   await expect(page.locator("h1")).toBeVisible();
 
-  for (const id of HOMEPAGE_SECTIONS) {
+  for (const id of OVERALL_TARGETS) {
     await expect(
       page.locator(`#${id}`),
       `#${id} is not visible under reduced motion`,

@@ -65,10 +65,7 @@ export function ProjectNavigation({
           </ButtonLink>
         ) : null}
 
-        <ButtonLink
-          href={contactHref ?? `${ROUTES.home}#${SECTION_IDS.contact}`}
-          variant="secondary"
-        >
+        <ButtonLink href={contactHref ?? `#${SECTION_IDS.contact}`} variant="secondary">
           Contact
         </ButtonLink>
       </div>

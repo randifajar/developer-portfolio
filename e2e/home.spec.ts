@@ -245,3 +245,43 @@ test.describe("mode switch (UX3 6.2, V3-NAV-001, 002, 007)", () => {
     }
   });
 });
+
+/**
+ * The Overall page (UX3 7.1). Its structure and content are asserted in the
+ * component suite; these are the behaviours only a browser has.
+ */
+test.describe("Overall page (UX3 7.1)", () => {
+  test("the hero action takes the visitor to the profile", async ({ page }) => {
+    await page.getByRole("link", { name: /explore the journey/i }).click();
+
+    await expect(page).toHaveURL(/#profile$/);
+    await expect(page.getByRole("region", { name: "Profile" })).toBeInViewport();
+  });
+
+  test("Résumés in Explore further opens the header's menu, and Escape returns to it", async ({
+    page,
+  }) => {
+    const explore = page.getByRole("region", { name: "Explore further" });
+    const resumes = explore.getByRole("button", { name: "Résumés" });
+    const menu = page.locator("#resume-menu");
+
+    await resumes.click();
+    await expect(menu).toBeVisible();
+    await expect(menu.getByRole("link", { name: /backend résumé/i })).toBeFocused();
+
+    await page.keyboard.press("Escape");
+    await expect(menu).toBeHidden();
+    await expect(resumes).toBeFocused();
+  });
+
+  test("the case study row leads to its case study", async ({ page }) => {
+    await page
+      .getByRole("link", { name: "Read the case study: Jury Process Management Integration" })
+      .click();
+
+    await expect(page).toHaveURL(/\/projects\/jury-process-management-integration$/);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "Jury Process Management Integration",
+    );
+  });
+});

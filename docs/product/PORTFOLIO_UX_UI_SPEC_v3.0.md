@@ -10,7 +10,8 @@ release, `PORTFOLIO_UX_UI_SPEC_v2.0.md` describes the live site.
 |---|---|
 | §2 Colour, §3 Surfaces, §4 Typography (tokens and type steps) | Built in P3. The v2 pages on `staging` already use them |
 | §6 Navigation: header, mode switch, Résumé menu; §7.7 Footer | Built in P4, with two differences noted in §6.1 and §6.2. The `/backend` and `/infrastructure` routes exist and show their intros |
-| §5, §7.1–§7.6, §8–§11 (layout, pages, motion, responsive, accessibility, performance) | Not built yet; P5 onwards |
+| §6.5 Focus and scroll on a mode change; §7 the persistent hero; §7.1 Overall | Built in P5, with the stacked career layout (§8.4 adds the pinned one in P8) and a labelled placeholder for the photograph (§7.6). §6.5 is amended: see the note there |
+| §5, §7.2–§7.6, §8–§11 (layout, the other pages, motion, responsive, accessibility, performance) | Not built yet; P6 onwards |
 
 **Will supersede:** `PORTFOLIO_UX_UI_SPEC_v2.0.md`, at the V3 release.
 
@@ -211,8 +212,22 @@ does two things:
 - moves focus to the new `h1`, with `preventScroll`.
 
 The router cannot be left to do this. In the installed Next.js (16.4.6) it would scroll
-the page below the persistent hero into view, and it leaves focus where it was. Mode links
-therefore use `scroll={false}`.
+the page below the persistent hero into view, and it leaves focus where it was.
+
+**Amended in P5.** This section said mode links therefore use `scroll={false}`. They do
+not need it. `ModeHero` wraps the page it sits above, and React runs layout effects
+children first, so the router's scroll handler for the page runs before the hero's reset and
+the reset has the last word, before paint. Every link into a mode route then behaves the
+same without a prop to remember, including links added in later phases.
+
+The same holds for every way into a mode route except two, which are left alone:
+
+- **A page load or reload.** The browser keeps its position and nothing is focused that the
+  visitor did not ask for.
+- **Back and Forward.** The browser's scroll restoration stands.
+
+Arriving from the projects pages counts as a mode change: the hero is created by the
+navigation, and it resets and focuses as above.
 
 ---
 
@@ -238,6 +253,25 @@ Each hero names the engineer, the focus and the next action (V3-CONT-003). Wordi
 | 7 | Education & credentials | white | Degree, programme, certification, course, languages |
 | 8 | Explore further | dark | Backend, Infrastructure, All projects, Résumés |
 | 9 | Footer | dark | §7.7 |
+
+**As built in P5.** Five details differ from the approved mockup, each for a recorded reason:
+
+- **Engineering focus.** Each column's text is that mode's intro description, so the Overall
+  page and the mode page describe a discipline in the same words. The mockup's infrastructure
+  column named the employer's reverse proxy, which DEC-064 keeps off the site, and the backend
+  column follows the same rule so the two stay parallel.
+- **Profile.** The statement is the approved two paragraphs (OPEN-009). The mockup's third
+  paragraph, on AI tools, is not repeated here: AI-assisted practice is stated in the
+  engineering approach (SUP-014).
+- **Career.** The stacked layout follows the mockup's phone layout, which lists each
+  chapter's roles and nothing else. The desktop panel's extra line, "Not an SRE title · A
+  delivery and infrastructure role", belongs to the pinned layout and is decided with it in
+  P8. Nothing on the site calls the role SRE (§7.3).
+- **Selected work.** Overviews are Draft until their titles are confirmed (OPEN-011), so for
+  now the section lists the one case study with a discipline. Nothing is added to fill it.
+- **Explore further.** "Seven pieces of work, by discipline" was a count typed into the copy.
+  The count is now taken from what is published, and "by discipline" returns with the
+  projects filter in P7.
 
 ### 7.2 Backend (`/backend`)
 

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { getPublishedModeIntro } from "@/domain/content/selectors";
 import { MAIN_CONTENT_ID, RESUME_PATH, ROUTES, SECTION_IDS } from "@/lib/constants";
 
 describe("section anchors", () => {
@@ -14,15 +15,14 @@ describe("section anchors", () => {
     }
   });
 
-  it("cover every anchor-navigable homepage section required by FAC-NAV-002", () => {
-    expect(ids).toEqual(
-      expect.arrayContaining([
-        SECTION_IDS.experience,
-        SECTION_IDS.skills,
-        SECTION_IDS.aiWorkflow,
-        SECTION_IDS.contact,
-      ]),
-    );
+  // FAC-NAV-002's header section links are superseded by the V3 header (UX3
+  // 6); what remains are the in-page targets the V3 pages link to.
+  it("cover the V3 Overall targets and the footer (UX3 7.1, 7.7)", () => {
+    expect(ids).toEqual(["profile", "career", "work", "education", "contact"]);
+  });
+
+  it("keep the Overall hero's action target in step with its content", () => {
+    expect(getPublishedModeIntro("overall")?.action.targetId).toBe(SECTION_IDS.profile);
   });
 
   it("does not collide with the skip-to-content target", () => {
@@ -41,8 +41,10 @@ describe("resume path", () => {
 });
 
 describe("routes", () => {
-  it("match the approved public route inventory (DEC-024)", () => {
+  it("match the approved public route inventory (DEC-024, DEC-056)", () => {
     expect(ROUTES.home).toBe("/");
+    expect(ROUTES.backend).toBe("/backend");
+    expect(ROUTES.infrastructure).toBe("/infrastructure");
     expect(ROUTES.projects).toBe("/projects");
     expect(ROUTES.projectDetail("example-slug")).toBe("/projects/example-slug");
   });

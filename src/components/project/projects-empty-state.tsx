@@ -59,7 +59,7 @@ export function ProjectsEmptyState({ resumePath, contact }: ProjectsEmptyStatePr
             {contact.label}
           </ButtonLink>
         ) : (
-          <ButtonLink href={`${ROUTES.home}#${SECTION_IDS.contact}`} variant="secondary">
+          <ButtonLink href={`#${SECTION_IDS.contact}`} variant="secondary">
             Contact
           </ButtonLink>
         )}

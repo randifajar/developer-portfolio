@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 /**
  * The page's structural unit: one full-bleed band, one contained column.
  *
- * Every homepage section renders through this, which is what makes the surface
+ * Every page section renders through this, which is what makes the surface
  * system work. Before it, four sections put `max-w` on the `<section>` element
  * itself, so a background colour on them would have stopped at the content
  * width instead of spanning the viewport.
@@ -41,6 +41,11 @@ interface SectionProps {
   /** Anchor target, when the section is linked from the navigation. */
   readonly id?: string;
   /**
+   * The id of the section's heading. Naming the section makes it a region
+   * landmark, so a screen-reader user can move between sections by name.
+   */
+  readonly labelledBy?: string;
+  /**
    * `prose` narrows the inner column for long-form reading. `content` is the
    * default page width.
    */
@@ -72,11 +77,17 @@ export function Section({
   surface,
   children,
   id,
+  labelledBy,
   width = "content",
   className = "",
 }: SectionProps) {
   return (
-    <section id={id} data-surface={surface} className="bg-background text-text-primary">
+    <section
+      id={id}
+      aria-labelledby={labelledBy}
+      data-surface={surface}
+      className="bg-background text-text-primary"
+    >
       <div
         className={`mx-auto w-full px-5 py-16 sm:px-8 lg:px-12 ${WIDTH_CLASS[width]} ${className}`.trim()}
       >
