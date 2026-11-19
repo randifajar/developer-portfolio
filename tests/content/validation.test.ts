@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { aiPractices } from "@/content/ai-practices";
 import { contactChannels, externalProfiles } from "@/content/contact";
 import { contentSet } from "@/content/content-set";
 import { experience } from "@/content/experience";
@@ -91,16 +90,6 @@ describe("rule: valid project references", () => {
     const content = {
       ...realContent(),
       experience: [{ ...first!, projectIds: ["project-missing"] }],
-    };
-
-    expect(rulesTriggeredBy(content)).toContain("valid-project-references");
-  });
-
-  it("rejects an AI practice referencing an unknown project", () => {
-    const [first] = aiPractices;
-    const content = {
-      ...realContent(),
-      aiPractices: [{ ...first!, relatedProjectIds: ["project-missing"] }],
     };
 
     expect(rulesTriggeredBy(content)).toContain("valid-project-references");

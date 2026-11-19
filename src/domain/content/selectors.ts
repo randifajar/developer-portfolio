@@ -1,4 +1,3 @@
-import { aiPractices } from "@/content/ai-practices";
 import { careerChapters } from "@/content/career";
 import { contactChannels, externalProfiles } from "@/content/contact";
 import { certifications, education, languages } from "@/content/credentials";
@@ -14,7 +13,6 @@ import { siteConfig } from "@/content/site";
 import { skills } from "@/content/skills";
 import { toolkitGroups } from "@/content/toolkits";
 import type {
-  AIPractice,
   CareerChapter,
   Certification,
   ContactChannel,
@@ -187,14 +185,6 @@ export function getPublishedSkillGroups(): readonly SkillGroupView[] {
       .slice()
       .sort((a, b) => a.sortOrder - b.sortOrder),
   })).filter((view) => view.skills.length > 0);
-}
-
-/** Published AI-Assisted Engineering practices, in workflow order. */
-export function getPublishedAIPractices(): readonly AIPractice[] {
-  return aiPractices
-    .filter(isPubliclyEligible)
-    .slice()
-    .sort((a, b) => a.sortOrder - b.sortOrder);
 }
 
 /**

@@ -1,6 +1,6 @@
 import type { ContentSet, ValidationIssue } from "@/domain/content/validation";
 import { validateContentSet } from "@/domain/content/validation";
-import { isPubliclyEligible } from "@/domain/content/types";
+import { MODES, isPubliclyEligible } from "@/domain/content/types";
 
 /**
  * Release validation.
@@ -266,7 +266,10 @@ export function validateRelease(
     });
   }
 
-  /* Published skills and AI practices (FAC-SKILL-001, FAC-AI-001). --------- */
+  /* Published skills (FAC-SKILL-001). -------------------------------------- */
+  // FAC-AI-001's companion rule, "published-ai-practices-required", went with
+  // the AI section in V3 P5b (SUP-014): V3 states AI-assisted practice in the
+  // engineering approach instead.
   if (content.skills.filter(isPubliclyEligible).length === 0) {
     add({
       rule: "published-skills-required",
@@ -275,12 +278,19 @@ export function validateRelease(
     });
   }
 
-  if (content.aiPractices.filter(isPubliclyEligible).length === 0) {
-    add({
-      rule: "published-ai-practices-required",
-      contentType: "AI-Assisted Engineering Practice",
-      message: "No AI-Assisted Engineering Practice is Published.",
-    });
+  /* A Published intro for every mode (UX3 7, NFAC-A11Y-003). --------------- */
+  // The intro is the mode hero's copy, and its heading is the page's h1. A mode
+  // without one renders no hero and so no h1 at all. Structural validation
+  // allows a missing intro (rule 17 says "at most one"), so content can be
+  // drafted a mode at a time; a release cannot ship that state.
+  for (const mode of MODES) {
+    if (!content.modeIntros.some((intro) => intro.mode === mode && isPubliclyEligible(intro))) {
+      add({
+        rule: "published-mode-intros-required",
+        contentType: "Mode Intro",
+        message: `No Published intro for the "${mode}" mode, so its page would have no h1.`,
+      });
+    }
   }
 
   /* No placeholder text in anything publicly visible (NFAC-CONTENT-004). --- */
@@ -289,10 +299,20 @@ export function validateRelease(
     ["Work Experience", content.experience.filter(isPubliclyEligible)],
     ["Project Case Study", publishedProjects],
     ["Technical Skill", content.skills.filter(isPubliclyEligible)],
-    ["AI-Assisted Engineering Practice", content.aiPractices.filter(isPubliclyEligible)],
     ["Media Asset", content.mediaAssets.filter(isPubliclyEligible)],
     ["Contact Channel", content.contactChannels.filter(isPubliclyEligible)],
     ["External Professional Profile", content.externalProfiles.filter(isPubliclyEligible)],
+    // The V3 records (V3 P5b). They render on every mode page, and until this
+    // was added none of them was scanned: a TODO in a career chapter would have
+    // passed release validation.
+    ["Mode Intro", content.modeIntros.filter(isPubliclyEligible)],
+    ["Career Chapter", content.careerChapters.filter(isPubliclyEligible)],
+    ["Education", content.education.filter(isPubliclyEligible)],
+    ["Certification", content.certifications.filter(isPubliclyEligible)],
+    ["Language", content.languages.filter(isPubliclyEligible)],
+    ["Engineering Practice", content.engineeringPractices.filter(isPubliclyEligible)],
+    ["Toolkit Group", content.toolkitGroups.filter(isPubliclyEligible)],
+    ["Project Overview", content.projectOverviews.filter(isPubliclyEligible)],
   ];
 
   for (const [contentType, records] of publiclyVisible) {

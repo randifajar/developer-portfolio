@@ -13,27 +13,17 @@ import type { ReactNode } from "react";
  * place rather than repeating `py-16` across seven files.
  */
 
-export type SectionSurface = "light" | "neutral" | "dark" | "navy" | "white" | "blue";
-
 /**
- * Surface emphasis, most to least (UX2 4.4).
+ * The five V3 surfaces (UX3 3, SUP-016). The tokens each one sets are in
+ * globals.css, and the contrast matrix checks every pairing on each.
  *
- * Exported because it is a product rule, not a styling detail: the AI Workflow
- * section may never sit above Work Experience or Selected Work. That rule
- * replaces SUP-007's mechanism, which is void now that every section carries a
- * band, and it is asserted in tests/components/section-surface.test.tsx —
- * SUP-007 has never had a test until now.
+ * v2 ranked its surfaces so that the AI Workflow section could never outrank
+ * Work Experience (SUP-007, `SURFACE_RANK`). V3 has no AI section (SUP-014),
+ * so the rank and its test went in V3 P5b; which section sits on which
+ * surface is now asserted section by section in
+ * tests/components/overall-page.test.tsx.
  */
-export const SURFACE_RANK: Record<SectionSurface, number> = {
-  // V3 (UX3 3): the one blue section carries the most emphasis; navy weighs
-  // the same as dark, and white the same as light.
-  blue: 4,
-  dark: 3,
-  navy: 3,
-  neutral: 2,
-  light: 1,
-  white: 1,
-};
+export type SectionSurface = "light" | "dark" | "navy" | "white" | "blue";
 
 interface SectionProps {
   readonly surface: SectionSurface;

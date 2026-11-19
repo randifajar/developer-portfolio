@@ -228,27 +228,6 @@
     --color-status-error: #b91c1c;
   }
 
-  /* v2 only: the Skills section. Removed with that section in V3 P5. */
-  [data-surface="neutral"] {
-    --color-background: #eaeff5;
-    --color-surface: #ffffff;
-    --color-surface-muted: #dfe6ef;
-    --color-text-primary: #0f172a;
-    --color-text-secondary: #42505f;
-    --color-text-muted: #55636f;
-    --color-border: #bfcad8;
-    --color-accent: #1d4ed8;
-    --color-accent-hover: #1e3a8a;
-    --color-focus: #1d4ed8;
-    --color-on-accent: #ffffff;
-    --color-accent-subtle: #d3e2fb;
-    --color-on-accent-subtle: #1e3a8a;
-    --color-status-success: #14532d;
-    --color-status-warning: #7c3a0b;
-    --color-status-neutral: #2c3948;
-    --color-status-error: #a31616;
-  }
-
   /* The V3 near-black (UX3 2, 3): hero, Explore further, footer, page heroes. */
   [data-surface="dark"] {
     --color-background: #070b12;

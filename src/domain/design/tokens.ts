@@ -14,13 +14,13 @@
 import type { HexColor } from "./contrast";
 
 /**
- * The surfaces: V3's five (UX3 3, SUP-016) plus v2's `neutral`, which the
- * Skills section uses until V3 P5 replaces it.
+ * The surfaces: V3's five (UX3 3, SUP-016). v2's `neutral` went in V3 P5b,
+ * with the Skills section that was its last user.
  *
  * `light` is also the `:root` default, so a component outside any surface scope
  * still resolves sane values.
  */
-export const SURFACE_NAMES = ["light", "neutral", "dark", "navy", "white", "blue"] as const;
+export const SURFACE_NAMES = ["light", "dark", "navy", "white", "blue"] as const;
 export type SurfaceName = (typeof SURFACE_NAMES)[number];
 
 export type TokenMap = Readonly<Record<string, HexColor>>;

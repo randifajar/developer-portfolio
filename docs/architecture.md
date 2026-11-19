@@ -98,18 +98,24 @@ The Not Found copy is tested against phrases like "not yet published" and
 
 Splitting these is what makes it possible to build against placeholder content.
 
-**Structural** (`npm run validate:content`) runs on every pull request. Fifteen
-cross-record rules — uniqueness, references, one active Resume, no Published
-private content, complete Published projects. Passes today.
+**Structural** (`npm run validate:content`) runs on every pull request. Eighteen
+cross-record rules — uniqueness, references, at most one active résumé per
+variant, no Published private content, complete Published projects, career
+chapters inside their roles' dates, at most one intro per mode, every intro
+naming the engineer. Passes today.
 
-**Release** (`npm run validate:release`) runs before launch only. Adds the
-launch-readiness rules and a deep placeholder scan. **Fails today, by design.**
+**Release** (`npm run validate:release`) runs before a release. It adds the
+launch-readiness rules — among them, since V3 P5b, a Published intro for every
+mode, because a mode without one would render no h1 — and a deep placeholder
+scan across every Published record type. It failed for the whole of v1's
+development, by design, and has passed since the launch content was completed
+on 2026-08-09.
 
-That failure is the mechanism keeping Draft content out of production. If it
-ever passes on incomplete content, the safety property is gone. A test asserts
-it fails on the current content, and a second fixture proves it can pass on
-complete content — without that pair, the failing assertion would be
-meaningless.
+That gate is the mechanism keeping Draft content out of production: Draft
+records are ignored, and Published ones must be complete. Each rule is asserted
+in both directions — it fires against content that violates it and stays quiet
+on the real content — because a broken rule and a satisfied one otherwise look
+identical.
 
 The placeholder scan skips non-rendered keys such as ids, because an id like
 `experience-placeholder-current` is internal bookkeeping no visitor reads.

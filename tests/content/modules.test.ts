@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { aiPractices } from "@/content/ai-practices";
 import { contactChannels, externalProfiles } from "@/content/contact";
+import { contentSet } from "@/content/content-set";
 import { experience } from "@/content/experience";
 import { mediaAssets } from "@/content/media";
 import { profile } from "@/content/profile";
+import { projectOverviews } from "@/content/project-overviews";
 import { projects } from "@/content/projects";
 import { resume } from "@/content/resume";
 import { siteConfig } from "@/content/site";
@@ -23,7 +24,6 @@ describe("content modules load", () => {
     expect(experience.length).toBeGreaterThan(0);
     expect(projects.length).toBeGreaterThan(0);
     expect(skills.length).toBeGreaterThan(0);
-    expect(aiPractices.length).toBeGreaterThan(0);
     expect(resume.id).toBeTruthy();
     expect(contactChannels.length).toBeGreaterThan(0);
     expect(externalProfiles.length).toBeGreaterThan(0);
@@ -41,7 +41,6 @@ describe("identifier uniqueness", () => {
     expectUniqueIds(experience, "experience");
     expectUniqueIds(projects, "projects");
     expectUniqueIds(skills, "skills");
-    expectUniqueIds(aiPractices, "aiPractices");
     expectUniqueIds(contactChannels, "contactChannels");
     expectUniqueIds(externalProfiles, "externalProfiles");
     expectUniqueIds(mediaAssets, "mediaAssets");
@@ -80,18 +79,10 @@ describe("confidentiality invariants for a public repository", () => {
     return out;
   }
 
-  const allContent = collectStrings([
-    siteConfig,
-    profile,
-    experience,
-    projects,
-    skills,
-    aiPractices,
-    resume,
-    contactChannels,
-    externalProfiles,
-    mediaAssets,
-  ]).join("\n");
+  // Every content type, through the shared content set, so a type added later
+  // is scanned without anyone remembering to list it here. The V3 records were
+  // missing from the hand-written list this replaced (V3 P5b).
+  const allContent = collectStrings([siteConfig, ...Object.values(contentSet)]).join("\n");
 
   it("contains no internal project or ticket identifier patterns", () => {
     // Uppercase-letters + underscore + digits is the shape of the internal
@@ -116,7 +107,7 @@ describe("confidentiality invariants for a public repository", () => {
   });
 
   it("never marks private or restricted content as published (FAC-PUBLISH-002)", () => {
-    const classified = [...experience, ...projects, ...aiPractices, ...mediaAssets];
+    const classified = [...experience, ...projects, ...mediaAssets, ...projectOverviews];
 
     for (const record of classified) {
       if (

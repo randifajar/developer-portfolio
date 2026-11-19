@@ -129,7 +129,6 @@ const emptyContent = {
   experience: [],
   projects: [],
   skills: [],
-  aiPractices: [],
   resumes: [],
   contactChannels: [],
   externalProfiles: [],
