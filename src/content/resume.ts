@@ -33,6 +33,10 @@ export const resume = defineResume({
   publicationDate: "2026-08-08",
   publicPath: RESUME_PATH,
   isActive: true,
+  // DEC-059: the backend résumé. The infrastructure résumé gets its own record
+  // only when Randi approves its publication; until then the V3 Résumé menu
+  // shows that variant as "PDF available after approval".
+  variant: "backend",
   confidentialityClass: "public",
   publicationStatus: "published",
 });

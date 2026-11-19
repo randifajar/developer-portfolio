@@ -11,12 +11,13 @@ import type {
   ModeIntro,
   ProfessionalProfile,
   ProjectCaseStudy,
+  ProjectOverview,
   Resume,
   TechnicalSkill,
   ToolkitGroup,
   WorkExperience,
 } from "@/domain/content/schemas";
-import { MODES } from "@/domain/content/types";
+import { DISCIPLINES, MODES } from "@/domain/content/types";
 
 /**
  * Cross-record validation.
@@ -59,6 +60,7 @@ export interface ContentSet {
   readonly languages: readonly Language[];
   readonly engineeringPractices: readonly EngineeringPractice[];
   readonly toolkitGroups: readonly ToolkitGroup[];
+  readonly projectOverviews: readonly ProjectOverview[];
 }
 
 /** Sections a Published project must not leave empty (PRD 5.3). */
@@ -112,6 +114,7 @@ export function validateContentSet(content: ContentSet): ValidationIssue[] {
     ["Language", content.languages],
     ["Engineering Practice", content.engineeringPractices],
     ["Toolkit Group", content.toolkitGroups],
+    ["Project Overview", content.projectOverviews],
   ];
 
   for (const [contentType, records] of idGroups) {
@@ -220,19 +223,27 @@ export function validateContentSet(content: ContentSet): ValidationIssue[] {
     }
   }
 
-  /* Rule 6 — at most one active Published Resume (FAC-RESUME-004). --------- */
-  const activePublishedResumes = content.resumes.filter(
-    (candidate) => candidate.isActive && candidate.publicationStatus === "published",
-  );
+  /* Rule 6 — at most one active Published Resume per variant (FAC-RESUME-004). */
+  // Amended for V3 (DEC-059): one backend and one infrastructure résumé may both
+  // be active, since the Résumé menu offers one of each. Two of the same variant
+  // would still make "the" backend résumé ambiguous.
+  for (const variant of DISCIPLINES) {
+    const activePublishedResumes = content.resumes.filter(
+      (candidate) =>
+        candidate.variant === variant &&
+        candidate.isActive &&
+        candidate.publicationStatus === "published",
+    );
 
-  if (activePublishedResumes.length > 1) {
-    add({
-      rule: "single-active-resume",
-      contentType: "Resume",
-      message:
-        `${activePublishedResumes.length} Resumes are both active and Published ` +
-        `(${activePublishedResumes.map((r) => r.id).join(", ")}). Exactly one may be.`,
-    });
+    if (activePublishedResumes.length > 1) {
+      add({
+        rule: "single-active-resume",
+        contentType: "Resume",
+        message:
+          `${activePublishedResumes.length} ${variant} Resumes are both active and Published ` +
+          `(${activePublishedResumes.map((r) => r.id).join(", ")}). Exactly one per variant may be.`,
+      });
+    }
   }
 
   /* Rule 7 — at most one Published Profile (FAC-PROFILE-004). -------------- */
@@ -250,6 +261,7 @@ export function validateContentSet(content: ContentSet): ValidationIssue[] {
     ["Project Case Study", content.projects],
     ["AI-Assisted Engineering Practice", content.aiPractices],
     ["Media Asset", content.mediaAssets],
+    ["Project Overview", content.projectOverviews],
   ];
 
   for (const [contentType, records] of classifiedGroups) {

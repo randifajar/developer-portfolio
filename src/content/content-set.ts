@@ -7,6 +7,7 @@ import { mediaAssets } from "@/content/media";
 import { modeIntros } from "@/content/modes";
 import { engineeringPractices } from "@/content/practices";
 import { profile } from "@/content/profile";
+import { projectOverviews } from "@/content/project-overviews";
 import { projects } from "@/content/projects";
 import { resume } from "@/content/resume";
 import { skills } from "@/content/skills";
@@ -40,4 +41,5 @@ export const contentSet: ContentSet = {
   languages,
   engineeringPractices,
   toolkitGroups,
+  projectOverviews,
 };
