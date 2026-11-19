@@ -1090,6 +1090,23 @@ The Header should remain a Server Component that composes the interactive mobile
 
 No homepage-wide client state is approved.
 
+> **Amended for V3 (DEC-057, approved 2026-11-18).** V3 replaces `MobileNavigation`
+> with six Client Components, each as small as its job allows:
+>
+> | Component | Why it needs the browser |
+> |---|---|
+> | `ModeSwitch` | Positions the active indicator from the pathname |
+> | `ResumeMenu` | Arrow keys and the "this page" marker; open, close and Escape are the native Popover API, so the menu works without JavaScript |
+> | `ModeHero` | Animates the hero between modes and owns scroll and focus on a mode change, because the router's default scroll targets the page below the persistent hero |
+> | `CareerJourney` | Pins the career sequence on wide screens with motion allowed; stacked is the default without JavaScript |
+> | `ProjectFilter` | Reads and writes `?discipline=`; without JavaScript every project shows |
+> | `CopyEmail` | Copies the address; the `mailto:` link works without it |
+>
+> The Header and the Footer remain Server Components that compose these. The one
+> piece of client state that persists across routes is the mode hero's, and it is
+> derived from the pathname rather than held. Until each component lands, the v2
+> boundary above stands.
+
 ---
 
 # 14. Styling Architecture
