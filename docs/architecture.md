@@ -132,7 +132,7 @@ on `staging`:
 | `mode-switch.tsx` | The current mode comes from the pathname |
 | `resume-menu.tsx` | Arrow keys, focus on open, and the "this page" marker. Open, close, and Escape are the native Popover API, so the menu works without JavaScript |
 | `copy-email.tsx` | Clipboard access; it renders nothing where the browser cannot copy |
-| `mode-hero.tsx` | The hero of the three mode routes, in the `(modes)` layout so it persists across a mode change (V3 P5). It picks the intro by pathname, and owns scroll and focus after a mode change (UX3 6.5) |
+| `mode-hero.tsx` | The hero of the three mode routes, in the `(modes)` layout so it persists across a mode change (V3 P5). It picks the intro by pathname, owns scroll and focus after a mode change (UX3 6.5), and animates the change (V3 P8, with `mode-hero-motion.ts`: Web Animations, the pointer light, nothing under reduced motion) |
 | `project/project-filter.tsx` | The projects filter, its state in `?discipline=` (V3 P7). It also exports `ProjectsBackLink`, the case study's way back to the filtered view. Without JavaScript every project shows |
 
 `resume-menu.tsx` also exports `ResumeMenuTrigger`, a second button that opens

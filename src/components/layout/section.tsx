@@ -78,7 +78,9 @@ export function Section({
       data-surface={surface}
       className="bg-background text-text-primary"
     >
+      {/* Rises into view as it is scrolled to (UX3 8.5; the rule is in globals.css). */}
       <div
+        data-reveal=""
         className={`mx-auto w-full px-5 py-16 sm:px-8 lg:px-12 ${WIDTH_CLASS[width]} ${className}`.trim()}
       >
         {children}

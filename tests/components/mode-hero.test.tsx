@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from "vitest";
 import { ModeHero, type ModeHeroIntro } from "@/components/layout/mode-hero";
@@ -225,5 +225,113 @@ describe("ModeHero and in-page anchors (UX3 6.5)", () => {
 
     expect(scrollTo).not.toHaveBeenCalled();
     expect(screen.getByRole("heading", { level: 1 })).not.toHaveFocus();
+  });
+});
+
+/**
+ * The mode change with motion (UX3 8.2). jsdom has no Web Animations API, so
+ * these stand one in: each animation is a promise the test finishes by hand,
+ * which is what lets them check what the hero shows mid-change.
+ */
+describe("ModeHero mode change with motion (UX3 8.2)", () => {
+  interface FakeAnimation {
+    id: string;
+    element: Element;
+    keyframes: Keyframe[];
+    finished: Promise<void>;
+    finish: () => void;
+    cancel: () => void;
+  }
+
+  let created: FakeAnimation[] = [];
+  let reduced = false;
+  const originalAnimate = Element.prototype.animate;
+  const originalGetAnimations = Element.prototype.getAnimations;
+  const originalMatchMedia = window.matchMedia;
+
+  beforeEach(() => {
+    created = [];
+    reduced = false;
+    Element.prototype.animate = function (this: Element, keyframes: Keyframe[]) {
+      let finish!: () => void;
+      const finished = new Promise<void>((resolve) => {
+        finish = resolve;
+      });
+      const animation = { id: "", element: this, keyframes, finished, finish, cancel: () => {} };
+      created.push(animation);
+      return animation as unknown as Animation;
+    } as typeof Element.prototype.animate;
+    Element.prototype.getAnimations = function (this: Element) {
+      return created.filter((animation) =>
+        this.contains(animation.element),
+      ) as unknown as Animation[];
+    };
+    window.matchMedia = ((query: string) => ({
+      matches: query.includes("reduced-motion") ? reduced : false,
+    })) as unknown as typeof window.matchMedia;
+  });
+
+  afterEach(() => {
+    Element.prototype.animate = originalAnimate;
+    Element.prototype.getAnimations = originalGetAnimations;
+    window.matchMedia = originalMatchMedia;
+  });
+
+  const finishExits = async () => {
+    await act(async () => {
+      for (const animation of created) {
+        if (JSON.stringify(animation.keyframes).includes('"opacity":0')) animation.finish();
+      }
+    });
+  };
+
+  it("keeps the old copy while it leaves, then shows the new copy and focuses it", async () => {
+    const { rerender } = hydrateHero();
+
+    navigation.pathname = "/backend";
+    rerender(hero());
+
+    // The route has changed and the page is at the top, but the copy is still
+    // leaving: the old heading stays, and focus waits for the new one.
+    expect(scrollTo).toHaveBeenCalledWith({ top: 0, behavior: "instant" });
+    expect(screen.getByRole("heading", { level: 1 })).toHaveAccessibleName("Randi Fajar Wicaksono");
+    expect(screen.getByRole("heading", { level: 1 })).not.toHaveFocus();
+
+    await finishExits();
+
+    const heading = screen.getByRole("heading", { level: 1 });
+    expect(heading).toHaveAccessibleName("Behind the Application.");
+    expect(heading).toHaveFocus();
+    // The new heading lines rose in.
+    expect(
+      created.some((animation) => JSON.stringify(animation.keyframes).includes("translateY(106%)")),
+    ).toBe(true);
+  });
+
+  it("settles on the last of several quick changes", async () => {
+    const { rerender } = hydrateHero();
+
+    navigation.pathname = "/backend";
+    rerender(hero());
+    navigation.pathname = "/infrastructure";
+    rerender(hero());
+
+    await finishExits();
+    await finishExits();
+
+    expect(screen.getByRole("heading", { level: 1 })).toHaveAccessibleName("Beyond Deployment.");
+  });
+
+  it("swaps at once, with no animation, under reduced motion (UX3 8.6)", () => {
+    reduced = true;
+    const { rerender } = hydrateHero();
+
+    navigation.pathname = "/backend";
+    rerender(hero());
+
+    expect(screen.getByRole("heading", { level: 1 })).toHaveAccessibleName(
+      "Behind the Application.",
+    );
+    expect(created).toHaveLength(0);
   });
 });
