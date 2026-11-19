@@ -108,8 +108,9 @@ naming the engineer. Passes today.
 launch-readiness rules — among them, since V3 P5b, a Published intro for every
 mode, because a mode without one would render no h1 — and a deep placeholder
 scan across every Published record type. It failed for the whole of v1's
-development, by design, and has passed since the launch content was completed
-on 2026-08-09.
+development, by design, and passed from 2026-08-09, when the launch content was
+completed. Since V3 P10 it fails on one condition, deliberately: the V3 hero
+photograph is not supplied yet (OPEN-010), and the release waits for it.
 
 That gate is the mechanism keeping Draft content out of production: Draft
 records are ignored, and Published ones must be complete. Each rule is asserted

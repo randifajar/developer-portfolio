@@ -338,8 +338,13 @@
  */
 @layer base {
   html {
-    /* Anchor targets must not sit behind the sticky header (UX 6.3). */
-    scroll-padding-top: calc(var(--spacing-header) + 1rem);
+    /*
+     * Anchor targets must not sit behind the sticky header (UX 6.3). --hdr is
+     * the header's measured height (UX3 5, set by the mode switch), so this
+     * holds when the header wraps to two rows on a narrow phone; before it is
+     * measured, the one-row token stands in.
+     */
+    scroll-padding-top: calc(var(--hdr, var(--spacing-header)) + 1rem);
     -webkit-text-size-adjust: 100%;
   }
 
@@ -422,6 +427,18 @@
 
   [data-hero-entrance] [data-photograph-placeholder] {
     animation: hero-photo-rise 1.6s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+  }
+
+  /* The photograph itself also fades in (UX3 8.1); it carries no text. */
+  [data-hero-entrance] [data-photograph] {
+    animation: hero-photo-in 1.6s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+  }
+
+  @keyframes hero-photo-in {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
   }
 
   @keyframes hero-line-rise {

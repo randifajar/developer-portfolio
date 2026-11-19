@@ -278,6 +278,27 @@ export function validateRelease(
     });
   }
 
+  /* A published hero photograph (UX3 7.6, OPEN-010). --------------------- */
+  // Until there is one, the Overall hero shows a labelled placeholder on
+  // staging. That is fine to review and wrong to release, so the release is
+  // refused until the photograph is set, published, and sized for the image
+  // component, which needs its dimensions to reserve space (no layout shift).
+  {
+    const heroId = content.profile.heroPhotoAssetId;
+    const hero = content.mediaAssets.find((asset) => asset.id === heroId);
+
+    if (!hero || !isPubliclyEligible(hero) || !hero.width || !hero.height) {
+      add({
+        rule: "published-hero-photograph-required",
+        contentType: "Professional Profile",
+        recordId: content.profile.id,
+        message: heroId
+          ? `The hero photograph "${heroId}" must be published, with its width and height.`
+          : "No hero photograph is set, so the Overall hero still shows its placeholder (OPEN-010).",
+      });
+    }
+  }
+
   /* A Published intro for every mode (UX3 7, NFAC-A11Y-003). --------------- */
   // The intro is the mode hero's copy, and its heading is the page's h1. A mode
   // without one renders no hero and so no h1 at all. Structural validation

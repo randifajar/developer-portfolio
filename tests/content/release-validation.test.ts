@@ -12,6 +12,20 @@ import type { ContentSet } from "@/domain/content/validation";
 
 const SITE_URL = "https://example.com";
 
+/** A stand-in for the V3 hero photograph (OPEN-010), for the release-ready fixture. */
+const HERO_PHOTOGRAPH = {
+  id: "media-hero-photograph",
+  type: "professional-photograph" as const,
+  filePath: "/images/hero-photograph.jpg",
+  altText: "A portrait, for the hero.",
+  width: 1600,
+  height: 2000,
+  ownerType: "profile" as const,
+  ownerId: "profile-randi-fajar-wicaksono",
+  confidentialityClass: "public" as const,
+  publicationStatus: "published" as const,
+};
+
 /**
  * A default parameter would treat an explicitly passed `undefined` as "not
  * provided" and silently substitute SITE_URL, which is exactly the case the
@@ -70,6 +84,7 @@ function releaseReadyContent(): ContentSet {
       ...publish,
       headline: "Backend engineering, integrations, and AI-assisted delivery.",
       summary: "A real professional summary describing genuine experience and direction.",
+      heroPhotoAssetId: HERO_PHOTOGRAPH.id,
     },
     experience: experience.map((role) => ({
       ...role,
@@ -84,11 +99,14 @@ function releaseReadyContent(): ContentSet {
     resumes: [{ ...resume, ...publish, isActive: true, version: "2026.08" }],
     contactChannels,
     externalProfiles,
-    mediaAssets: mediaAssets.map((asset) => ({
-      ...asset,
-      ...publish,
-      altText: "A real, descriptive alternative text.",
-    })),
+    mediaAssets: [
+      ...mediaAssets.map((asset) => ({
+        ...asset,
+        ...publish,
+        altText: "A real, descriptive alternative text.",
+      })),
+      HERO_PHOTOGRAPH,
+    ],
     // The V3 records as they ship. They are release-ready already and are not
     // the subject of these tests.
     modeIntros: contentSet.modeIntros,
@@ -119,8 +137,46 @@ function releaseReadyContent(): ContentSet {
  * exactly how a gate quietly stops being a gate.
  */
 describe("release validation accepts the real content set", () => {
-  it("passes", () => {
-    expect(validateRelease(draftContent(), { siteUrl: SITE_URL })).toEqual([]);
+  /**
+   * Except for one thing, deliberately: the V3 hero photograph (OPEN-010).
+   * Until Randi supplies it the Overall hero shows a labelled placeholder, and
+   * the release is refused. Asserting the exact list keeps every other rule
+   * guarded — anything else failing on real content still fails this test —
+   * and when the photograph arrives, this fails too, as the signal to make it
+   * the plain "passes" it was until V3 P10.
+   */
+  it("passes, except for the hero photograph still to come (OPEN-010)", () => {
+    expect(
+      validateRelease(draftContent(), { siteUrl: SITE_URL }).map((issue) => issue.rule),
+    ).toEqual(["published-hero-photograph-required"]);
+  });
+
+  it("reports a hero photograph that is unset, unpublished, or without its size (UX3 7.6)", () => {
+    const ready = releaseReadyContent();
+    const rules = (content: ContentSet) => rulesFor(content);
+
+    expect(rules(ready)).not.toContain("published-hero-photograph-required");
+    expect(
+      rules({ ...ready, profile: { ...ready.profile, heroPhotoAssetId: undefined } }),
+    ).toContain("published-hero-photograph-required");
+    expect(
+      rules({
+        ...ready,
+        mediaAssets: ready.mediaAssets.map((asset) =>
+          asset.id === HERO_PHOTOGRAPH.id
+            ? { ...asset, publicationStatus: "draft" as const }
+            : asset,
+        ),
+      }),
+    ).toContain("published-hero-photograph-required");
+    expect(
+      rules({
+        ...ready,
+        mediaAssets: ready.mediaAssets.map((asset) =>
+          asset.id === HERO_PHOTOGRAPH.id ? { ...asset, width: undefined } : asset,
+        ),
+      }),
+    ).toContain("published-hero-photograph-required");
   });
 
   it("reports fewer than two Published projects (FAC-HOME-004)", () => {

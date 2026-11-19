@@ -176,13 +176,15 @@ export function validateContentSet(content: ContentSet): ValidationIssue[] {
   /* Rule 4 — valid media references. -------------------------------------- */
   const mediaIds = new Set(content.mediaAssets.map((asset) => asset.id));
 
-  if (content.profile.photoAssetId && !mediaIds.has(content.profile.photoAssetId)) {
-    add({
-      rule: "valid-media-references",
-      contentType: "Professional Profile",
-      recordId: content.profile.id,
-      message: `References unknown media asset "${content.profile.photoAssetId}".`,
-    });
+  for (const assetId of [content.profile.photoAssetId, content.profile.heroPhotoAssetId]) {
+    if (assetId && !mediaIds.has(assetId)) {
+      add({
+        rule: "valid-media-references",
+        contentType: "Professional Profile",
+        recordId: content.profile.id,
+        message: `References unknown media asset "${assetId}".`,
+      });
+    }
   }
 
   for (const project of content.projects) {

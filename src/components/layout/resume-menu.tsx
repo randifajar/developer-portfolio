@@ -95,7 +95,7 @@ export function ResumeMenu({ items }: { readonly items: readonly ResumeMenuItem[
         type="button"
         popoverTarget={MENU_ID}
         onClick={focusInvoker}
-        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border px-4 text-meta font-semibold text-text-primary hover:border-accent hover:text-accent"
+        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border px-3 text-meta sm:px-4 font-semibold text-text-primary hover:border-accent hover:text-accent"
       >
         Résumé
         <span aria-hidden="true">↗</span>

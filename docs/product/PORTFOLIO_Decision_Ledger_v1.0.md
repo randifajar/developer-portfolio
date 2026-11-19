@@ -136,7 +136,7 @@ the two easiest to overlook in a column of seven identical values.
 | OPEN-008 | Docker, Linux and Jenkins classification (V3 plan D9) | **Resolved** 2026-11-19 — all four, with AWS, are professional experience (SUP-018) |
 | OPEN-009 | Proposed V3 wording: profile statement, engineering headline, transition sentence (V3 plan I4) | **Resolved** 2026-11-19 — Randi approved all three as proposed in the V3.1 mockup |
 | OPEN-011 | Titles of the six project overviews (DEC-060) | Open Decision — working titles. Randi, 2026-11-19: "all in here is draft, we can revise it later". The overviews stay Draft until he confirms or renames them |
-| OPEN-010 | V3 hero photograph (V3 plan I1) | Open Decision — the 400×400 portrait from OPEN-005 is too small for the V3 hero; a labelled placeholder stands in on `staging`, and release validation rejects it |
+| OPEN-010 | V3 hero photograph (V3 plan I1) | Open Decision — the 400×400 portrait from OPEN-005 is too small for the V3 hero; a labelled placeholder stands in on `staging`, and release validation rejects it. Since V3 P10 that rule exists (`published-hero-photograph-required`): set the profile's `heroPhotoAssetId` to a published image with its width and height, and the hero shows it |
 
 ---
 

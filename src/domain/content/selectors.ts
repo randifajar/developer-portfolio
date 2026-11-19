@@ -359,3 +359,32 @@ export function getPublishedWorkAreas(discipline: Discipline): readonly WorkArea
 export function getPublishedCaseStudiesFor(discipline: Discipline): readonly ProjectCaseStudy[] {
   return getPublishedProjects().filter((project) => project.disciplines?.includes(discipline));
 }
+
+/** What the Overall hero needs to show its photograph. */
+export interface HeroPhotograph {
+  readonly src: string;
+  readonly alt: string;
+  readonly width: number;
+  readonly height: number;
+}
+
+/**
+ * The Overall hero's photograph (UX3 7.6), or null while there is none to
+ * show: unset, unpublished, or without the dimensions the image needs to
+ * reserve its space. Null shows the placeholder (OPEN-010).
+ */
+export function getHeroPhotograph(): HeroPhotograph | null {
+  const profile = getPublishedProfile();
+  const asset = getPublishedMediaAsset(profile?.heroPhotoAssetId);
+
+  if (!asset || !asset.width || !asset.height) {
+    return null;
+  }
+
+  return {
+    src: asset.filePath,
+    alt: asset.altText ?? "",
+    width: asset.width,
+    height: asset.height,
+  };
+}

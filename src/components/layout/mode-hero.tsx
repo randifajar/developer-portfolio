@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   useEffect,
@@ -17,6 +18,7 @@ import {
   motionAllowed,
   usePointerLight,
 } from "@/components/layout/mode-hero-motion";
+import type { HeroPhotograph } from "@/domain/content/selectors";
 import type { Mode } from "@/domain/content/types";
 import { ROUTES } from "@/lib/constants";
 
@@ -120,11 +122,13 @@ interface ModeHeroProps {
    * from the content.
    */
   readonly actionModes: readonly Mode[];
+  /** The Overall hero's photograph, or null to show its placeholder (OPEN-010). */
+  readonly photo?: HeroPhotograph | null;
   /** The page below the hero. */
   readonly children: ReactNode;
 }
 
-export function ModeHero({ intros, actionModes, children }: ModeHeroProps) {
+export function ModeHero({ intros, actionModes, photo = null, children }: ModeHeroProps) {
   const pathname = usePathname();
   const mode = MODE_FOR_PATH[pathname] ?? "overall";
 
@@ -229,6 +233,7 @@ export function ModeHero({ intros, actionModes, children }: ModeHeroProps) {
           intro={intro}
           showAction={actionModes.includes(shownMode)}
           showPhotograph={shownMode === "overall"}
+          photo={photo}
           entrance={entrance}
           bandRef={bandRef}
           headingRef={headingRef}
@@ -244,6 +249,7 @@ interface HeroBandProps {
   readonly intro: ModeHeroIntro;
   readonly showAction: boolean;
   readonly showPhotograph: boolean;
+  readonly photo: HeroPhotograph | null;
   readonly entrance: boolean;
   readonly bandRef: Ref<HTMLElement>;
   readonly headingRef: Ref<HTMLHeadingElement>;
@@ -261,6 +267,7 @@ function HeroBand({
   intro,
   showAction,
   showPhotograph,
+  photo,
   entrance,
   bandRef,
   headingRef,
@@ -297,7 +304,7 @@ function HeroBand({
         }}
       />
 
-      {showPhotograph ? <PhotographPlaceholder /> : null}
+      {showPhotograph ? photo ? <Photograph photo={photo} /> : <PhotographPlaceholder /> : null}
 
       <div className="relative mx-auto w-full max-w-(--spacing-content) px-5 pt-10 pb-[clamp(2.5rem,8vh,5.25rem)] sm:px-8 lg:px-12">
         <div className="flex flex-col gap-5">
@@ -354,6 +361,33 @@ function HeroBand({
   );
 }
 
+/*
+ * Where the photograph sits (UX3 7.6): from 860 px the right 46% of the hero,
+ * its left edge masked into the dark; below that, the top of the hero, masked
+ * downward. Shared by the photograph and its placeholder.
+ */
+const PHOTOGRAPH_LAYER =
+  "absolute inset-x-0 top-0 bottom-[40%] -z-10 mask-b-from-70% min-[860px]:inset-y-0 min-[860px]:right-0 min-[860px]:left-auto min-[860px]:w-[46%] min-[860px]:mask-b-from-100% min-[860px]:mask-l-from-78%";
+
+/**
+ * The Overall hero's photograph (UX3 7.6). Preloaded, as the page's largest
+ * image, and filling a fixed layer, so it never shifts the layout.
+ */
+function Photograph({ photo }: { readonly photo: HeroPhotograph }) {
+  return (
+    <div data-photograph="" className={PHOTOGRAPH_LAYER}>
+      <Image
+        src={photo.src}
+        alt={photo.alt}
+        fill
+        preload
+        sizes="(min-width: 860px) 46vw, 100vw"
+        className="object-cover object-top"
+      />
+    </div>
+  );
+}
+
 /**
  * The Overall hero's photograph, until Randi supplies it (UX3 7.6, OPEN-010).
  *
@@ -366,11 +400,7 @@ function HeroBand({
  */
 function PhotographPlaceholder() {
   return (
-    <div
-      aria-hidden="true"
-      data-photograph-placeholder=""
-      className="absolute inset-x-0 top-0 bottom-[40%] -z-10 mask-b-from-70% min-[860px]:inset-y-0 min-[860px]:right-0 min-[860px]:left-auto min-[860px]:w-[46%] min-[860px]:mask-b-from-100% min-[860px]:mask-l-from-78%"
-    >
+    <div aria-hidden="true" data-photograph-placeholder="" className={PHOTOGRAPH_LAYER}>
       <div className="flex h-full items-start bg-linear-to-b from-surface-muted to-surface px-6 pt-6 min-[860px]:items-end min-[860px]:pb-7 min-[860px]:pl-[30%]">
         <p className="text-kicker font-semibold text-text-secondary uppercase">
           Photograph · to be supplied
