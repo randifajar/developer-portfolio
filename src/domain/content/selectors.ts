@@ -1,25 +1,37 @@
 import { aiPractices } from "@/content/ai-practices";
+import { careerChapters } from "@/content/career";
 import { contactChannels, externalProfiles } from "@/content/contact";
+import { certifications, education, languages } from "@/content/credentials";
 import { experience } from "@/content/experience";
 import { mediaAssets } from "@/content/media";
+import { modeIntros } from "@/content/modes";
+import { engineeringPractices } from "@/content/practices";
 import { profile } from "@/content/profile";
 import { projects } from "@/content/projects";
 import { resume } from "@/content/resume";
 import { siteConfig } from "@/content/site";
 import { skills } from "@/content/skills";
+import { toolkitGroups } from "@/content/toolkits";
 import type {
   AIPractice,
+  CareerChapter,
+  Certification,
   ContactChannel,
+  Education,
+  EngineeringPractice,
   ExternalProfile,
+  Language,
   MediaAsset,
+  ModeIntro,
   ProfessionalProfile,
   ProjectCaseStudy,
   Resume,
   SiteConfig,
   TechnicalSkill,
+  ToolkitGroup,
   WorkExperience,
 } from "@/domain/content/schemas";
-import type { SkillGroup } from "@/domain/content/types";
+import type { Discipline, Mode, PublicationStatus, SkillGroup } from "@/domain/content/types";
 import { SKILL_GROUPS, isPubliclyEligible } from "@/domain/content/types";
 import { getAdjacentProjects } from "@/domain/projects/project-navigation";
 
@@ -238,4 +250,69 @@ export function getPublishedMediaAsset(id: string | undefined): MediaAsset | nul
   }
 
   return mediaAssets.filter(isPubliclyEligible).find((asset) => asset.id === id) ?? null;
+}
+
+/* ------------------------------------------------------------------------- */
+/* V3 records (UX/UI specification v3.0)                                       */
+/* ------------------------------------------------------------------------- */
+
+function publishedInOrder<T extends { publicationStatus: PublicationStatus; sortOrder: number }>(
+  records: readonly T[],
+): readonly T[] {
+  return records
+    .filter(isPubliclyEligible)
+    .slice()
+    .sort((a, b) => a.sortOrder - b.sortOrder);
+}
+
+/** The Published hero copy for a mode (UX3 7), or null. */
+export function getPublishedModeIntro(mode: Mode): ModeIntro | null {
+  return modeIntros.filter(isPubliclyEligible).find((intro) => intro.mode === mode) ?? null;
+}
+
+/** A career chapter with the Published roles it cites, in the order it cites them. */
+export interface CareerChapterView extends CareerChapter {
+  readonly roles: readonly WorkExperience[];
+}
+
+/**
+ * Published career chapters in order (UX3 7.1). Each carries its roles, so the
+ * page renders dates from the experience records rather than from the
+ * chapter. Roles keep the chapter's order (the 2024 chapter reads internship,
+ * then contract), and a role that is not publicly eligible is left out, never
+ * invented.
+ */
+export function getPublishedCareerChapters(): readonly CareerChapterView[] {
+  const roles = getPublishedExperience();
+
+  return publishedInOrder(careerChapters).map((chapter) => ({
+    ...chapter,
+    roles: chapter.experienceIds.flatMap((id) => roles.filter((role) => role.id === id)),
+  }));
+}
+
+/** Published roles tagged with a discipline, current first (UX3 7.2, 7.3). */
+export function getPublishedExperienceFor(discipline: Discipline): readonly WorkExperience[] {
+  return getPublishedExperience().filter((role) => role.disciplines.includes(discipline));
+}
+
+export function getPublishedEducation(): readonly Education[] {
+  return publishedInOrder(education);
+}
+
+export function getPublishedCertifications(): readonly Certification[] {
+  return publishedInOrder(certifications);
+}
+
+export function getPublishedLanguages(): readonly Language[] {
+  return publishedInOrder(languages);
+}
+
+export function getPublishedEngineeringPractices(): readonly EngineeringPractice[] {
+  return publishedInOrder(engineeringPractices);
+}
+
+/** A mode page's toolkit groups, in order (UX3 7.2, 7.3). */
+export function getPublishedToolkit(discipline: Discipline): readonly ToolkitGroup[] {
+  return publishedInOrder(toolkitGroups.filter((group) => group.discipline === discipline));
 }

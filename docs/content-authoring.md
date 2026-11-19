@@ -174,6 +174,32 @@ develop against placeholders, and the launch gate refuses them.
 
 ---
 
+## V3 records
+
+Added in V3 (UX/UI specification v3.0). The v2 site never reads them; the V3
+pages will, through the selectors.
+
+| Module | Holds | Rules beyond the schema |
+|---|---|---|
+| `modes.ts` | The hero copy for Overall, Backend, Infrastructure | At most one Published intro per mode; every Published intro names you, in the eyebrow or across the two heading lines |
+| `career.ts` | The three career chapters | Each chapter cites experience ids, never its own dates; every id must exist, and the chapter's year must fall within each role it cites |
+| `credentials.ts` | Education, certifications, languages | Exactly as your résumés state them |
+| `practices.ts` | "How I approach engineering" | Each item restates a résumé line; the module says which |
+| `toolkits.ts` | The grouped tool lists on the two mode pages | Names only, no levels. Nothing that shows how an employer's systems are wired (DEC-064) |
+
+Two V3 fields sit on older records:
+
+- **`statement`, on the profile.** The Overall profile statement.
+- **`disciplines`, on every experience record.** `backend`, `infrastructure`, or both. It
+  decides which mode page shows the role, so it is required: a role tagged with
+  nothing would vanish from both.
+
+The validation scripts and tests read one shared set, `src/content/content-set.ts`.
+A new content type goes there, and the `ContentSet` type makes forgetting it a
+compile error rather than a silent gap in validation.
+
+---
+
 ## When you are ready to launch
 
 Follow [`docs/release-checklist.md`](release-checklist.md) in order. Step 3

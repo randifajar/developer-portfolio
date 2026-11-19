@@ -88,6 +88,18 @@ export const profile = defineProfile({
     "validation, technical decisions, code review, regression checking, security, and final " +
     "verification.",
 
+  // The V3 Overall profile statement (UX3 7.1). The first paragraph is the
+  // wording proposed in the V3.1 mockup and approved by Randi on 2026-11-19
+  // (OPEN-009). The second restates facts the experience records hold: one
+  // employer, the sector, and the dates of the first and latest roles.
+  statement:
+    "I began my engineering career building backend services and data workflows. Over time, " +
+    "the problems expanded beyond application code into deployment pipelines, infrastructure " +
+    "configuration, and the operational systems behind reliable releases.\n\n" +
+    "All of it has been at Zettabyte Pte Ltd, on software for higher-education platforms: " +
+    "from an internship in July 2024, through contract and full-time backend roles, to the " +
+    "infrastructure team in August 2026.",
+
   // SUP-015, 2026-11-19: as in the experience records and on both résumés.
   // DEC-013 had "Yogyakarta, Indonesia".
   location: "Sleman, Yogyakarta, Indonesia",

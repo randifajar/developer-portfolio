@@ -17,15 +17,8 @@
 
 import { existsSync } from "node:fs";
 
-import { aiPractices } from "@/content/ai-practices";
-import { contactChannels, externalProfiles } from "@/content/contact";
-import { experience } from "@/content/experience";
-import { mediaAssets } from "@/content/media";
-import { profile } from "@/content/profile";
-import { projects } from "@/content/projects";
-import { resume } from "@/content/resume";
+import { contentSet } from "@/content/content-set";
 import { siteConfig } from "@/content/site";
-import { skills } from "@/content/skills";
 import type { LinkTarget } from "@/domain/content/link-validation";
 import {
   classifyExternalStatus,
@@ -184,20 +177,7 @@ function report(results: readonly Result[]): void {
 }
 
 async function main(): Promise<void> {
-  const targets = collectLinks(
-    {
-      profile,
-      experience,
-      projects,
-      skills,
-      aiPractices,
-      resumes: [resume],
-      contactChannels,
-      externalProfiles,
-      mediaAssets,
-    },
-    siteConfig,
-  );
+  const targets = collectLinks(contentSet, siteConfig);
 
   const results = await Promise.all(
     targets.map(async (target): Promise<Result> => {

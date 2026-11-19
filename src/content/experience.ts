@@ -71,6 +71,8 @@ export const experience = [
     // evidenced by the branch-based deployment workflows.
     technologyIds: ["skill-jenkins", "skill-docker", "skill-linux", "skill-aws", "skill-git"],
 
+    disciplines: ["infrastructure"],
+
     confidentialityClass: "sanitized",
     publicationStatus: "published",
     sortOrder: 1,
@@ -121,6 +123,8 @@ export const experience = [
       "skill-ai-assisted-engineering",
     ],
 
+    disciplines: ["backend"],
+
     confidentialityClass: "sanitized",
     publicationStatus: "published",
     sortOrder: 2,
@@ -164,6 +168,8 @@ export const experience = [
       "skill-git",
     ],
 
+    disciplines: ["backend"],
+
     confidentialityClass: "sanitized",
     publicationStatus: "published",
     sortOrder: 3,
@@ -198,6 +204,8 @@ export const experience = [
     ],
 
     technologyIds: ["skill-nodejs", "skill-mongodb", "skill-rest-apis", "skill-git"],
+
+    disciplines: ["backend"],
 
     confidentialityClass: "sanitized",
     publicationStatus: "published",
