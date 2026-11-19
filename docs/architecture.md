@@ -124,7 +124,7 @@ The placeholder scan skips non-rendered keys such as ids, because an id like
 
 ## Client JavaScript
 
-V3 allows six Client Components (DEC-057, Technical Design 13.4). Five exist
+V3 allows six Client Components (DEC-057, Technical Design 13.4). All six exist
 on `staging`:
 
 | Component | Why it runs in the browser |
@@ -133,6 +133,7 @@ on `staging`:
 | `resume-menu.tsx` | Arrow keys, focus on open, and the "this page" marker. Open, close, and Escape are the native Popover API, so the menu works without JavaScript |
 | `copy-email.tsx` | Clipboard access; it renders nothing where the browser cannot copy |
 | `mode-hero.tsx` | The hero of the three mode routes, in the `(modes)` layout so it persists across a mode change (V3 P5). It picks the intro by pathname, owns scroll and focus after a mode change (UX3 6.5), and animates the change (V3 P8, with `mode-hero-motion.ts`: Web Animations, the pointer light, nothing under reduced motion) |
+| `overall/career-journey.tsx` | Pins the career chapters on wide screens with motion allowed, and follows the scroll position (V3 P8). Stacked without JavaScript, below 900 px, and under reduced motion |
 | `project/project-filter.tsx` | The projects filter, its state in `?discipline=` (V3 P7). It also exports `ProjectsBackLink`, the case study's way back to the filtered view. Without JavaScript every project shows |
 
 `resume-menu.tsx` also exports `ResumeMenuTrigger`, a second button that opens
@@ -144,8 +145,8 @@ layout effects children first, so the router's scroll handler for the page
 runs before the hero's reset, and the reset decides where a mode change lands.
 The layout reads the intros on the server and passes them in as plain data.
 
-`CareerJourney` arrives with motion, in P8. v2's `mobile-navigation.tsx` was removed in P4 with the mobile menu: the
-V3 header has no menu.
+v2's `mobile-navigation.tsx` was removed in P4 with the mobile menu: the V3
+header has no menu.
 
 Everything else is a Server Component. `Header` and `Footer` compose the
 islands but stay server-rendered — marking them `"use client"` would pull the

@@ -1,4 +1,5 @@
 import { Section } from "@/components/layout/section";
+import { CareerJourney } from "@/components/overall/career-journey";
 import { ArrowLink } from "@/components/ui/arrow-link";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { SectionTitle } from "@/components/ui/section-title";
@@ -11,9 +12,10 @@ import { countedNoun } from "@/lib/numbers";
 /**
  * Career — three chapters, one direction (UX3 7.1, 8.4).
  *
- * This is the stacked layout, which stays the layout without JavaScript and
- * with reduced motion. V3 P8 adds the pinned desktop sequence on top of it;
- * nothing here depends on that arriving.
+ * This renders the stacked layout, which stays the layout without JavaScript,
+ * below 900 px, and under reduced motion. CareerJourney, a client island,
+ * pins it on wide screens once the page is interactive (UX3 8.4); nothing
+ * here depends on that happening.
  *
  * Chapters hold the narrative and roles hold the facts. Each role's title and
  * dates come from its experience record (DEC-020: exact dates, shown at month
@@ -47,62 +49,68 @@ export function CareerSection() {
           />
         </div>
 
-        <ol className="flex flex-col">
-          {chapters.map((chapter) => {
-            const headlineId = `career-${chapter.id}`;
+        <CareerJourney years={chapters.map((chapter) => chapter.year)}>
+          <ol data-career-list="" className="flex flex-col">
+            {chapters.map((chapter, index) => {
+              const headlineId = `career-${chapter.id}`;
 
-            return (
-              <li key={chapter.id} className="border-t border-border py-10 last:pb-0">
-                <article
-                  aria-labelledby={headlineId}
-                  className="grid gap-6 min-[900px]:grid-cols-[minmax(0,0.9fr)_minmax(0,2fr)_minmax(0,1.2fr)] min-[900px]:gap-10"
+              return (
+                <li
+                  key={chapter.id}
+                  data-chapter={index}
+                  className="border-t border-border py-10 last:pb-0"
                 >
-                  {/* The year is in the heading for assistive technology. */}
-                  <p
-                    aria-hidden="true"
-                    className="text-display-section leading-none font-bold text-accent"
+                  <article
+                    aria-labelledby={headlineId}
+                    className="grid gap-6 min-[900px]:grid-cols-[minmax(0,0.9fr)_minmax(0,2fr)_minmax(0,1.2fr)] min-[900px]:gap-10"
                   >
-                    {chapter.year}
-                  </p>
-
-                  <div className="flex flex-col gap-4">
-                    <Eyebrow>{chapter.label}</Eyebrow>
-                    <h3 id={headlineId} className="text-page-title font-semibold text-balance">
-                      <span className="sr-only">{chapter.year}: </span>
-                      {chapter.headline}
-                    </h3>
-                    <p className="max-w-(--spacing-prose) text-body text-text-secondary">
-                      {chapter.body}
+                    {/* The year is in the heading for assistive technology. */}
+                    <p
+                      aria-hidden="true"
+                      className="text-display-section leading-none font-bold text-accent"
+                    >
+                      {chapter.year}
                     </p>
-                    {(links.get(chapter.id) ?? []).map((discipline) => (
-                      <ArrowLink key={discipline} href={ROUTES[discipline]}>
-                        {DISCIPLINE_LABELS[discipline]}
-                      </ArrowLink>
-                    ))}
-                  </div>
 
-                  {chapter.roles.length > 0 ? (
-                    <div className="flex flex-col gap-3">
-                      <p className="text-kicker font-semibold text-text-muted uppercase">
-                        {chapter.roles.length === 1 ? "Role" : "Roles"}
+                    <div className="flex flex-col gap-4">
+                      <Eyebrow>{chapter.label}</Eyebrow>
+                      <h3 id={headlineId} className="text-page-title font-semibold text-balance">
+                        <span className="sr-only">{chapter.year}: </span>
+                        {chapter.headline}
+                      </h3>
+                      <p className="max-w-(--spacing-prose) text-body text-text-secondary">
+                        {chapter.body}
                       </p>
-                      <ul className="flex flex-col gap-3">
-                        {chapter.roles.map((role) => (
-                          <li key={role.id} className="flex flex-col gap-0.5">
-                            <span className="text-body font-semibold">{role.position}</span>
-                            <span className="text-meta text-text-secondary">
-                              {formatRoleDates(role)}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
+                      {(links.get(chapter.id) ?? []).map((discipline) => (
+                        <ArrowLink key={discipline} href={ROUTES[discipline]}>
+                          {DISCIPLINE_LABELS[discipline]}
+                        </ArrowLink>
+                      ))}
                     </div>
-                  ) : null}
-                </article>
-              </li>
-            );
-          })}
-        </ol>
+
+                    {chapter.roles.length > 0 ? (
+                      <div className="flex flex-col gap-3">
+                        <p className="text-kicker font-semibold text-text-muted uppercase">
+                          {chapter.roles.length === 1 ? "Role" : "Roles"}
+                        </p>
+                        <ul className="flex flex-col gap-3">
+                          {chapter.roles.map((role) => (
+                            <li key={role.id} className="flex flex-col gap-0.5">
+                              <span className="text-body font-semibold">{role.position}</span>
+                              <span className="text-meta text-text-secondary">
+                                {formatRoleDates(role)}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+                  </article>
+                </li>
+              );
+            })}
+          </ol>
+        </CareerJourney>
       </div>
     </Section>
   );
