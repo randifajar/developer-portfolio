@@ -1,6 +1,10 @@
 import type { ReactNode } from "react";
 import { ModeHero, type ModeHeroIntro } from "@/components/layout/mode-hero";
-import { getPublishedModeIntro } from "@/domain/content/selectors";
+import {
+  getPublishedDisciplineIntro,
+  getPublishedModeIntro,
+  getPublishedProfile,
+} from "@/domain/content/selectors";
 import { MODES, type Mode } from "@/domain/content/types";
 
 /**
@@ -18,10 +22,18 @@ import { MODES, type Mode } from "@/domain/content/types";
  */
 
 /*
- * The hero's action scrolls to a section on the same page. Backend and
- * Infrastructure have no such section until V3 P6, so only Overall offers it.
+ * The hero's action scrolls to the first section of the page below it, so it
+ * is offered only when that section renders and can never point at nothing.
+ * These are the same conditions the sections themselves check: Overall's
+ * profile renders with the profile statement, and each discipline page's
+ * first section with that discipline's intro. A test renders every mode and
+ * checks that an offered action's target exists.
  */
-const ACTION_MODES: readonly Mode[] = ["overall"];
+function hasActionTarget(mode: Mode): boolean {
+  return mode === "overall"
+    ? Boolean(getPublishedProfile()?.statement)
+    : getPublishedDisciplineIntro(mode) !== null;
+}
 
 export default function ModesLayout({ children }: { readonly children: ReactNode }) {
   const intros = MODES.flatMap((mode): ModeHeroIntro[] => {
@@ -43,7 +55,7 @@ export default function ModesLayout({ children }: { readonly children: ReactNode
   });
 
   return (
-    <ModeHero intros={intros} actionModes={ACTION_MODES}>
+    <ModeHero intros={intros} actionModes={MODES.filter(hasActionTarget)}>
       {children}
     </ModeHero>
   );

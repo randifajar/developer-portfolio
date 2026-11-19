@@ -17,12 +17,24 @@ describe("section anchors", () => {
 
   // FAC-NAV-002's header section links are superseded by the V3 header (UX3
   // 6); what remains are the in-page targets the V3 pages link to.
-  it("cover the V3 Overall targets and the footer (UX3 7.1, 7.7)", () => {
-    expect(ids).toEqual(["profile", "career", "work", "education", "contact"]);
+  it("cover the V3 page targets and the footer (UX3 7.1–7.3, 7.7)", () => {
+    expect(ids).toEqual([
+      "profile",
+      "career",
+      "work",
+      "education",
+      "backend-work",
+      "infrastructure-work",
+      "contact",
+    ]);
   });
 
-  it("keep the Overall hero's action target in step with its content", () => {
+  it("keep every hero action's target in step with its content", () => {
     expect(getPublishedModeIntro("overall")?.action.targetId).toBe(SECTION_IDS.profile);
+    expect(getPublishedModeIntro("backend")?.action.targetId).toBe(SECTION_IDS.backendWork);
+    expect(getPublishedModeIntro("infrastructure")?.action.targetId).toBe(
+      SECTION_IDS.infrastructureWork,
+    );
   });
 
   it("does not collide with the skip-to-content target", () => {

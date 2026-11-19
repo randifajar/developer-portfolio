@@ -1,14 +1,10 @@
 import { Section } from "@/components/layout/section";
+import { ProjectRows } from "@/components/shared/project-rows";
 import { ArrowLink } from "@/components/ui/arrow-link";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { SectionTitle } from "@/components/ui/section-title";
-import {
-  getFeaturedProjects,
-  getPublishedProjectOverviews,
-  getTechnologyNames,
-} from "@/domain/content/selectors";
-import type { Discipline } from "@/domain/content/types";
-import { DISCIPLINE_LABELS, ROUTES, SECTION_IDS } from "@/lib/constants";
+import { getFeaturedProjects, getPublishedProjectOverviews } from "@/domain/content/selectors";
+import { ROUTES, SECTION_IDS } from "@/lib/constants";
 
 /**
  * Selected work — backend and infrastructure, side by side (UX3 7.1).
@@ -25,19 +21,11 @@ import { DISCIPLINE_LABELS, ROUTES, SECTION_IDS } from "@/lib/constants";
  * The overviews are Draft until Randi confirms their titles (OPEN-011), so for
  * now the section shows the one case study. That is the truthful state, not a
  * gap to pad: nothing is invented to fill the rows (FAC-HOME-004).
+ *
+ * The rows are the same component the Backend and Infrastructure pages use.
  */
 const HEADING_ID = "work-heading";
 const OVERVIEW_LIMIT = 3;
-const TECHNOLOGY_LIMIT = 3;
-
-interface WorkRowProps {
-  readonly disciplines: readonly Discipline[];
-  readonly kind: string;
-  readonly title: string;
-  readonly summary: string;
-  readonly technologies: readonly string[];
-  readonly href?: string;
-}
 
 export function SelectedWorkSection() {
   const caseStudies = getFeaturedProjects().filter(
@@ -64,59 +52,8 @@ export function SelectedWorkSection() {
           <ArrowLink href={ROUTES.projects}>All projects</ArrowLink>
         </div>
 
-        <ol className="flex flex-col border-t border-border">
-          {caseStudies.map((project) => (
-            <WorkRow
-              key={project.id}
-              disciplines={project.disciplines ?? []}
-              kind={project.period ? `Case study · ${project.period}` : "Case study"}
-              title={project.title}
-              summary={project.summary}
-              technologies={getTechnologyNames(project.technologyIds).slice(0, TECHNOLOGY_LIMIT)}
-              href={ROUTES.projectDetail(project.slug)}
-            />
-          ))}
-          {overviews.map((overview) => (
-            <WorkRow
-              key={overview.id}
-              disciplines={overview.disciplines}
-              kind="Overview"
-              title={overview.title}
-              summary={overview.summary}
-              technologies={overview.technologies ?? []}
-            />
-          ))}
-        </ol>
+        <ProjectRows caseStudies={caseStudies} overviews={overviews} />
       </div>
     </Section>
-  );
-}
-
-function WorkRow({ disciplines, kind, title, summary, technologies, href }: WorkRowProps) {
-  return (
-    <li className="grid gap-4 border-b border-border py-8 min-[900px]:grid-cols-[minmax(0,1fr)_minmax(0,2.4fr)_minmax(0,1.3fr)] min-[900px]:gap-10">
-      <p className="flex flex-col gap-1 text-meta">
-        <span className="font-semibold text-accent">
-          {disciplines.map((discipline) => DISCIPLINE_LABELS[discipline]).join(" · ")}
-        </span>
-        <span className="text-text-muted">{kind}</span>
-      </p>
-
-      <div className="flex flex-col gap-2">
-        <h3 className="text-card-title font-semibold text-balance">{title}</h3>
-        <p className="text-body text-text-secondary">{summary}</p>
-      </div>
-
-      <div className="flex flex-col gap-2 min-[900px]:items-end min-[900px]:text-right">
-        {technologies.length > 0 ? (
-          <p className="text-meta text-text-muted">{technologies.join(" · ")}</p>
-        ) : null}
-        {href ? (
-          <ArrowLink href={href} context={title}>
-            Read the case study
-          </ArrowLink>
-        ) : null}
-      </div>
-    </li>
   );
 }

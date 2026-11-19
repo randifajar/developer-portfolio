@@ -410,10 +410,14 @@ All criteria in this document are `P0` or `P1`.
   - Relevant technologies
 
 > **V3.** The Overall page shows each role's title and dates in the career
-> chapters, and the current role and company in the profile. Summaries,
-> responsibilities, contributions, and technologies move to the Backend and
-> Infrastructure pages (UX3 7.2, 7.3), built in V3 P6. Between P5 and P6,
-> `staging` shows them nowhere; the live site is unaffected until the release.
+> chapters, and the current role and company in the profile. The full entries
+> are on the mode pages, since V3 P6:
+>
+> - **Backend.** Every backend role, with its summary, responsibilities and
+>   contributions as separate lists, and technologies.
+> - **Infrastructure.** The current role's title and dates in the transition
+>   facts, its summary as the hero description, and its responsibilities and
+>   contribution as the four work areas.
 
 ---
 
@@ -693,10 +697,8 @@ All criteria in this document are `P0` or `P1`.
 **Then**
 - Skills are organized into approved practical groups.
 
-> **V3.** Skills are grouped per discipline as the toolkits of the Backend and
-> Infrastructure pages (UX3 7.2, 7.3), built in V3 P6. v2's Technical Skills
-> section left `staging` with the v2 homepage in P5, so until P6 `staging`
-> shows no skills; the live site is unaffected until the release.
+> **V3.** Tools are grouped per discipline as the toolkits of the Backend and
+> Infrastructure pages (UX3 7.2, 7.3), on `staging` since V3 P6.
 
 ---
 
@@ -712,6 +714,12 @@ All criteria in this document are `P0` or `P1`.
   - Strong Working Skill
   - Professional Experience
   - Currently Learning
+
+> **Open in V3.** The approved V3.1 design replaces the Skills section with
+> toolkits that carry no levels, so no V3 page shows a classification. The
+> classifications stay in the skills records, where SUP-018 set them. Whether
+> that is acceptable, or the classification should appear somewhere, is
+> Randi's decision; until then this criterion has no V3 surface.
 
 ---
 

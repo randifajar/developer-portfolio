@@ -167,6 +167,8 @@ src/
 ├── components/
 │   ├── layout/   Header, mode switch, Résumé menu, mode hero, Footer, Section
 │   ├── overall/  The seven sections of the Overall page (V3 P5)
+│   ├── modes/    The Backend and Infrastructure sections (V3 P6)
+│   ├── shared/   Pieces two pages share, such as the project rows
 │   ├── project/  Card, sections, responsibility split, navigation
 │   └── ui/       Primitives everything composes from
 ├── content/      Typed content modules — the only data source

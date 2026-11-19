@@ -47,6 +47,21 @@ test("every Overall section is visible with motion disabled", async ({ page }) =
   }
 });
 
+test("the Backend and Infrastructure opening sections are visible with motion disabled", async ({
+  page,
+}) => {
+  for (const [path, id] of [
+    ["/backend", SECTION_IDS.backendWork],
+    ["/infrastructure", SECTION_IDS.infrastructureWork],
+  ] as const) {
+    await page.goto(path);
+    await expect(
+      page.locator(`#${id}`),
+      `#${id} is not visible under reduced motion`,
+    ).toBeVisible();
+  }
+});
+
 test("no element is left transparent or displaced by a disabled animation", async ({ page }) => {
   await page.goto("/");
   await page.waitForLoadState("networkidle");

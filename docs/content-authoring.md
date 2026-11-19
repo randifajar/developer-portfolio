@@ -176,16 +176,18 @@ develop against placeholders, and the launch gate refuses them.
 
 ## V3 records
 
-Added in V3 (UX/UI specification v3.0). The v2 site never reads them; the V3
-pages will, through the selectors.
+Added in V3 (UX/UI specification v3.0). The V3 pages read them through the
+selectors: on `staging` since V3 P5 and P6, on the live site from the V3
+release.
 
 | Module | Holds | Rules beyond the schema |
 |---|---|---|
-| `modes.ts` | The hero copy for Overall, Backend, Infrastructure | At most one Published intro per mode; every Published intro names you, in the eyebrow or across the two heading lines |
+| `modes.ts` | The hero copy for Overall, Backend, Infrastructure | At most one Published intro per mode; every Published intro names you, in the eyebrow or across the two heading lines. A release needs one for every mode, since the intro's heading is that page's h1 |
 | `career.ts` | The three career chapters | Each chapter cites experience ids, never its own dates; every id must exist, and the chapter's year must fall within each role it cites |
 | `credentials.ts` | Education, certifications, languages | Exactly as your résumés state them |
 | `practices.ts` | "How I approach engineering" | Each item restates a résumé line; the module says which |
 | `toolkits.ts` | The grouped tool lists on the two mode pages | Names only, no levels. Nothing that shows how an employer's systems are wired (DEC-064) |
+| `discipline-pages.ts` | The Backend and Infrastructure pages below their heroes: each page's opening paragraph (and Infrastructure's scope line), and each page's four work areas | At most one Published intro per discipline. Each work area cites experience ids, which must exist and carry its discipline. The infrastructure text is held to an approved list in its test (DEC-064) |
 | `project-overviews.ts` | Six résumé projects shown briefly, with no case study and no route | General titles only, never an internal application name (DEC-060). A technology only where the project's résumé line names it. Draft until you confirm the titles (OPEN-011) |
 
 Four V3 fields sit on older records:

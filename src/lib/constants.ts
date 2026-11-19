@@ -19,6 +19,11 @@ export const SECTION_IDS = {
   career: "career",
   work: "work",
   education: "education",
+  // The Backend and Infrastructure hero actions' targets (UX3 7.2, 7.3): the
+  // first section of each page. They must match the mode intros in
+  // src/content/modes.ts.
+  backendWork: "backend-work",
+  infrastructureWork: "infrastructure-work",
   // The footer, on every page (UX3 7.7). v2's Contact section and its other
   // anchors — about, experience, projects, skills, ai-workflow — went in P5.
   contact: "contact",

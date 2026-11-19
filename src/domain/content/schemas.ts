@@ -434,6 +434,39 @@ export const projectOverviewSchema = z.object({
   sortOrder: z.number().int(),
 });
 
+/**
+ * The opening of a discipline's page (UX3 7.2, 7.3): the paragraph under its
+ * first heading. Infrastructure's also carries the scope line of its
+ * transition facts. The headings are the page's, not content, as section
+ * headlines are elsewhere; the paragraph is a claim, so it is content.
+ */
+export const disciplineIntroSchema = z.object({
+  id: identifier,
+  discipline: z.enum(DISCIPLINES),
+  lead: nonEmptyText,
+  scope: nonEmptyText.optional(),
+  publicationStatus,
+});
+
+/**
+ * One area of a discipline's work, as its page presents it (UX3 7.2, 7.3): a
+ * label, a title, and a paragraph restating résumé lines. It cites the roles
+ * it restates, so a cross-record rule can check that they exist and share its
+ * discipline. `context` frames the work without claiming more of it — that a
+ * migration was part of a wider effort, for example.
+ */
+export const workAreaSchema = z.object({
+  id: identifier,
+  discipline: z.enum(DISCIPLINES),
+  label: nonEmptyText,
+  title: nonEmptyText,
+  body: nonEmptyText,
+  context: nonEmptyText.optional(),
+  experienceIds: z.array(identifier).min(1),
+  publicationStatus,
+  sortOrder: z.number().int(),
+});
+
 /* ------------------------------------------------------------------------- */
 /* Site configuration                                                         */
 /* ------------------------------------------------------------------------- */
@@ -472,3 +505,5 @@ export type Language = z.infer<typeof languageSchema>;
 export type EngineeringPractice = z.infer<typeof engineeringPracticeSchema>;
 export type ToolkitGroup = z.infer<typeof toolkitGroupSchema>;
 export type ProjectOverview = z.infer<typeof projectOverviewSchema>;
+export type DisciplineIntro = z.infer<typeof disciplineIntroSchema>;
+export type WorkArea = z.infer<typeof workAreaSchema>;

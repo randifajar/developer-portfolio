@@ -2,6 +2,7 @@ import type {
   CareerChapter,
   Certification,
   ContactChannel,
+  DisciplineIntro,
   Education,
   EngineeringPractice,
   ExternalProfile,
@@ -14,6 +15,7 @@ import type {
   Resume,
   TechnicalSkill,
   ToolkitGroup,
+  WorkArea,
   WorkExperience,
 } from "@/domain/content/schemas";
 import { DISCIPLINES, MODES } from "@/domain/content/types";
@@ -59,6 +61,9 @@ export interface ContentSet {
   readonly engineeringPractices: readonly EngineeringPractice[];
   readonly toolkitGroups: readonly ToolkitGroup[];
   readonly projectOverviews: readonly ProjectOverview[];
+  // The Backend and Infrastructure pages (UX3 7.2, 7.3), added in V3 P6.
+  readonly disciplineIntros: readonly DisciplineIntro[];
+  readonly workAreas: readonly WorkArea[];
 }
 
 /** Sections a Published project must not leave empty (PRD 5.3). */
@@ -112,6 +117,8 @@ export function validateContentSet(content: ContentSet): ValidationIssue[] {
     ["Engineering Practice", content.engineeringPractices],
     ["Toolkit Group", content.toolkitGroups],
     ["Project Overview", content.projectOverviews],
+    ["Discipline Intro", content.disciplineIntros],
+    ["Work Area", content.workAreas],
   ];
 
   for (const [contentType, records] of idGroups) {
@@ -469,6 +476,53 @@ export function validateContentSet(content: ContentSet): ValidationIssue[] {
         message:
           `Neither the eyebrow nor the heading names "${content.profile.fullName}". Every ` +
           "mode's hero must identify the engineer (V3-CONT-003).",
+      });
+    }
+  }
+
+  /* Rule 19 — work areas cite real roles of their own discipline. -------- */
+  // A work area restates what roles held. It may not cite a role that does
+  // not exist, nor one from the other discipline: its page would credit work
+  // to the wrong side of the timeline.
+  for (const area of content.workAreas) {
+    for (const experienceId of area.experienceIds) {
+      const role = experienceById.get(experienceId);
+
+      if (!role) {
+        add({
+          rule: "valid-experience-references",
+          contentType: "Work Area",
+          recordId: area.id,
+          message: `Cites experience "${experienceId}", which does not exist.`,
+        });
+      } else if (!role.disciplines.includes(area.discipline)) {
+        add({
+          rule: "work-area-discipline-matches",
+          contentType: "Work Area",
+          recordId: area.id,
+          message:
+            `Cites "${experienceId}", which is not tagged ${area.discipline}. A work area ` +
+            "may only restate roles of its own discipline.",
+        });
+      }
+    }
+  }
+
+  /* Rule 20 — at most one Published intro per discipline page. ------------ */
+  // "At most", like Rule 17: the page renders its opening only when there is
+  // one, and two would leave which one shows to registration order.
+  for (const discipline of DISCIPLINES) {
+    const published = content.disciplineIntros.filter(
+      (intro) => intro.discipline === discipline && intro.publicationStatus === "published",
+    );
+
+    if (published.length > 1) {
+      add({
+        rule: "single-discipline-intro",
+        contentType: "Discipline Intro",
+        message:
+          `${published.length} Published intros for the ${discipline} page ` +
+          `(${published.map((intro) => intro.id).join(", ")}). At most one may be.`,
       });
     }
   }

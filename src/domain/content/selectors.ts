@@ -1,6 +1,7 @@
 import { careerChapters } from "@/content/career";
 import { contactChannels, externalProfiles } from "@/content/contact";
 import { certifications, education, languages } from "@/content/credentials";
+import { disciplineIntros, workAreas } from "@/content/discipline-pages";
 import { experience } from "@/content/experience";
 import { mediaAssets } from "@/content/media";
 import { modeIntros } from "@/content/modes";
@@ -16,6 +17,7 @@ import type {
   CareerChapter,
   Certification,
   ContactChannel,
+  DisciplineIntro,
   Education,
   EngineeringPractice,
   ExternalProfile,
@@ -29,6 +31,7 @@ import type {
   SiteConfig,
   TechnicalSkill,
   ToolkitGroup,
+  WorkArea,
   WorkExperience,
 } from "@/domain/content/schemas";
 import type { Discipline, Mode, PublicationStatus, SkillGroup } from "@/domain/content/types";
@@ -333,4 +336,26 @@ export function getPublishedProjectOverviews(discipline?: Discipline): readonly 
  */
 export function getPublishedResumeFor(variant: Discipline): Resume | null {
   return resume.variant === variant ? getActiveResume() : null;
+}
+
+/** The Published opening of a discipline's page (UX3 7.2, 7.3), or null. */
+export function getPublishedDisciplineIntro(discipline: Discipline): DisciplineIntro | null {
+  return (
+    disciplineIntros.filter(isPubliclyEligible).find((intro) => intro.discipline === discipline) ??
+    null
+  );
+}
+
+/** A discipline's Published work areas, in order (UX3 7.2, 7.3). */
+export function getPublishedWorkAreas(discipline: Discipline): readonly WorkArea[] {
+  return publishedInOrder(workAreas.filter((area) => area.discipline === discipline));
+}
+
+/**
+ * Published case studies tagged with a discipline, in the approved project
+ * order (UX3 7.2, 7.3). A case study without a discipline, like the
+ * portfolio itself, belongs to neither page.
+ */
+export function getPublishedCaseStudiesFor(discipline: Discipline): readonly ProjectCaseStudy[] {
+  return getPublishedProjects().filter((project) => project.disciplines?.includes(discipline));
 }
