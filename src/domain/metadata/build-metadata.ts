@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
-import { getSiteConfig, isPubliclyLaunchReady } from "@/domain/content/selectors";
+import {
+  getPublishedModeIntro,
+  getSiteConfig,
+  isPubliclyLaunchReady,
+} from "@/domain/content/selectors";
 import type { ProjectCaseStudy } from "@/domain/content/schemas";
 import { absoluteUrl, getSiteUrl } from "@/lib/environment";
 import { ROUTES } from "@/lib/constants";
@@ -92,6 +96,37 @@ export function buildProjectsIndexMetadata(): Metadata {
  * Called only after the route has resolved a publicly eligible project, so an
  * unpublished project can never reach this function.
  */
+/**
+ * Metadata for a V3 mode route, `/backend` or `/infrastructure` (DEC-056).
+ *
+ * The description is the mode intro's, so a link preview says what the page
+ * says. Per-route social images arrive with V3 P9; until then the default card
+ * stands in.
+ */
+export function buildModeMetadata(mode: "backend" | "infrastructure"): Metadata {
+  const siteConfig = getSiteConfig();
+  const canonical = ROUTES[mode];
+  const title = mode === "backend" ? "Backend" : "Infrastructure";
+  const description = getPublishedModeIntro(mode)?.description ?? siteConfig.defaultDescription;
+
+  return {
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      type: "website",
+      title: `${title} — ${siteConfig.ownerName}`,
+      description,
+      url: absoluteUrl(canonical),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} — ${siteConfig.ownerName}`,
+      description,
+    },
+  };
+}
+
 export function buildProjectMetadata(project: ProjectCaseStudy): Metadata {
   const siteConfig = getSiteConfig();
   const canonical = ROUTES.projectDetail(project.slug);

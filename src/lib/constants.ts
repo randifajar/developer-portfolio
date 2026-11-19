@@ -40,6 +40,9 @@ export const RESUME_PATH = "/resume.pdf";
  */
 export const ROUTES = {
   home: "/",
+  // The two V3 mode routes (DEC-056). `home` doubles as the Overall mode.
+  backend: "/backend",
+  infrastructure: "/infrastructure",
   projects: "/projects",
   projectDetail: (slug: string) => `/projects/${slug}`,
 } as const;

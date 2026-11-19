@@ -187,6 +187,13 @@ All criteria in this document are `P0` or `P1`.
 - The destination heading is visible.
 - Keyboard navigation remains usable.
 
+> **Superseded by the V3 header (UX3 6, approved 2026-11-18).** The V3 header
+> holds the mode switch and the Résumé menu only; it lists no homepage
+> sections. Sections are reached by scrolling and by in-page actions, Projects
+> and every mode from the footer on every page (UX3 6.4). This criterion stays
+> as the record of v2. On `staging` since V3 P4; on the live site from the V3
+> release.
+
 ---
 
 ## FAC-NAV-003 — Navigate to the Projects Index

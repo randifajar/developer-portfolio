@@ -1,7 +1,6 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import Home from "@/app/page";
-import { NAVIGATION_LINKS } from "@/components/layout/navigation-links";
 import { SECTION_IDS } from "@/lib/constants";
 
 /**
@@ -62,31 +61,6 @@ describe("the homepage renders sections in the approved order", () => {
   });
 });
 
-/**
- * The header is a table of contents with Projects hoisted to its own route, so
- * the four anchor links must not contradict the page they describe.
- *
- * Only the anchors are compared. Projects targets /projects rather than a
- * section, so its position is a presentation decision rather than a claim about
- * page order — but it must still not sit ahead of Experience, which is the
- * inconsistency this release removed.
- */
-describe("the header agrees with the homepage about what comes first", () => {
-  it("lists Experience before Projects", () => {
-    const labels = NAVIGATION_LINKS.map((link) => link.label);
-
-    expect(labels.indexOf("Experience")).toBeLessThan(labels.indexOf("Projects"));
-  });
-
-  it("lists its section anchors in homepage order", () => {
-    const anchorOrder = NAVIGATION_LINKS.map((link) => link.href)
-      .filter((href) => href.includes("#"))
-      .map((href) => href.split("#")[1]);
-
-    const expected = APPROVED_SECTION_ORDER.filter((id) =>
-      anchorOrder.includes(id),
-    ) as readonly string[];
-
-    expect(anchorOrder).toEqual([...expected]);
-  });
-});
+// The header no longer lists homepage sections (V3: modes and Résumé only,
+// UX3 6.1), so the two checks that compared its anchors with the page order
+// were removed with it. The page-order tests above still guard SUP-005.
