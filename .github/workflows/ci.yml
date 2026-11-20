@@ -82,8 +82,39 @@ jobs:
       # --with-deps installs the system libraries WebKit and Firefox need on
       # Ubuntu. Without it WebKit fails to launch and the cross-browser
       # requirement in NFAC-COMPAT-001 goes silently unverified.
+      #
+      # Bounded and retried since 2026-11-21. Those libraries are 140 MB of apt
+      # packages from the runner's Ubuntu mirror, fetched on every run, usually
+      # in seconds. Some mirrors stay slow for a whole run: six runs from
+      # 2026-11-18 to 2026-11-20 fetched at 50 to 300 kB/s, five of them from
+      # us-east-2.ec2.archive.ubuntu.com. On PR #114 this step used up the
+      # job's 25 minutes before any test ran, and GitHub reported the job as
+      # "cancelled". A re-run installed in 64 seconds.
+      #
+      # So an attempt gets 270 seconds, twice the slowest of the 42 healthy
+      # runs since 2026-11-15 (35 to 129 s), and up to three are made. apt
+      # keeps the packages it finished downloading, so on a slow mirror the
+      # attempts add up rather than start over. timeout-minutes caps the step
+      # at 15, which leaves the tests at least 9 of the job's 25 minutes. If
+      # every attempt runs out of time in apt, the mirror is the problem:
+      # re-run the job.
+      #
+      # sudo forwards a signal only to the process it started, so a stopped
+      # attempt can leave apt-get running as root with apt's lock held, or dpkg
+      # half-done. Each attempt clears both first: a no-op the first time,
+      # which keeps those commands exercised on every run.
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium firefox webkit
+        timeout-minutes: 15
+        run: |
+          for attempt in 1 2 3; do
+            sudo pkill -x apt-get || true
+            while pgrep -x 'apt-get|dpkg' > /dev/null; do sleep 2; done
+            sudo dpkg --configure -a
+            timeout --kill-after=10s 270s npx playwright install --with-deps chromium firefox webkit && exit 0
+            echo "::warning::Playwright browser install attempt $attempt of 3 exited with $? (124 means it ran out of time)."
+          done
+          echo "::error::Playwright browser install failed 3 times. If they ran out of time downloading apt packages, re-run the job."
+          exit 1
 
       # Playwright's webServer config builds and starts the production server,
       # so the suite runs against what actually deploys rather than a dev build.
