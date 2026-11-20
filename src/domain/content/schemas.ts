@@ -80,6 +80,11 @@ export const professionalProfileSchema = z.object({
   statement: nonEmptyText.optional(),
   location: nonEmptyText,
   photoAssetId: identifier.optional(),
+  // The V3 Overall hero's photograph (UX3 7.6, OPEN-010). Separate from
+  // `photoAssetId`, the v2 portrait, which at 400 × 400 is too small to fill
+  // the right half of the hero. Until it is set the hero shows a labelled
+  // placeholder, and release validation refuses the release.
+  heroPhotoAssetId: identifier.optional(),
   publicationStatus,
   updatedAt: isoDate,
 });

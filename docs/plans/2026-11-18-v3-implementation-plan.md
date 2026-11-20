@@ -5,7 +5,7 @@
 | Field | Value |
 |---|---|
 | Date | 2026-11-18 |
-| Status | **Approved 2026-11-18** ("approved, use your recommendations"). Randi also asked for a pre-production environment, so the integration branch is `staging` (D5, section 6). On 2026-11-19 he settled D12 (Zettabyte), D9 (professional experience), the infrastructure detail level (DEC-064) and the proposed wording (approved), and asked for the target-roles list to be removed. P0 to P8 are merged into `staging` (#99 to #112); P9 onwards is in progress. The overview titles are working titles (OPEN-011) |
+| Status | **Approved 2026-11-18** ("approved, use your recommendations"). Randi also asked for a pre-production environment, so the integration branch is `staging` (D5, section 6). On 2026-11-19 he settled D12 (Zettabyte), D9 (professional experience), the infrastructure detail level (DEC-064) and the proposed wording (approved), and asked for the target-roles list to be removed. P0 to P9 are merged into `staging` (#99 to #113); P10 is in review, and P11 (the release) waits for Randi and the owner inputs. The overview titles are working titles (OPEN-011) |
 | Approved design | V3.1 review mockup, approved 2026-11-18. It stays on Randi's machine by his decision (2026-11-19); `docs/product/PORTFOLIO_UX_UI_SPEC_v3.0.md` records the design |
 | Inputs | V3 master requirements v1.0, the V3.1 improvement brief, the backend and infrastructure résumés, the repository at `25a31d5` |
 | Decision and merge authority | Randi Fajar Wicaksono, per pull request |
@@ -400,6 +400,24 @@ P0 leaves one known gap: until I2 arrives, the published backend résumé still 
 Developer as "Present".
 
 ---
+
+**P10 as built.** Hardening done on `staging`:
+
+- the header is one row at 390 px and wraps at 360 px (UX3 5): the mode labels had
+  the eyebrow's tracking, 0.2em, where the mockup has 0.05em;
+- the header's measured height is published as `--hdr`, so anchors clear it when it wraps;
+- the mode pill moves (V3-NAV-003), which P8 had left out;
+- the hero shows a photograph when one is set, and release validation refuses the
+  placeholder (OPEN-010);
+- the link check passes, with two links for a human, as before.
+
+Not done in P10, and why:
+
+- **Lighthouse on the Vercel preview.** The preview is behind Vercel login, and Lighthouse is
+  not installed in this repository; adding a dependency for it was out of scope. It is a
+  release-time measurement (section 8, "Measured on the Vercel preview"), for P11.
+- **A manual cross-browser review.** The end-to-end suite runs in all three engines; a
+  human look on real devices belongs with the preview review at P11.
 
 # 8. Test strategy
 

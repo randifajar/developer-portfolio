@@ -73,6 +73,15 @@ describe("rule: valid media references", () => {
     expect(rulesTriggeredBy(content)).toContain("valid-media-references");
   });
 
+  it("rejects a hero photograph referencing an unknown media asset (V3 P10)", () => {
+    const content = {
+      ...realContent(),
+      profile: { ...profile, heroPhotoAssetId: "media-missing" },
+    };
+
+    expect(rulesTriggeredBy(content)).toContain("valid-media-references");
+  });
+
   it("rejects a project referencing an unknown media asset", () => {
     const [first] = projects;
     const content = {

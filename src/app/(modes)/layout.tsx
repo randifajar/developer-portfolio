@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { ModeHero, type ModeHeroIntro } from "@/components/layout/mode-hero";
 import {
+  getHeroPhotograph,
   getPublishedDisciplineIntro,
   getPublishedModeIntro,
   getPublishedProfile,
@@ -55,7 +56,11 @@ export default function ModesLayout({ children }: { readonly children: ReactNode
   });
 
   return (
-    <ModeHero intros={intros} actionModes={MODES.filter(hasActionTarget)}>
+    <ModeHero
+      intros={intros}
+      actionModes={MODES.filter(hasActionTarget)}
+      photo={getHeroPhotograph()}
+    >
       {children}
     </ModeHero>
   );

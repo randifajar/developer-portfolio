@@ -339,3 +339,25 @@ describe("ModeHero mode change with motion (UX3 8.2)", () => {
     expect(created).toHaveLength(0);
   });
 });
+
+describe("ModeHero photograph (UX3 7.6, OPEN-010)", () => {
+  const photo = { src: "/images/hero.jpg", alt: "A portrait", width: 1600, height: 2000 };
+
+  it("shows the photograph on Overall when there is one, in place of the placeholder", () => {
+    const { container } = render(
+      <ModeHero intros={INTROS} actionModes={["overall"]} photo={photo}>
+        <p>The page below</p>
+      </ModeHero>,
+    );
+
+    expect(screen.getByRole("img", { name: "A portrait" })).toBeInTheDocument();
+    expect(container.querySelector("[data-photograph-placeholder]")).toBeNull();
+  });
+
+  it("shows the labelled placeholder while there is none", () => {
+    const { container } = render(hero());
+
+    expect(screen.queryByRole("img")).toBeNull();
+    expect(container.querySelector("[data-photograph-placeholder]")).not.toBeNull();
+  });
+});

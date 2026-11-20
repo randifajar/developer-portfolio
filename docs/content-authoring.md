@@ -190,9 +190,13 @@ release.
 | `discipline-pages.ts` | The Backend and Infrastructure pages below their heroes: each page's opening paragraph (and Infrastructure's scope line), and each page's four work areas | At most one Published intro per discipline. Each work area cites experience ids, which must exist and carry its discipline. The infrastructure text is held to an approved list in its test (DEC-064) |
 | `project-overviews.ts` | Six résumé projects shown briefly, with no case study and no route | General titles only, never an internal application name (DEC-060). A technology only where the project's résumé line names it. Draft until you confirm the titles (OPEN-011) |
 
-Four V3 fields sit on older records:
+Five V3 fields sit on older records:
 
 - **`statement`, on the profile.** The Overall profile statement.
+- **`heroPhotoAssetId`, on the profile.** The Overall hero's photograph (UX3 7.6). Add the
+  image under `public/`, register it in `media.ts` as a published `professional-photograph`
+  with its alt text, width, and height, and point this field at it. Until then the hero
+  shows a labelled placeholder and release validation refuses the release (OPEN-010).
 - **`disciplines`, on every experience record.** `backend`, `infrastructure`, or both. It
   decides which mode page shows the role, so it is required: a role tagged with
   nothing would vanish from both.

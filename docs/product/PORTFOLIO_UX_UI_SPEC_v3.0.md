@@ -15,7 +15,7 @@ release, `PORTFOLIO_UX_UI_SPEC_v2.0.md` describes the live site.
 | §7.4 Projects, §7.5 Case study | Built in P7. See the as-built note under §7.5 |
 | §8.1–§8.3, §8.5, §8.6 (entrance, mode change, pointer light, reveal, reduced motion) | Built in P8. See the as-built note under §8.6 |
 | §8.4 Career sequence | Built in P8. See the as-built note under §8.6 |
-| §5, §7.6, §9–§11 (layout, photograph, responsive, accessibility, performance) | P9 and P10 |
+| §5 Layout, §6.2 pill movement, §7.6 Photograph, §9–§11 | Built in P10: the header is one row at 390 px and wraps at 360 px, and its measured height clears anchors; the mode pill moves; the hero shows a photograph when one is set, and release validation refuses the placeholder (OPEN-010). Lighthouse on the preview was not run (see the plan, P10) |
 
 **Will supersede:** `PORTFOLIO_UX_UI_SPEC_v2.0.md`, at the V3 release.
 
@@ -179,8 +179,10 @@ There is no identity lockup, no menu and no burger. This differs from the requir
 - **Active mode.**
   - It carries `aria-current="page"`.
   - A pill marks it, so the state is shown by shape as well as colour.
-  - The pill moves at once on click (V3-NAV-003). In P4 it appears on the new mode without
-    moving; the movement is motion, and arrives with P8.
+  - The pill moves at once on click (V3-NAV-003). In P4 it appeared on the new mode without
+    moving. **Built in P10**, not P8 as planned: the pill is one shape, measured after
+    hydration, that slides to the new mode; before that, and without JavaScript, the active
+    link fills itself.
 - **Clicking the current mode** does nothing. It does not replay the transition.
 - **Target size.** Links are at least 40 px high, and the Résumé button 44 px.
 
