@@ -14,6 +14,10 @@ is the 2026-08-16 entry in `release-audit.md`.
 > body is a record of what was known on 2026-08-12, including seven conflicts and
 > a set of open questions, and rewriting it would destroy the thing it is for.
 > Only the status line made a claim about the present.
+>
+> **Generalized on 2026-11-21, by Randi's decision**, the one exception: the
+> design reference, a real motorsport team's website, is described generically
+> instead of named, as in the V3 requirements. The analysis is otherwise unchanged.
 
 This is the first of the two artifacts PRD §75 requires before any V2 code is
 written. It ends at a decision gate: §27 lists what needs Randi's answer, and the
@@ -149,11 +153,11 @@ widths. The homepage section already solves this (`projects.length === 2 ?
 
 ---
 
-## 4. Aston Martin Reference Analysis
+## 4. Design Reference Analysis
 
-The reference is `astonmartinf1.com`, and PRD §9 is unambiguous that it is a
-design-principle reference, not a template: *"not: Aston Martin F1 with MongoDB
-replacing Fernando Alonso."*
+The reference is a motorsport team's website, and PRD §9 is unambiguous that it is
+a design-principle reference, not a template: *"not: the reference team's site with
+MongoDB replacing its driver."*
 
 ### Principles to Adapt
 
@@ -169,9 +173,9 @@ replacing Fernando Alonso."*
 
 ### Elements Not to Copy
 
-Aston Martin green as identity, the logo, any Formula One branding, car/driver/racing
-imagery, the exact typography or proprietary fonts, the exact palette, composition,
-navigation, animation, CTA wording, or graphic motifs.
+The team's signature colour as identity, the logo, any team or racing-series
+branding, car/driver/racing imagery, the exact typography or proprietary fonts, the
+exact palette, composition, navigation, animation, CTA wording, or graphic motifs.
 
 **The adaptation risk worth naming:** the reference sells spectacle; this portfolio
 sells verifiable evidence. Where the two pull apart, V2-DP-001 governs — evidence
@@ -183,7 +187,7 @@ looked.
 
 ## 5. Proposed V2 Design Direction
 
-**Performance Engineering** — the PRD's own name for Aston Martin's editorial
+**Performance Engineering** — the PRD's own name for the reference's editorial
 composition combined with V1's Quiet Engineering discipline. It should read as
 engineering precision, deliberate decisions, and calm technical confidence.
 
@@ -548,8 +552,8 @@ PRs update citations in files they touch, and a sweep catches the remainder.
 
 Per §52: no CMS, database, auth, accounts, admin, comments, newsletter, blog, chat,
 chatbot, or contact API. No theme switcher (§15, explicitly deferred). No analytics.
-No project filters at two projects. No fake metrics or invented scale. No Aston
-Martin branding. No public private-source examples.
+No project filters at two projects. No fake metrics or invented scale. No
+reference-team branding. No public private-source examples.
 
 Added here: **no active-section navigation indicator** (§20 above), and **no content
 model changes** unless approved under §51.
