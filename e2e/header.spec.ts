@@ -10,10 +10,15 @@ import { expect, test, type Page } from "@playwright/test";
 const headerHeight = (page: Page) =>
   page.evaluate(() => document.querySelector("body > header")!.getBoundingClientRect().height);
 
-test("the header is one row at 390 and 375 px, and wraps at 360 px", async ({ page }) => {
+/*
+ * Exactly the two widths UX3 5 specifies. Between them the row break depends
+ * on text metrics, which differ by platform: at 375 px the header was one row
+ * in Chromium on Windows and two in Chromium on Linux (CI), so this asserts
+ * nothing there.
+ */
+test("the header is one row at 390 px and wraps at 360 px (UX3 5)", async ({ page }) => {
   for (const [width, rows] of [
     [390, 1],
-    [375, 1],
     [360, 2],
   ] as const) {
     await page.setViewportSize({ width, height: 800 });

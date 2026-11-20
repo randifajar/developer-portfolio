@@ -403,7 +403,7 @@ Developer as "Present".
 
 **P10 as built.** Hardening done on `staging`:
 
-- the header keeps one row down to 375 px and wraps from 360 px (UX3 5): the mode labels had
+- the header is one row at 390 px and wraps at 360 px (UX3 5): the mode labels had
   the eyebrow's tracking, 0.2em, where the mockup has 0.05em;
 - the header's measured height is published as `--hdr`, so anchors clear it when it wraps;
 - the mode pill moves (V3-NAV-003), which P8 had left out;

@@ -15,7 +15,7 @@ release, `PORTFOLIO_UX_UI_SPEC_v2.0.md` describes the live site.
 | §7.4 Projects, §7.5 Case study | Built in P7. See the as-built note under §7.5 |
 | §8.1–§8.3, §8.5, §8.6 (entrance, mode change, pointer light, reveal, reduced motion) | Built in P8. See the as-built note under §8.6 |
 | §8.4 Career sequence | Built in P8. See the as-built note under §8.6 |
-| §5 Layout, §6.2 pill movement, §7.6 Photograph, §9–§11 | Built in P10: the header keeps one row to 375 px and its measured height clears anchors; the mode pill moves; the hero shows a photograph when one is set, and release validation refuses the placeholder (OPEN-010). Lighthouse on the preview was not run (see the plan, P10) |
+| §5 Layout, §6.2 pill movement, §7.6 Photograph, §9–§11 | Built in P10: the header is one row at 390 px and wraps at 360 px, and its measured height clears anchors; the mode pill moves; the hero shows a photograph when one is set, and release validation refuses the placeholder (OPEN-010). Lighthouse on the preview was not run (see the plan, P10) |
 
 **Will supersede:** `PORTFOLIO_UX_UI_SPEC_v2.0.md`, at the V3 release.
 

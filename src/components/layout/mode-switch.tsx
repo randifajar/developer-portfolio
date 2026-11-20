@@ -29,8 +29,8 @@ import { ROUTES } from "@/lib/constants";
  * wide for one row at 390 px, where UX3 5 keeps it on one row (V3 P10).
  *
  * It also measures the header it sits in and publishes the height as `--hdr`
- * (UX3 5): below about 375 px the header wraps to two rows, and anchored
- * scrolling has to clear both.
+ * (UX3 5): on the narrowest phones the header wraps to two rows (one row at
+ * 390 px, two at 360 px), and anchored scrolling has to clear both.
  */
 const MODE_LINKS = [
   { href: ROUTES.home, label: "Overall", short: null },
