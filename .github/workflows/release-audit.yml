@@ -58,9 +58,21 @@ jobs:
         if: always()
         run: npm run check:links
 
+      # Bounded and retried as in ci.yml, which records why. Keep the two steps
+      # identical.
       - name: Install Playwright browsers
         if: always()
-        run: npx playwright install --with-deps chromium firefox webkit
+        timeout-minutes: 15
+        run: |
+          for attempt in 1 2 3; do
+            sudo pkill -x apt-get || true
+            while pgrep -x 'apt-get|dpkg' > /dev/null; do sleep 2; done
+            sudo dpkg --configure -a
+            timeout --kill-after=10s 270s npx playwright install --with-deps chromium firefox webkit && exit 0
+            echo "::warning::Playwright browser install attempt $attempt of 3 exited with $? (124 means it ran out of time)."
+          done
+          echo "::error::Playwright browser install failed 3 times. If they ran out of time downloading apt packages, re-run the job."
+          exit 1
 
       - name: End-to-end and accessibility tests
         if: always()
