@@ -6,8 +6,12 @@
 > **Repository:** `randifajar/developer-portfolio`  
 > **Production Branch:** `production`  
 > **Current Portfolio:** `https://developer-portfolio-delta-three.vercel.app/`  
-> **Primary UI/UX Reference:** `https://www.astonmartinf1.com/en-GB`  
+> **Primary UI/UX Reference:** a motorsport team's website  
 > **Date:** 2026-08-12
+
+> **Generalized on 2026-11-21, by Randi's decision.** The design reference, a real
+> motorsport team's website, is described generically instead of named, as in the
+> V3 requirements. Nothing else in this document changed.
 
 ---
 
@@ -24,7 +28,7 @@ This document defines:
 - why V2 exists;
 - what V2 should accomplish;
 - the approved visual direction;
-- the Aston Martin F1 reference boundaries;
+- the design reference's boundaries;
 - what should change;
 - what must remain unchanged;
 - page-by-page UX goals;
@@ -302,7 +306,7 @@ The site should feel:
 It should **not** feel:
 
 - like a racing fan website;
-- like an Aston Martin clone;
+- like a clone of the reference team's site;
 - like a cyberpunk dashboard;
 - like a crypto landing page;
 - like a terminal theme;
@@ -317,7 +321,7 @@ It should **not** feel:
 
 Primary reference:
 
-`https://www.astonmartinf1.com/en-GB`
+A motorsport team's website.
 
 The reference is useful because of its **editorial design language**.
 
@@ -338,13 +342,13 @@ We want to learn from:
 
 ---
 
-# 9. What Must NOT Be Copied From Aston Martin F1
+# 9. What Must NOT Be Copied From the Reference
 
 The portfolio must not copy:
 
-- Aston Martin logo;
-- Formula One branding;
-- Aston Martin green as the identity;
+- the team's logo;
+- the racing series' branding;
+- the team's signature color as the identity;
 - car imagery;
 - driver imagery;
 - racing photography;
@@ -366,7 +370,7 @@ The final portfolio must remain recognizably:
 
 not:
 
-> Aston Martin F1 with MongoDB replacing Fernando Alonso.
+> the reference team's site with MongoDB replacing its driver.
 
 ---
 
@@ -374,7 +378,7 @@ not:
 
 V2 combines:
 
-> **Aston Martin-inspired premium editorial composition**
+> **Motorsport-inspired premium editorial composition**
 
 with:
 
@@ -678,7 +682,7 @@ Defer it unless separately approved.
 
 # 16. Color Direction
 
-Do not use Aston Martin green as the identity.
+Do not use the reference team's signature color as the identity.
 
 Recommended personal direction:
 
@@ -1894,7 +1898,7 @@ Do not add:
 - fake metrics;
 - fake system scale;
 - public private-source-code examples;
-- Aston Martin branding.
+- the reference team's branding.
 
 ---
 
@@ -2202,7 +2206,7 @@ Follow repository governance.
 Before implementation:
 
 - analyze current site;
-- analyze Aston Martin reference;
+- analyze the design reference;
 - define visual system;
 - define typography;
 - define color;
@@ -2442,7 +2446,7 @@ and does not visually dominate.
 
 ## V2-AC-011 — Original Identity
 
-The site feels inspired by premium editorial/motorsport presentation but not like an Aston Martin clone.
+The site feels inspired by premium editorial/motorsport presentation but not like a clone of the reference team's site.
 
 ---
 
@@ -2561,7 +2565,7 @@ Claude must first:
 23. Inspect Contact.
 24. Inspect tests.
 25. Inspect current portfolio visually.
-26. Analyze the Aston Martin F1 reference.
+26. Analyze the design reference.
 27. Identify which V1 decisions remain valid.
 28. Identify which V1 visual decisions V2 supersedes.
 29. Identify conflicts.
@@ -2587,7 +2591,7 @@ Claude must produce:
 
 ## 3. V1.1 Residual Issues
 
-## 4. Aston Martin Reference Analysis
+## 4. Design Reference Analysis
 ### Principles to Adapt
 ### Elements Not to Copy
 
@@ -2775,9 +2779,9 @@ Current production portfolio:
 https://developer-portfolio-delta-three.vercel.app/
 
 Primary UI/UX reference:
-https://www.astonmartinf1.com/en-GB
+a motorsport team's website
 
-The Aston Martin F1 website is a design-language reference only.
+That website is a design-language reference only.
 
 Do not copy:
 - its branding
@@ -2823,7 +2827,7 @@ First:
    testing, and release documents.
 5. Review recent V1.1 commits.
 6. Inspect the current live portfolio visually.
-7. Inspect the Aston Martin F1 reference.
+7. Inspect the design reference.
 8. Identify the design principles we can adapt without copying branding.
 9. Identify V1/V1.1 decisions that remain valid.
 10. Identify V1 visual decisions that V2 should supersede.

@@ -1,5 +1,9 @@
 # V2 Design Review Gate
 
+> **Generalized on 2026-11-21, by Randi's decision.** The design reference, a real
+> motorsport team's website, is described generically instead of named, as in the
+> V3 requirements. Nothing else in this document changed.
+
 **This is the PRD §78 gate.** Nothing is implemented. Every decision below is
 cheaper to change now than at any later point.
 
@@ -33,7 +37,7 @@ Approving the picture and approving the tokens are the same act.
 ### 1. Homepage, desktop
 
 Does this read as *your* portfolio, or as a template with your content in it? PRD §9
-sets the bar: *not "Aston Martin F1 with MongoDB replacing Fernando Alonso."*
+sets the bar: *not "the reference team's site with MongoDB replacing its driver."*
 
 ### 2. Homepage, mobile
 
