@@ -5,7 +5,7 @@
 | Field | Value |
 |---|---|
 | Date | 2026-11-18 |
-| Status | **Approved 2026-11-18** ("approved, use your recommendations"). Randi also asked for a pre-production environment, so the integration branch is `staging` (D5, section 6). On 2026-11-19 he settled D12 (Zettabyte), D9 (professional experience), the infrastructure detail level (DEC-064) and the proposed wording (approved), and asked for the target-roles list to be removed. P0 to P10 are merged into `staging` (#99 to #114); P11 (the release) waits for Randi and the owner inputs. The overview titles are working titles (OPEN-011) |
+| Status | **Approved 2026-11-18** ("approved, use your recommendations"). Randi also asked for a pre-production environment, so the integration branch is `staging` (D5, section 6). On 2026-11-19 he settled D12 (Zettabyte), D9 (professional experience), the infrastructure detail level (DEC-064) and the proposed wording (approved), and asked for the target-roles list to be removed. P0 to P10 are merged into `staging` (#99 to #114). On 2026-11-21 Randi supplied the photograph (I1) and decided the résumé (I2, D6); P11 (the release) waits for him. The overview titles are working titles (OPEN-011) |
 | Approved design | V3.1 review mockup, approved 2026-11-18. It stays on Randi's machine by his decision (2026-11-19); `docs/product/PORTFOLIO_UX_UI_SPEC_v3.0.md` records the design |
 | Inputs | V3 master requirements v1.0, the V3.1 improvement brief, the backend and infrastructure résumés, the repository at `25a31d5` |
 | Decision and merge authority | Randi Fajar Wicaksono, per pull request |
@@ -96,6 +96,10 @@ validation refuses to ship it.
 | `/projects/[slug]` | Case study | Static, `dynamicParams = false` | Only projects with a full case study get a route; the two existing case studies keep theirs. Overviews and unknown slugs return the same not-found result (DEC-047) |
 | `/resume/backend.pdf`, `/resume/infrastructure.pdf` | Résumés | Static files | Each is added only once that PDF is approved for publication (D6) |
 | `/resume.pdf` | Legacy | Permanent redirect | Points to the backend résumé, so existing links on CVs and applications keep working |
+
+**As decided on 2026-11-21 (D6).** The v2 PDF is the only résumé and stays at `/resume.pdf`, so
+neither `/resume/*.pdf` file is added and no redirect is needed: existing links keep working
+because the file never moves.
 
 ## 3.2 Layout and components
 
@@ -281,8 +285,8 @@ Measures:
 **As built in P9.** The sitemap lists `/backend` and `/infrastructure`, and each mode route
 has its own Open Graph card: its hero's eyebrow, heading, and description, with the site's card
 as the fallback. The cards share one renderer, which reads its palette from the stylesheet.
-Two items wait on the résumés (D6): the `/resume.pdf` redirect is tied to moving the file to
-`/resume/backend.pdf`, which happens with the approved PDFs, so it is not done yet; and
+Two items waited on the résumés (D6): the `/resume.pdf` redirect, tied to moving the file to
+`/resume/backend.pdf`, which D6 made unnecessary on 2026-11-21 (see 3.1); and
 per-route titles and descriptions already existed from P4.
 - **Unchanged.** Robots. Canonical URLs keep coming from `SITE_URL` (`src/lib/environment.ts`).
 
@@ -300,7 +304,7 @@ explicit yes.
 | D3 | Homepage structure | The V3.1 Overall order | Supersedes SUP-005 |
 | D4 | Client boundary | The six components in 3.2. The header and footer stay Server Components | Amends Technical Design §13.4, which allows only `MobileNavigation` and "no homepage-wide client state" |
 | D5 | Delivery strategy | Integration branch, named `staging` at Randi's request for a pre-production environment (section 6, option B) | Amends the Mandatory Branch Rule in `CLAUDE.md` and `git-workflow.md` §2 |
-| D6 | Résumé publication | Publish both only after two things: (a) the backend résumé shows Backend Developer ending Jul 2026, and (b) Randi approves the phone number being public or supplies versions without it | Changes FAC-RESUME-004 |
+| D6 | Résumé publication | Publish both only after two things: (a) the backend résumé shows Backend Developer ending Jul 2026, and (b) Randi approves the phone number being public or supplies versions without it. **Decided 2026-11-21:** the v2 PDF, as it is, is the only résumé; the phone number stays public; no infrastructure PDF | Changes FAC-RESUME-004 |
 | D7 | Project overviews | Six résumé projects as overviews under the general titles. None becomes a case study without its own approval | New |
 | D8 | Display typeface | Geist only (the mockup default) | Supersedes DEC-050; extends DEC-051 |
 | D9 | Skill classification | **Decided 2026-11-19: Docker, Linux, Jenkins and AWS are professional experience.** SUP-008 had deliberately kept Docker as currently-learning (confirmed 2026-08-16), although it was used professionally; the infrastructure role now centres on them | Supersedes SUP-008 (SUP-018) |
@@ -315,8 +319,8 @@ explicit yes.
 
 | # | Input | Blocks | Until then |
 |---|---|---|---|
-| I1 | The photograph | Release (P11) | A labelled placeholder on the integration branch; release validation rejects it |
-| I2 | An updated backend résumé (role dates) and the publication decision (D6) | Live résumé links | The Résumé menu lists only approved variants |
+| I1 | The photograph | Release (P11) | **Supplied 2026-11-21**: a larger version of the v2 portrait (OPEN-010) |
+| I2 | An updated backend résumé (role dates) and the publication decision (D6) | Live résumé links | **Decided 2026-11-21** (D6): the v2 PDF as it is, so the Résumé menu lists the backend résumé alone |
 | I3 | Approval of the general project titles and of the level of AWS and Jenkins detail | Publishing the overviews | **Detail level decided 2026-11-19** (DEC-064). The titles are working titles (OPEN-011), so the overviews stay Draft |
 | I4 | Approval of the proposed wording: profile statement, engineering headline, transition sentence | Publishing those sections | **Approved 2026-11-19** |
 | I5 | Optional: for each infrastructure item, what the team owned and how the result was verified | Richer infrastructure copy | Résumé wording only |
@@ -397,7 +401,8 @@ Sizes are relative: S, M, L.
 | **P11** | Release | Sync; README and release audit; `release:check`; the promotion pull request `staging → production`; post-deploy verification on the live URL; sync back into `staging` | S | P10, I1–I4 |
 
 P0 leaves one known gap: until I2 arrives, the published backend résumé still lists Backend
-Developer as "Present".
+Developer as "Present". On 2026-11-21 Randi decided to keep that PDF as it is (D6), so the
+gap stays, by his decision.
 
 ---
 

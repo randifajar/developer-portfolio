@@ -22,14 +22,15 @@ import { ROUTES } from "@/lib/constants";
  * - arrow keys between the items;
  * - the "this page" marker, which needs the pathname.
  *
- * Only Published résumés are links. A variant without one says so instead of
- * offering a download the site cannot fulfil (FAC-RESUME-003, DEC-059).
+ * Every item is a Published résumé. A variant without one is left out by the
+ * header rather than shown as awaiting a PDF (D6, 2026-11-21), so the menu
+ * never offers a download the site cannot fulfil (FAC-RESUME-003, DEC-059).
  */
 export interface ResumeMenuItem {
   readonly variant: "backend" | "infrastructure";
   readonly label: string;
-  /** The PDF's public path, or null while the résumé awaits approval. */
-  readonly href: string | null;
+  /** The PDF's public path. */
+  readonly href: string;
 }
 
 const MENU_ID = "resume-menu";
@@ -117,32 +118,22 @@ export function ResumeMenu({ items }: { readonly items: readonly ResumeMenuItem[
 
             return (
               <li key={item.variant}>
-                {item.href ? (
-                  <a
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    data-this-page={thisPage ? "" : undefined}
-                    className="flex flex-col rounded-xl px-3 py-2 hover:bg-surface-muted focus-visible:bg-surface-muted"
-                  >
-                    <span className="text-body font-semibold">
-                      {item.label}
-                      {thisPage ? <span className="text-accent"> · this page</span> : null}
-                    </span>
-                    <span className="text-meta text-text-muted">
-                      PDF
-                      <span className="sr-only"> (opens in a new tab)</span>
-                    </span>
-                  </a>
-                ) : (
-                  <p className="flex flex-col px-3 py-2">
-                    <span className="text-body font-semibold">
-                      {item.label}
-                      {thisPage ? <span className="text-accent"> · this page</span> : null}
-                    </span>
-                    <span className="text-meta text-text-muted">PDF available after approval</span>
-                  </p>
-                )}
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-this-page={thisPage ? "" : undefined}
+                  className="flex flex-col rounded-xl px-3 py-2 hover:bg-surface-muted focus-visible:bg-surface-muted"
+                >
+                  <span className="text-body font-semibold">
+                    {item.label}
+                    {thisPage ? <span className="text-accent"> · this page</span> : null}
+                  </span>
+                  <span className="text-meta text-text-muted">
+                    PDF
+                    <span className="sr-only"> (opens in a new tab)</span>
+                  </span>
+                </a>
               </li>
             );
           })}

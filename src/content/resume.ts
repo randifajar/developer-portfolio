@@ -14,9 +14,12 @@ import { RESUME_PATH } from "@/lib/constants";
  * Corrected 2026-11-18: the file does carry a phone number, and has since it
  * was committed. Checked by extracting the PDF's text and matching the number
  * pattern, without reproducing the number anywhere. The record above was wrong,
- * not the file changed. Whether the number stays public is Randi's decision
- * (V3 plan, D6). Until he makes it, the file is unchanged. It also still lists
- * the Backend Developer role as current, which only a new PDF from him can fix.
+ * not the file changed. It also still lists the Backend Developer role as
+ * current.
+ *
+ * D6, decided by Randi on 2026-11-21: this v2 PDF stays the published résumé,
+ * as it is, phone number included. It is the only résumé; there is no
+ * infrastructure PDF.
  *
  * The file arrived named resume.pdf.pdf. Left alone it would have 404'd, since
  * RESUME_PATH and every Resume action point at /resume.pdf.
@@ -33,9 +36,8 @@ export const resume = defineResume({
   publicationDate: "2026-08-08",
   publicPath: RESUME_PATH,
   isActive: true,
-  // DEC-059: the backend résumé. The infrastructure résumé gets its own record
-  // only when Randi approves its publication; until then the V3 Résumé menu
-  // shows that variant as "PDF available after approval".
+  // DEC-059: the backend résumé. An infrastructure résumé would get its own
+  // record; there is none (D6), so the V3 Résumé menu lists this one alone.
   variant: "backend",
   confidentialityClass: "public",
   publicationStatus: "published",

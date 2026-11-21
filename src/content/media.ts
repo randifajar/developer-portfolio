@@ -3,9 +3,11 @@ import { defineMediaAsset } from "@/domain/content/define";
 /**
  * Media Assets — PUBLISHED.
  *
- * Both assets below are Published, both files resolve, and both are verified
- * serving in production. OPEN-005 is resolved: the photograph was supplied on
- * 2026-08-08 with its crop and alt text.
+ * Every asset below is Published and resolves. The profile photograph and the
+ * social card are verified serving in production; the V3 hero portrait reaches
+ * production with the V3 release. OPEN-005 is resolved: the photograph was
+ * supplied on 2026-08-08 with its crop and alt text, and OPEN-010 on 2026-11-21
+ * with the hero portrait.
  *
  * This header said "DRAFT" and "every asset here is Draft, and the referenced
  * files do not exist yet" until 2026-08-16, by which point the photograph had
@@ -49,6 +51,34 @@ export const mediaAssets = [
       "hooded jacket.",
     width: 400,
     height: 400,
+    ownerType: "profile",
+    ownerId: "profile-randi-fajar-wicaksono",
+    confidentialityClass: "public",
+    publicationStatus: "published",
+  }),
+  /*
+   * The V3 hero's portrait (UX3 7.6, OPEN-010), supplied by Randi on
+   * 2026-11-21: a larger version of the portrait above, at 1254x1254, so the
+   * hero can fill its half of a wide screen without upscaling a 400 px image.
+   *
+   * Committed without its embedded metadata chunk, at his request. Only that
+   * chunk was removed: decoded, the committed file and the supplied one are
+   * identical pixel for pixel.
+   *
+   * Kept as the supplied PNG rather than re-encoded. The hero requests it
+   * through next/image, which serves AVIF or WebP at the width the layout
+   * needs, so the file's 2.1 MB does not reach a visitor.
+   */
+  defineMediaAsset({
+    id: "media-hero-photograph",
+    type: "professional-photograph",
+    filePath: "/images/profile/randi-fajar-wicaksono-hero.png",
+    // The same scene as the portrait above, so the same description.
+    altText:
+      "Randi Fajar Wicaksono outdoors against a pale blue sky, wearing sunglasses and a dark " +
+      "hooded jacket.",
+    width: 1254,
+    height: 1254,
     ownerType: "profile",
     ownerId: "profile-randi-fajar-wicaksono",
     confidentialityClass: "public",

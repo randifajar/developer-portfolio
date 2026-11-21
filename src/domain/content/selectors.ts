@@ -330,9 +330,9 @@ export function getPublishedProjectOverviews(discipline?: Discipline): readonly 
 /**
  * The Published résumé of one variant, or null (DEC-059).
  *
- * Null is a normal state: the V3 Résumé menu shows that variant as "PDF
- * available after approval" instead of a link. The v2 `getActiveResume` above
- * still returns the backend résumé, which is the only one today.
+ * Null is a normal state: the V3 Résumé menu leaves that variant out (D6,
+ * 2026-11-21). The v2 `getActiveResume` above still returns the backend
+ * résumé, which is the only one.
  */
 export function getPublishedResumeFor(variant: Discipline): Resume | null {
   return resume.variant === variant ? getActiveResume() : null;

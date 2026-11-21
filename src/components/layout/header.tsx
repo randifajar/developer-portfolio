@@ -27,12 +27,23 @@ const RESUME_LABELS: Record<ResumeMenuItem["variant"], string> = {
   infrastructure: "Infrastructure résumé",
 };
 
+/**
+ * The Résumé menu's items: one per variant with a Published résumé, and none
+ * for a variant without one (D6, 2026-11-21: the v2 PDF is the only résumé, so
+ * the menu lists the backend résumé alone).
+ *
+ * Never empty in a release: release validation requires exactly one active
+ * Published résumé (`exactly-one-active-resume`).
+ */
+function resumeMenuItems(): ResumeMenuItem[] {
+  return DISCIPLINES.flatMap((variant) => {
+    const href = getPublishedResumeFor(variant)?.publicPath;
+    return href ? [{ variant, label: RESUME_LABELS[variant], href }] : [];
+  });
+}
+
 export function Header() {
-  const resumes: ResumeMenuItem[] = DISCIPLINES.map((variant) => ({
-    variant,
-    label: RESUME_LABELS[variant],
-    href: getPublishedResumeFor(variant)?.publicPath ?? null,
-  }));
+  const resumes = resumeMenuItems();
 
   return (
     <header
