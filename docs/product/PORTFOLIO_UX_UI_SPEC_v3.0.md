@@ -15,7 +15,7 @@ release, `PORTFOLIO_UX_UI_SPEC_v2.0.md` describes the live site.
 | §7.4 Projects, §7.5 Case study | Built in P7. See the as-built note under §7.5 |
 | §8.1–§8.3, §8.5, §8.6 (entrance, mode change, pointer light, reveal, reduced motion) | Built in P8. See the as-built note under §8.6 |
 | §8.4 Career sequence | Built in P8. See the as-built note under §8.6 |
-| §5 Layout, §6.2 pill movement, §7.6 Photograph, §9–§11 | Built in P10: the header is one row at 390 px and wraps at 360 px, and its measured height clears anchors; the mode pill moves; the hero shows a photograph when one is set, and release validation refuses the placeholder (OPEN-010). Lighthouse on the preview was not run (see the plan, P10) |
+| §5 Layout, §6.2 pill movement, §7.6 Photograph, §9–§11 | Built in P10: the header is one row at 390 px and wraps at 360 px, and its measured height clears anchors; the mode pill moves; the hero shows a photograph when one is set, and release validation refuses the placeholder (OPEN-010). The photograph arrived on 2026-11-21. Lighthouse on the preview was not run (see the plan, P10) |
 
 **Will supersede:** `PORTFOLIO_UX_UI_SPEC_v2.0.md`, at the V3 release.
 
@@ -195,9 +195,10 @@ There is no identity lockup, no menu and no burger. This differs from the requir
   - The client component adds arrow-key movement between the items.
   - Focus returns to the button on close.
 - **Current page.** The résumé matching the current mode is marked "· this page".
-- **Before publication.** Until a résumé is approved for publication, its item reads "PDF
-  available after approval" and links nowhere. Only published variants are ever offered as
-  downloads (FAC-RESUME-003).
+- **Only published résumés.** A variant without a published PDF is not listed. Its item read
+  "PDF available after approval" until Randi decided on 2026-11-21 that the v2 PDF is the only
+  résumé (D6); since then the menu lists the backend résumé alone. Only published variants are
+  ever offered as downloads (FAC-RESUME-003).
 
 ### 6.4 Reaching Projects and Contact
 
@@ -381,8 +382,8 @@ There is one photograph, on the Overall hero only.
 - **Loading:** it loads eagerly through `next/image` with `preload`, explicit `sizes` and
   a fixed aspect ratio, so it never shifts the layout.
 - **On the other modes:** the photograph is clipped away rather than shown.
-- **Until Randi supplies it:** a labelled placeholder stands in on `staging`, and release
-  validation rejects it (OPEN-010).
+- **Supplied on 2026-11-21** (OPEN-010): a larger version of the v2 portrait. Without one, a
+  labelled placeholder stands in, and release validation rejects the release.
 
 ### 7.7 Footer
 

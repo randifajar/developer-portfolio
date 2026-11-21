@@ -135,7 +135,7 @@ describe("case-study disciplines (UX3 7.4)", () => {
 });
 
 describe("résumé variants (DEC-059)", () => {
-  it("offers the backend résumé and no infrastructure résumé yet", () => {
+  it("offers the backend résumé and no infrastructure résumé (D6)", () => {
     expect(getPublishedResumeFor("backend")?.variant).toBe("backend");
     expect(getPublishedResumeFor("infrastructure")).toBeNull();
   });

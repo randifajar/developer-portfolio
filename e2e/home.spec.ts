@@ -173,7 +173,8 @@ test.describe("Résumé menu (UX3 6.3)", () => {
       "href",
       "/resume.pdf",
     );
-    await expect(menu.getByText("PDF available after approval")).toBeVisible();
+    // The only résumé (D6): no entry for a variant without a PDF.
+    await expect(menu.getByRole("link")).toHaveCount(1);
 
     await page.keyboard.press("Escape");
     await expect(menu).toBeHidden();
