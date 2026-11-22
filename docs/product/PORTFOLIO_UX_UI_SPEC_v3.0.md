@@ -184,12 +184,16 @@ There is no identity lockup, no menu and no burger. This differs from the requir
     hydration, that slides to the new mode; before that, and without JavaScript, the active
     link fills itself.
 - **Clicking the current mode** does nothing. It does not replay the transition.
+- **Label case.** Title case (Overall · Backend · Infrastructure), not the mockup's uppercase:
+  title case keeps the header on one row at 390 px, as tested (§5), and uppercase is wider and
+  untested. Decided 2026-11-22 (DEC-068).
 - **Target size.** Links are at least 40 px high, and the Résumé button 44 px.
 
 ### 6.3 Résumé menu
 
 - **Mechanism.**
-  - A button opens a popover listing the two résumés, backend and infrastructure (DEC-059).
+  - A button opens a popover listing the published résumés (DEC-059): the backend one alone
+    since D6 (2026-11-21).
   - It is built on the native Popover API. Opening, closing on Escape and closing on an
     outside click therefore work without JavaScript.
   - The client component adds arrow-key movement between the items.
@@ -274,7 +278,8 @@ Each hero names the engineer, the focus and the next action (V3-CONT-003). Wordi
   pinned one alike (P8 kept the two to the same content, so nothing exists only when
   pinned). The mockup's desktop panel added "Not an SRE title · A delivery and
   infrastructure role"; that line is not shown, and the Infrastructure page's Scope fact
-  says the same (§7.3). Nothing on the site calls the role SRE.
+  says the same (§7.3). Nothing on the site calls the role SRE. Decided 2026-11-22: it stays
+  that way (DEC-066).
 - **Selected work.** Overviews are Draft until their titles are confirmed (OPEN-011), so for
   now the section lists the one case study with a discipline. Nothing is added to fill it.
 - **Explore further.** "Seven pieces of work, by discipline" was a count typed into the copy.
@@ -317,7 +322,8 @@ differences:
   the infrastructure experience record does: "reverse proxies" and "AWS email-event
   delivery". A test holds the text to an approved list.
 - **Tense.** The infrastructure role is current, so its ongoing work is in the present
-  tense, as its experience record has it. The mockup used the past tense.
+  tense, as its experience record has it. The mockup used the past tense. Kept by decision on
+  2026-11-22 (DEC-069).
 - **Backend experience.** The mockup listed each role on one line. Each role now shows
   its summary, its responsibilities and contributions as two lists, and its technologies,
   which is what FAC-EXP-001 asks of an entry.
@@ -349,7 +355,7 @@ differences:
   - The body is on white and light surfaces.
   - The back link returns to the projects index with its filter intact.
 - **Not found.** An overview slug and an unknown slug return the same not-found result
-  (DEC-047).
+  (DEC-047). The page keeps its v2 layout for the V3 release (DEC-070).
 
 **As built in P7 (§7.4, §7.5).** The pages follow the approved mockup, with these
 differences:
@@ -367,7 +373,8 @@ differences:
   study's "← Projects" returns to the filtered view the visitor came from.
 - **Case-study sections** keep their names as headings, set as labels beside the text. The
   mockup gave each section a new headline ("Two applications, one workflow."), which the
-  content does not have; writing them would be new claims, so it waits for Randi. The
+  content does not have; writing them would be new claims. Decided 2026-11-22: the plain
+  names stay (DEC-065). The
   mockup's Team fact is left out for the same reason: team work is a list, not a summary
   line.
 - **v2's project card** and the shared section header, no longer used, were removed.

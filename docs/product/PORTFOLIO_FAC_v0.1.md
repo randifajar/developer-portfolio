@@ -715,11 +715,11 @@ All criteria in this document are `P0` or `P1`.
   - Professional Experience
   - Currently Learning
 
-> **Open in V3.** The approved V3.1 design replaces the Skills section with
-> toolkits that carry no levels, so no V3 page shows a classification. The
-> classifications stay in the skills records, where SUP-018 set them. Whether
-> that is acceptable, or the classification should appear somewhere, is
-> Randi's decision; until then this criterion has no V3 surface.
+> **Amended for V3 (DEC-067, 2026-11-22).** The approved V3.1 design replaces
+> the Skills section with toolkits that carry no levels, so no V3 page shows a
+> classification, and Randi accepted that. The classifications stay in the
+> skills records, where SUP-018 set them. The criterion applies wherever a
+> classification is displayed; V3 has no such surface.
 
 ---
 
