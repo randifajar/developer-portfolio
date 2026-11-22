@@ -33,8 +33,6 @@ const baseProfile = {
   headline: "A headline.",
   summary: "A summary.",
   location: "Yogyakarta, Indonesia",
-  availabilityStatement: "Open to opportunities",
-  targetRoles: ["Backend Developer"],
   publicationStatus: "published",
   updatedAt: "2026-08-11",
 };
@@ -103,7 +101,12 @@ describe("the social card palette follows the stylesheet", () => {
     const { resolve } = await import("node:path");
     const { parseSurfaceTokens } = await import("@/domain/design/tokens");
 
-    const source = readFileSync(resolve(process.cwd(), "src/app/opengraph-image.tsx"), "utf8");
+    // The renderer moved to the shared card module in V3 P9; the guard moved
+    // with it, so it still reads the code that paints the cards.
+    const source = readFileSync(
+      resolve(process.cwd(), "src/domain/metadata/social-card.tsx"),
+      "utf8",
+    );
     const { dark } = parseSurfaceTokens(
       readFileSync(resolve(process.cwd(), "src/app/globals.css"), "utf8"),
     );
@@ -111,12 +114,41 @@ describe("the social card palette follows the stylesheet", () => {
     // The renderer body must not contain a six-digit hex at all. Fallbacks in
     // cardPalette are permitted — they sit above the marker and only apply if
     // the token file cannot be parsed.
-    const renderer = source.slice(source.indexOf("export default function OpenGraphImage"));
+    const marker = source.indexOf("export function renderSocialCard");
+    expect(marker, "the renderer moved; point this guard at it").toBeGreaterThan(0);
+    const renderer = source.slice(marker);
 
     expect(renderer.match(/#[0-9a-fA-F]{6}/g) ?? [], "the renderer hardcodes a colour").toEqual([]);
 
-    // And the values it will resolve to are the real dark surface.
-    expect(dark["color-background"]).toBe("#0b0f14");
+    // And the values it will resolve to are the real dark surface: the V3
+    // near-black since P3 (UX3 2), sky for the accent.
+    expect(dark["color-background"]).toBe("#070b12");
     expect(dark["color-accent"]).toBe("#60a5fa");
+  });
+});
+
+/**
+ * The mode routes' cards (V3 P9) say what their page says: the intro's eyebrow
+ * and heading. Without a published intro, a route falls back to the site card.
+ */
+describe("the mode cards follow their intros", () => {
+  it("names the Backend page by its hero", async () => {
+    vi.resetModules();
+    const { alt } = (await import("@/app/(modes)/backend/opengraph-image")) as { alt: string };
+
+    expect(alt).toBe("Randi Fajar Wicaksono · Backend — Behind the Application.");
+  });
+
+  it("falls back to the site card when the mode has no published intro", async () => {
+    vi.resetModules();
+    // doMock outlives resetModules: an earlier test in this file left a draft
+    // profile registered. This one needs the real profile.
+    vi.doUnmock("@/content/profile");
+    vi.doMock("@/content/modes", () => ({ modeIntros: [] }));
+    const { alt } = (await import("@/app/(modes)/infrastructure/opengraph-image")) as {
+      alt: string;
+    };
+
+    expect(alt).toBe("Randi Fajar Wicaksono — Software Engineer · Backend & Infrastructure");
   });
 });

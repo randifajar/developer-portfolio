@@ -1,217 +1,199 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { CopyEmail } from "@/components/layout/copy-email";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
-import { MobileNavigation } from "@/components/layout/mobile-navigation";
-import { NAVIGATION_LINKS } from "@/components/layout/navigation-links";
+import { ModeSwitch } from "@/components/layout/mode-switch";
+import { ResumeMenu, type ResumeMenuItem } from "@/components/layout/resume-menu";
 
-const externalLinks = [
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/randifajar" },
-  { label: "GitHub", href: "https://github.com/randifajar" },
-];
+/**
+ * The V3 chrome: header, mode switch, Résumé menu, footer (UX3 6, 7.7).
+ *
+ * This file replaced the v2 suite for the section links and the mobile menu,
+ * both of which V3 removed: the header now holds the mode switch and the
+ * Résumé menu only (UX3 6.1).
+ */
 
-function renderMenu(resumeHref: string | null = "/resume.pdf") {
-  return render(
-    <MobileNavigation
-      links={NAVIGATION_LINKS}
-      resumeHref={resumeHref}
-      externalLinks={externalLinks}
-    />,
-  );
-}
+const navigation = vi.hoisted(() => ({ pathname: "/" }));
+vi.mock("next/navigation", () => ({ usePathname: () => navigation.pathname }));
 
-describe("navigation inventory (UX 6.1)", () => {
-  // Experience leads as of v1.1 (SUP-005), following the homepage hierarchy.
-  // Why that matters, and why Projects is the odd entry here, is recorded in
-  // tests/components/homepage-order.test.tsx.
-  it("covers every approved destination", () => {
-    expect(NAVIGATION_LINKS.map((link) => link.label)).toEqual([
-      "Experience",
-      "Projects",
-      "Skills",
-      "AI Workflow",
-      "Contact",
+afterEach(() => {
+  navigation.pathname = "/";
+});
+
+describe("ModeSwitch (UX3 6.2)", () => {
+  it("links the three modes, in order, to real routes (V3-NAV-001, 002)", () => {
+    render(<ModeSwitch />);
+    const links = within(screen.getByRole("navigation", { name: "Modes" })).getAllByRole("link");
+
+    expect(links.map((link) => link.getAttribute("href"))).toEqual([
+      "/",
+      "/backend",
+      "/infrastructure",
     ]);
   });
 
-  it("uses absolute anchors so they resolve from a Project Detail page too", () => {
-    const anchors = NAVIGATION_LINKS.filter((link) => link.href.includes("#"));
+  it("marks the current mode, and only it", () => {
+    navigation.pathname = "/backend";
+    render(<ModeSwitch />);
 
-    expect(anchors.length).toBeGreaterThan(0);
-    for (const link of anchors) {
-      expect(link.href.startsWith("/#")).toBe(true);
+    expect(screen.getByRole("link", { name: "Backend" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Overall" })).not.toHaveAttribute("aria-current");
+    expect(screen.getByRole("link", { name: "Infrastructure" })).not.toHaveAttribute(
+      "aria-current",
+    );
+  });
+
+  it("marks no mode off the mode routes", () => {
+    navigation.pathname = "/projects";
+    render(<ModeSwitch />);
+
+    for (const link of screen.getAllByRole("link")) {
+      expect(link).not.toHaveAttribute("aria-current");
+    }
+  });
+
+  it("keeps the full accessible name where the label shortens to Infra", () => {
+    render(<ModeSwitch />);
+    const link = screen.getByRole("link", { name: "Infrastructure" });
+
+    expect(link).toHaveTextContent("Infra");
+  });
+
+  it("shows the current mode by shape, not colour alone (a filled pill)", () => {
+    navigation.pathname = "/infrastructure";
+    render(<ModeSwitch />);
+
+    expect(screen.getByRole("link", { name: "Infrastructure" }).className).toContain(
+      "rounded-full",
+    );
+    expect(screen.getByRole("link", { name: "Infrastructure" }).className).toContain("bg-accent");
+    expect(screen.getByRole("link", { name: "Overall" }).className).not.toContain("bg-accent");
+  });
+});
+
+describe("ResumeMenu (UX3 6.3)", () => {
+  const items: readonly ResumeMenuItem[] = [
+    { variant: "backend", label: "Backend résumé", href: "/resume.pdf" },
+  ];
+
+  it("is a native popover that the button controls, so it works without JavaScript", () => {
+    const { container } = render(<ResumeMenu items={items} />);
+    const button = screen.getByRole("button", { name: /résumé/i });
+    const menu = container.querySelector("#resume-menu");
+
+    expect(button).toHaveAttribute("popovertarget", "resume-menu");
+    expect(menu).toHaveAttribute("popover", "auto");
+  });
+
+  it("links a Published résumé safely, in a new tab", () => {
+    render(<ResumeMenu items={items} />);
+    const link = screen.getByRole("link", { name: /backend résumé/i, hidden: true });
+
+    expect(link).toHaveAttribute("href", "/resume.pdf");
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link.getAttribute("rel")).toContain("noopener");
+  });
+
+  it("marks the résumé that matches the current page", () => {
+    navigation.pathname = "/backend";
+    render(<ResumeMenu items={items} />);
+
+    expect(screen.getByRole("link", { name: /backend résumé/i, hidden: true })).toHaveTextContent(
+      "this page",
+    );
+  });
+
+  it("marks none on Overall", () => {
+    render(<ResumeMenu items={items} />);
+
+    expect(screen.queryByText(/this page/)).toBeNull();
+  });
+
+  it("moves between items with the arrow keys, wrapping at the ends", async () => {
+    const user = userEvent.setup();
+    const both: readonly ResumeMenuItem[] = [
+      { variant: "backend", label: "Backend résumé", href: "/resume.pdf" },
+      { variant: "infrastructure", label: "Infrastructure résumé", href: "/resume/infra.pdf" },
+    ];
+    render(<ResumeMenu items={both} />);
+    const backend = screen.getByRole("link", { name: /backend résumé/i, hidden: true });
+    const infrastructure = screen.getByRole("link", {
+      name: /infrastructure résumé/i,
+      hidden: true,
+    });
+
+    backend.focus();
+    await user.keyboard("{ArrowDown}");
+    expect(infrastructure).toHaveFocus();
+
+    await user.keyboard("{ArrowDown}");
+    expect(backend).toHaveFocus();
+
+    await user.keyboard("{ArrowUp}");
+    expect(infrastructure).toHaveFocus();
+  });
+});
+
+describe("Header (UX3 6.1)", () => {
+  it("holds the mode switch and the Résumé menu, and no other control", () => {
+    render(<Header />);
+    const banner = screen.getByRole("banner");
+
+    expect(within(banner).getByRole("navigation", { name: "Modes" })).toBeInTheDocument();
+    expect(within(banner).getAllByRole("button")).toHaveLength(1);
+    // The three mode links. The résumé link is inside the closed popover, so
+    // it is hidden until the menu opens, as a closed menu should be.
+    expect(within(banner).getAllByRole("link")).toHaveLength(3);
+  });
+
+  it("lists the backend résumé alone, and nothing for a variant without a PDF (D6, FAC-RESUME-003)", () => {
+    render(<Header />);
+    const banner = screen.getByRole("banner");
+
+    expect(
+      within(banner).getByRole("link", { name: /backend résumé/i, hidden: true }),
+    ).toHaveAttribute("href", "/resume.pdf");
+    expect(within(banner).queryByText(/infrastructure résumé/i)).toBeNull();
+    expect(within(banner).queryByText(/after approval/i)).toBeNull();
+  });
+
+  /*
+   * The list follows the content, not a hard-coded variant: publishing an
+   * infrastructure résumé needs a record, not a code change. The content is
+   * swapped for one where the only résumé is the infrastructure variant.
+   */
+  it("lists whichever variant has a Published résumé", async () => {
+    vi.resetModules();
+    const { resume } = await import("@/content/resume");
+    vi.doMock("@/content/resume", () => ({
+      resume: { ...resume, variant: "infrastructure", publicPath: "/resume/infrastructure.pdf" },
+    }));
+
+    try {
+      const { Header: HeaderFromContent } = await import("@/components/layout/header");
+      render(<HeaderFromContent />);
+      const banner = screen.getByRole("banner");
+
+      expect(
+        within(banner).getByRole("link", { name: /infrastructure résumé/i, hidden: true }),
+      ).toHaveAttribute("href", "/resume/infrastructure.pdf");
+      expect(within(banner).queryByText(/backend résumé/i)).toBeNull();
+    } finally {
+      vi.doUnmock("@/content/resume");
+      vi.resetModules();
     }
   });
 });
 
-describe("MobileNavigation accessibility (UX 6.2, TD 15.2)", () => {
-  it("reports collapsed state before opening", () => {
-    renderMenu();
-
-    expect(screen.getByRole("button", { name: /open menu/i })).toHaveAttribute(
-      "aria-expanded",
-      "false",
-    );
-  });
-
-  it("reports expanded state after opening", async () => {
-    const user = userEvent.setup();
-    renderMenu();
-
-    await user.click(screen.getByRole("button", { name: /open menu/i }));
-
-    expect(screen.getByRole("button", { name: /open menu/i })).toHaveAttribute(
-      "aria-expanded",
-      "true",
-    );
-  });
-
-  it("gives the menu an accessible label", async () => {
-    const user = userEvent.setup();
-    renderMenu();
-
-    await user.click(screen.getByRole("button", { name: /open menu/i }));
-
-    expect(screen.getByRole("navigation", { name: /site navigation/i })).toBeInTheDocument();
-  });
-
-  it("closes on Escape from anywhere", async () => {
-    const user = userEvent.setup();
-    renderMenu();
-
-    await user.click(screen.getByRole("button", { name: /open menu/i }));
-    expect(screen.getByRole("navigation", { name: /site navigation/i })).toBeInTheDocument();
-
-    await user.keyboard("{Escape}");
-
-    expect(screen.queryByRole("navigation", { name: /site navigation/i })).not.toBeInTheDocument();
-  });
-
-  it("closes when a link is selected", async () => {
-    const user = userEvent.setup();
-    renderMenu();
-
-    await user.click(screen.getByRole("button", { name: /open menu/i }));
-    const menu = screen.getByRole("navigation", { name: /site navigation/i });
-    await user.click(within(menu).getByRole("link", { name: "Projects" }));
-
-    expect(screen.queryByRole("navigation", { name: /site navigation/i })).not.toBeInTheDocument();
-  });
-
-  it("returns focus to the trigger on close, so the keyboard position is not lost", async () => {
-    const user = userEvent.setup();
-    renderMenu();
-
-    const trigger = screen.getByRole("button", { name: /open menu/i });
-    await user.click(trigger);
-    await user.keyboard("{Escape}");
-
-    expect(trigger).toHaveFocus();
-  });
-
-  it("moves focus into the drawer when it opens", async () => {
-    const user = userEvent.setup();
-    renderMenu();
-
-    await user.click(screen.getByRole("button", { name: /open menu/i }));
-
-    expect(screen.getByRole("button", { name: /close menu/i })).toHaveFocus();
-  });
-
-  it("locks background scrolling while open and restores it on close", async () => {
-    const user = userEvent.setup();
-    renderMenu();
-
-    await user.click(screen.getByRole("button", { name: /open menu/i }));
-    expect(document.body.style.overflow).toBe("hidden");
-
-    await user.keyboard("{Escape}");
-    expect(document.body.style.overflow).not.toBe("hidden");
-  });
-
-  it("exposes every navigation destination on mobile (NFAC-RESP-002)", async () => {
-    const user = userEvent.setup();
-    renderMenu();
-
-    await user.click(screen.getByRole("button", { name: /open menu/i }));
-    const menu = screen.getByRole("navigation", { name: /site navigation/i });
-
-    for (const link of NAVIGATION_LINKS) {
-      expect(within(menu).getByRole("link", { name: link.label })).toBeInTheDocument();
-    }
-  });
-
-  it("offers the Resume action when one is active", async () => {
-    const user = userEvent.setup();
-    renderMenu("/resume.pdf");
-
-    await user.click(screen.getByRole("button", { name: /open menu/i }));
-
-    expect(screen.getByRole("link", { name: /view resume/i })).toBeInTheDocument();
-  });
-
-  it("omits the Resume action when none is active (FAC-RESUME-003)", async () => {
-    const user = userEvent.setup();
-    renderMenu(null);
-
-    await user.click(screen.getByRole("button", { name: /open menu/i }));
-
-    expect(screen.queryByRole("link", { name: /view resume/i })).not.toBeInTheDocument();
-  });
-
-  it("applies safe new-tab attributes to external links in the menu", async () => {
-    const user = userEvent.setup();
-    renderMenu();
-
-    await user.click(screen.getByRole("button", { name: /open menu/i }));
-    const gitHub = screen.getByRole("link", { name: /GitHub/ });
-
-    expect(gitHub.getAttribute("rel")).toContain("noopener");
-    expect(gitHub.getAttribute("rel")).toContain("noreferrer");
-  });
-
-  it("meets the 44px touch target minimum on the trigger (NFAC-RESP-004)", () => {
-    renderMenu();
-
-    const trigger = screen.getByRole("button", { name: /open menu/i });
-
-    expect(trigger.className).toContain("min-h-11");
-    expect(trigger.className).toContain("min-w-11");
-  });
-});
-
-describe("Header", () => {
-  it("identifies the site even while the profile is Draft", () => {
-    render(<Header />);
-
-    expect(screen.getAllByRole("link", { name: "Randi Fajar Wicaksono" }).length).toBeGreaterThan(
-      0,
-    );
-  });
-
-  it("renders the main navigation landmark", () => {
-    render(<Header />);
-
-    expect(screen.getByRole("navigation", { name: /main navigation/i })).toBeInTheDocument();
-  });
-
-  it("offers the Resume action now that one is active and Published", () => {
-    render(<Header />);
-
-    expect(screen.getByRole("link", { name: /view resume/i })).toHaveAttribute(
-      "href",
-      "/resume.pdf",
-    );
-  });
-});
-
-describe("Footer", () => {
-  it("renders the owner name and the supplied year", () => {
+describe("Footer (UX3 7.7)", () => {
+  it("identifies the portfolio on every page: name, year, location (FAC-NAV-004)", () => {
     render(<Footer year={2026} />);
 
-    expect(screen.getByText("Randi Fajar Wicaksono")).toBeInTheDocument();
-    expect(screen.getByText("© 2026")).toBeInTheDocument();
+    expect(
+      screen.getByText("© 2026 Randi Fajar Wicaksono · Sleman, Yogyakarta, Indonesia"),
+    ).toBeInTheDocument();
   });
 
   it("renders the approved public links (FAC-CONTACT-001, 003, 004)", () => {
@@ -225,9 +207,27 @@ describe("Footer", () => {
   it("uses a mailto link for email and never claims delivery (FAC-CONTACT-002)", () => {
     render(<Footer year={2026} />);
 
-    const email = screen.getByRole("link", { name: /randifajar2307@gmail.com/ });
+    expect(
+      screen.getByRole("link", { name: /randifajar2307@gmail.com/ }).getAttribute("href"),
+    ).toMatch(/^mailto:/);
+  });
 
-    expect(email.getAttribute("href")).toMatch(/^mailto:/);
+  it("lists the pages, so Projects and the modes are reachable from every page", () => {
+    render(<Footer year={2026} />);
+    const pages = within(screen.getByRole("navigation", { name: "Pages" })).getAllByRole("link");
+
+    expect(pages.map((link) => [link.textContent, link.getAttribute("href")])).toEqual([
+      ["Overall", "/"],
+      ["Backend", "/backend"],
+      ["Infrastructure", "/infrastructure"],
+      ["Projects", "/projects"],
+    ]);
+  });
+
+  it("offers the Published résumé", () => {
+    render(<Footer year={2026} />);
+
+    expect(screen.getByRole("link", { name: /^Résumé/ })).toHaveAttribute("href", "/resume.pdf");
   });
 
   it("provides a back-to-top action", () => {
@@ -237,5 +237,39 @@ describe("Footer", () => {
       "href",
       "#main-content",
     );
+  });
+
+  it("states no availability and no phone number (SUP-011)", () => {
+    const { container } = render(<Footer year={2026} />);
+
+    expect(container.textContent).not.toMatch(/open to/i);
+    expect(container.textContent).not.toMatch(/(\+62|\b08)[0-9 -]{8,}/);
+  });
+});
+
+describe("CopyEmail (UX3 7.7)", () => {
+  afterEach(() => {
+    Reflect.deleteProperty(navigator, "clipboard");
+  });
+
+  it("renders nothing where the browser cannot copy, never a dead button", () => {
+    Object.defineProperty(navigator, "clipboard", { value: undefined, configurable: true });
+    const { container } = render(<CopyEmail email="someone@example.com" />);
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it("copies the address and announces it", async () => {
+    // setup() installs user-event's own clipboard stub, so the mock goes in after it.
+    const user = userEvent.setup();
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
+    render(<CopyEmail email="someone@example.com" />);
+
+    await user.click(screen.getByRole("button", { name: "Copy address" }));
+
+    expect(writeText).toHaveBeenCalledWith("someone@example.com");
+    expect(screen.getByRole("button", { name: "Copied" })).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("Email address copied");
   });
 });

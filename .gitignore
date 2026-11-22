@@ -43,3 +43,8 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Local V3 design material. The approved V3.1 mockup and its earlier drafts stay
+# on Randi's machine by his decision (2026-11-19); the UX/UI specification v3.0
+# records the design in words. Ignored so they cannot be committed by accident.
+docs/design/v3/

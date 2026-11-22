@@ -1,25 +1,40 @@
-import { aiPractices } from "@/content/ai-practices";
+import { careerChapters } from "@/content/career";
 import { contactChannels, externalProfiles } from "@/content/contact";
+import { certifications, education, languages } from "@/content/credentials";
+import { disciplineIntros, workAreas } from "@/content/discipline-pages";
 import { experience } from "@/content/experience";
 import { mediaAssets } from "@/content/media";
+import { modeIntros } from "@/content/modes";
+import { engineeringPractices } from "@/content/practices";
 import { profile } from "@/content/profile";
+import { projectOverviews } from "@/content/project-overviews";
 import { projects } from "@/content/projects";
 import { resume } from "@/content/resume";
 import { siteConfig } from "@/content/site";
 import { skills } from "@/content/skills";
+import { toolkitGroups } from "@/content/toolkits";
 import type {
-  AIPractice,
+  CareerChapter,
+  Certification,
   ContactChannel,
+  DisciplineIntro,
+  Education,
+  EngineeringPractice,
   ExternalProfile,
+  Language,
   MediaAsset,
+  ModeIntro,
   ProfessionalProfile,
   ProjectCaseStudy,
+  ProjectOverview,
   Resume,
   SiteConfig,
   TechnicalSkill,
+  ToolkitGroup,
+  WorkArea,
   WorkExperience,
 } from "@/domain/content/schemas";
-import type { SkillGroup } from "@/domain/content/types";
+import type { Discipline, Mode, PublicationStatus, SkillGroup } from "@/domain/content/types";
 import { SKILL_GROUPS, isPubliclyEligible } from "@/domain/content/types";
 import { getAdjacentProjects } from "@/domain/projects/project-navigation";
 
@@ -175,14 +190,6 @@ export function getPublishedSkillGroups(): readonly SkillGroupView[] {
   })).filter((view) => view.skills.length > 0);
 }
 
-/** Published AI-Assisted Engineering practices, in workflow order. */
-export function getPublishedAIPractices(): readonly AIPractice[] {
-  return aiPractices
-    .filter(isPubliclyEligible)
-    .slice()
-    .sort((a, b) => a.sortOrder - b.sortOrder);
-}
-
 /**
  * The active public Resume, or null when none is available.
  *
@@ -238,4 +245,146 @@ export function getPublishedMediaAsset(id: string | undefined): MediaAsset | nul
   }
 
   return mediaAssets.filter(isPubliclyEligible).find((asset) => asset.id === id) ?? null;
+}
+
+/* ------------------------------------------------------------------------- */
+/* V3 records (UX/UI specification v3.0)                                       */
+/* ------------------------------------------------------------------------- */
+
+function publishedInOrder<T extends { publicationStatus: PublicationStatus; sortOrder: number }>(
+  records: readonly T[],
+): readonly T[] {
+  return records
+    .filter(isPubliclyEligible)
+    .slice()
+    .sort((a, b) => a.sortOrder - b.sortOrder);
+}
+
+/** The Published hero copy for a mode (UX3 7), or null. */
+export function getPublishedModeIntro(mode: Mode): ModeIntro | null {
+  return modeIntros.filter(isPubliclyEligible).find((intro) => intro.mode === mode) ?? null;
+}
+
+/** A career chapter with the Published roles it cites, in the order it cites them. */
+export interface CareerChapterView extends CareerChapter {
+  readonly roles: readonly WorkExperience[];
+}
+
+/**
+ * Published career chapters in order (UX3 7.1). Each carries its roles, so the
+ * page renders dates from the experience records rather than from the
+ * chapter. Roles keep the chapter's order (the 2024 chapter reads internship,
+ * then contract), and a role that is not publicly eligible is left out, never
+ * invented.
+ */
+export function getPublishedCareerChapters(): readonly CareerChapterView[] {
+  const roles = getPublishedExperience();
+
+  return publishedInOrder(careerChapters).map((chapter) => ({
+    ...chapter,
+    roles: chapter.experienceIds.flatMap((id) => roles.filter((role) => role.id === id)),
+  }));
+}
+
+/** Published roles tagged with a discipline, current first (UX3 7.2, 7.3). */
+export function getPublishedExperienceFor(discipline: Discipline): readonly WorkExperience[] {
+  return getPublishedExperience().filter((role) => role.disciplines.includes(discipline));
+}
+
+export function getPublishedEducation(): readonly Education[] {
+  return publishedInOrder(education);
+}
+
+export function getPublishedCertifications(): readonly Certification[] {
+  return publishedInOrder(certifications);
+}
+
+export function getPublishedLanguages(): readonly Language[] {
+  return publishedInOrder(languages);
+}
+
+export function getPublishedEngineeringPractices(): readonly EngineeringPractice[] {
+  return publishedInOrder(engineeringPractices);
+}
+
+/** A mode page's toolkit groups, in order (UX3 7.2, 7.3). */
+export function getPublishedToolkit(discipline: Discipline): readonly ToolkitGroup[] {
+  return publishedInOrder(toolkitGroups.filter((group) => group.discipline === discipline));
+}
+
+/**
+ * Published project overviews, optionally for one discipline (DEC-060).
+ *
+ * Overviews have no slug, so nothing here can produce a route; the case-study
+ * selectors above never see them. While their titles are working titles
+ * (OPEN-011) they are Draft, and this returns an empty list.
+ */
+export function getPublishedProjectOverviews(discipline?: Discipline): readonly ProjectOverview[] {
+  const published = publishedInOrder(projectOverviews);
+
+  return discipline
+    ? published.filter((overview) => overview.disciplines.includes(discipline))
+    : published;
+}
+
+/**
+ * The Published résumé of one variant, or null (DEC-059).
+ *
+ * Null is a normal state: the V3 Résumé menu leaves that variant out (D6,
+ * 2026-11-21). The v2 `getActiveResume` above still returns the backend
+ * résumé, which is the only one.
+ */
+export function getPublishedResumeFor(variant: Discipline): Resume | null {
+  return resume.variant === variant ? getActiveResume() : null;
+}
+
+/** The Published opening of a discipline's page (UX3 7.2, 7.3), or null. */
+export function getPublishedDisciplineIntro(discipline: Discipline): DisciplineIntro | null {
+  return (
+    disciplineIntros.filter(isPubliclyEligible).find((intro) => intro.discipline === discipline) ??
+    null
+  );
+}
+
+/** A discipline's Published work areas, in order (UX3 7.2, 7.3). */
+export function getPublishedWorkAreas(discipline: Discipline): readonly WorkArea[] {
+  return publishedInOrder(workAreas.filter((area) => area.discipline === discipline));
+}
+
+/**
+ * Published case studies tagged with a discipline, in the approved project
+ * order (UX3 7.2, 7.3). A case study without a discipline, like the
+ * portfolio itself, belongs to neither page.
+ */
+export function getPublishedCaseStudiesFor(discipline: Discipline): readonly ProjectCaseStudy[] {
+  return getPublishedProjects().filter((project) => project.disciplines?.includes(discipline));
+}
+
+/** What the Overall hero needs to show its photograph. */
+export interface HeroPhotograph {
+  readonly src: string;
+  readonly alt: string;
+  readonly width: number;
+  readonly height: number;
+}
+
+/**
+ * The Overall hero's photograph (UX3 7.6), or null while there is none to
+ * show: unset, unpublished, or without the dimensions the image needs to
+ * reserve its space. Null shows the placeholder (OPEN-010).
+ */
+export function getHeroPhotograph(): HeroPhotograph | null {
+  const profile = getPublishedProfile();
+  const asset = getPublishedMediaAsset(profile?.heroPhotoAssetId);
+
+  if (!asset || !asset.width || !asset.height) {
+    return null;
+  }
+
+  return {
+    src: asset.filePath,
+    alt: asset.altText ?? "",
+    width: asset.width,
+    height: asset.height,
+  };
 }

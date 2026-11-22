@@ -1,14 +1,23 @@
 import type { z } from "zod";
 import {
-  aiPracticeSchema,
+  careerChapterSchema,
+  certificationSchema,
   contactChannelSchema,
+  disciplineIntroSchema,
+  educationSchema,
+  engineeringPracticeSchema,
   externalProfileSchema,
+  languageSchema,
   mediaAssetSchema,
+  modeIntroSchema,
   professionalProfileSchema,
   projectCaseStudySchema,
+  projectOverviewSchema,
   resumeSchema,
   siteConfigSchema,
   technicalSkillSchema,
+  toolkitGroupSchema,
+  workAreaSchema,
   workExperienceSchema,
 } from "@/domain/content/schemas";
 
@@ -91,7 +100,6 @@ export const defineProfile = createDefiner("Professional Profile", professionalP
 export const defineExperience = createDefiner("Work Experience", workExperienceSchema);
 export const defineProject = createDefiner("Project Case Study", projectCaseStudySchema);
 export const defineSkill = createDefiner("Technical Skill", technicalSkillSchema);
-export const defineAIPractice = createDefiner("AI-Assisted Engineering Practice", aiPracticeSchema);
 export const defineResume = createDefiner("Resume", resumeSchema);
 export const defineContactChannel = createDefiner("Contact Channel", contactChannelSchema);
 export const defineExternalProfile = createDefiner(
@@ -100,3 +108,18 @@ export const defineExternalProfile = createDefiner(
 );
 export const defineMediaAsset = createDefiner("Media Asset", mediaAssetSchema);
 export const defineSiteConfig = createDefiner("Site Configuration", siteConfigSchema);
+
+// V3 records (UX/UI specification v3.0).
+export const defineModeIntro = createDefiner("Mode Intro", modeIntroSchema);
+export const defineCareerChapter = createDefiner("Career Chapter", careerChapterSchema);
+export const defineEducation = createDefiner("Education", educationSchema);
+export const defineCertification = createDefiner("Certification", certificationSchema);
+export const defineLanguage = createDefiner("Language", languageSchema);
+export const defineEngineeringPractice = createDefiner(
+  "Engineering Practice",
+  engineeringPracticeSchema,
+);
+export const defineToolkitGroup = createDefiner("Toolkit Group", toolkitGroupSchema);
+export const defineProjectOverview = createDefiner("Project Overview", projectOverviewSchema);
+export const defineDisciplineIntro = createDefiner("Discipline Intro", disciplineIntroSchema);
+export const defineWorkArea = createDefiner("Work Area", workAreaSchema);

@@ -104,6 +104,7 @@ describe("work experience schema", () => {
       isCurrent: false,
       summary: "Role overview.",
       responsibilities: ["Built and maintained backend services."],
+      disciplines: ["backend" as const],
       confidentialityClass: "sanitized" as const,
       publicationStatus: "published" as const,
       sortOrder: 1,
@@ -153,10 +154,18 @@ describe("resume schema", () => {
       publicationDate: "2026-08-04",
       publicPath: "/resume.pdf",
       isActive: true,
+      variant: "backend" as const,
       confidentialityClass: "public" as const,
       publicationStatus: "published" as const,
     };
   }
+
+  // DEC-059: every résumé belongs to one of the two variants.
+  it("rejects a resume with no variant", () => {
+    const { variant: _variant, ...withoutVariant } = validResume();
+
+    expect(() => resumeSchema.parse(withoutVariant)).toThrow();
+  });
 
   it("accepts a valid active resume", () => {
     expect(() => resumeSchema.parse(validResume())).not.toThrow();

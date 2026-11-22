@@ -1,0 +1,411 @@
+"use client";
+
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+  type Ref,
+} from "react";
+import {
+  cancelHeroMotion,
+  enterHero,
+  exitHero,
+  motionAllowed,
+  usePointerLight,
+} from "@/components/layout/mode-hero-motion";
+import type { HeroPhotograph } from "@/domain/content/selectors";
+import type { Mode } from "@/domain/content/types";
+import { ROUTES } from "@/lib/constants";
+
+/**
+ * The persistent hero of the three mode routes (UX3 7, DEC-057).
+ *
+ * It lives in the `(modes)` route group's layout, so Next.js keeps it mounted
+ * when the visitor switches between Overall, Backend, and Infrastructure: only
+ * the page below it is replaced. That is what lets the heading animate from
+ * one mode to the next (UX3 8.2): the current copy leaves, the new copy
+ * renders, and it enters. The route itself changes at once; only the hero's
+ * copy takes its time. Under reduced motion, or without the Web Animations
+ * API, the copy swaps at once.
+ *
+ * It also owns scroll and focus when the mode changes (UX3 6.5). The installed
+ * Next.js (16.4.6) handles neither the way this layout needs. After a
+ * navigation its layout router scrolls the changed segment into view when that
+ * segment starts off screen — here the changed segment is the page below this
+ * hero, so on a phone, where the hero is taller than the viewport, it jumps
+ * straight past the hero — and it leaves focus on the link that was pressed.
+ * So the hero puts the scroll back at the top and moves focus to the new
+ * heading. Focus waits for the new copy, so a screen reader never announces
+ * the heading that is leaving.
+ *
+ * The page is passed in as `children` for one reason: ordering. React runs
+ * layout effects children first, so the router's scroll handler for the page
+ * runs before this component's effect, and the reset here is the last word,
+ * before the browser paints. Rendered as a sibling before the page instead, the
+ * hero's reset would run first and the router would scroll past it again. That
+ * ordering is why no link into a mode route needs `scroll={false}`.
+ *
+ * What does not move the scroll or focus:
+ *
+ * - a page load or reload, so the browser keeps its position and nothing is
+ *   focused that the visitor did not ask for;
+ * - Back and Forward, so the browser's scroll restoration stands;
+ * - a link to an anchor on the new page, which the router scrolls to.
+ */
+export interface ModeHeroIntro {
+  readonly mode: Mode;
+  readonly eyebrow: string;
+  readonly headingLines: readonly [string, string];
+  readonly description?: string;
+  readonly action: { readonly label: string; readonly targetId: string };
+}
+
+const MODE_FOR_PATH: Record<string, Mode> = {
+  [ROUTES.home]: "overall",
+  [ROUTES.backend]: "backend",
+  [ROUTES.infrastructure]: "infrastructure",
+};
+
+export const MODE_HERO_HEADING_ID = "mode-hero-heading";
+
+/*
+ * Whether the navigation now rendering came from Back or Forward.
+ *
+ * Module state rather than component state, because the hero is not mounted
+ * when Back returns to a mode route from the projects pages. The listeners are
+ * installed by the first hero to mount; any later traversal to a mode route
+ * can only reach an entry this document created, which means a hero has
+ * mounted before it.
+ *
+ * Every other way into a mode route begins with a click on a link (Enter on a
+ * focused link fires one too). The click clears the flag, so a traversal that
+ * never reached a hero, such as Back to an in-page anchor, cannot leave it set
+ * for a later click.
+ */
+let historyTraversal = false;
+let trackingInstalled = false;
+
+function installTraversalTracking() {
+  if (trackingInstalled) return;
+  trackingInstalled = true;
+
+  window.addEventListener("popstate", () => {
+    historyTraversal = true;
+  });
+  document.addEventListener(
+    "click",
+    () => {
+      historyTraversal = false;
+    },
+    { capture: true },
+  );
+}
+
+function consumeHistoryTraversal(): boolean {
+  const traversal = historyTraversal;
+  historyTraversal = false;
+  return traversal;
+}
+
+const subscribeToNothing = () => () => {};
+
+interface ModeHeroProps {
+  readonly intros: readonly ModeHeroIntro[];
+  /**
+   * Modes whose page renders the action's target. The others hide the action
+   * rather than offer a link that scrolls nowhere. The layout works this out
+   * from the content.
+   */
+  readonly actionModes: readonly Mode[];
+  /** The Overall hero's photograph, or null to show its placeholder (OPEN-010). */
+  readonly photo?: HeroPhotograph | null;
+  /** The page below the hero. */
+  readonly children: ReactNode;
+}
+
+export function ModeHero({ intros, actionModes, photo = null, children }: ModeHeroProps) {
+  const pathname = usePathname();
+  const mode = MODE_FOR_PATH[pathname] ?? "overall";
+
+  /*
+   * The mode whose copy the hero shows. It trails the route by the length of
+   * the exit animation, then catches up; without motion it never trails.
+   */
+  const [shownMode, setShownMode] = useState(mode);
+  const intro = intros.find((candidate) => candidate.mode === shownMode);
+
+  const bandRef = useRef<HTMLElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const haloRef = useRef<HTMLDivElement>(null);
+  usePointerLight(bandRef, haloRef);
+
+  /*
+   * True on the first render when React is hydrating server HTML — a page
+   * load or a reload — and false when a client navigation created the hero,
+   * arriving from the projects pages. Only the first render's value is kept.
+   */
+  const hydrating = useSyncExternalStore(
+    subscribeToNothing,
+    () => false,
+    () => true,
+  );
+  const createdByNavigation = useRef(!hydrating);
+  const renderedPath = useRef<string | null>(null);
+
+  /** Each mode change takes a ticket; a later change makes earlier tickets void. */
+  const transition = useRef(0);
+  const focusOnSwap = useRef(false);
+  /** The first-load entrance belongs to CSS, until the first mode change. */
+  const [entrance, setEntrance] = useState(true);
+
+  useEffect(installTraversalTracking, []);
+
+  useLayoutEffect(() => {
+    const firstRun = renderedPath.current === null;
+    const pathChanged = renderedPath.current !== pathname;
+    renderedPath.current = pathname;
+
+    // The copy follows the route: at once, or after the current copy leaves.
+    if (!firstRun && pathChanged) {
+      const ticket = ++transition.current;
+      const band = bandRef.current;
+      setEntrance(false);
+
+      if (!band || !motionAllowed()) {
+        setShownMode(mode);
+      } else {
+        cancelHeroMotion(band);
+        void exitHero(band).then(() => {
+          if (ticket === transition.current) {
+            setShownMode(mode);
+          }
+        });
+      }
+    }
+
+    if (firstRun ? !createdByNavigation.current : !pathChanged) return;
+    if (consumeHistoryTraversal()) return;
+    // A link to a place on the page, such as the projects page's "← Overall"
+    // to the selected work, is the router's to scroll to; going to the top
+    // would undo it.
+    if (window.location.hash) return;
+
+    window.scrollTo({ top: 0, behavior: "instant" });
+
+    if (firstRun) {
+      headingRef.current?.focus({ preventScroll: true });
+    } else {
+      // Focus follows the new copy, so the old heading is never announced.
+      focusOnSwap.current = true;
+    }
+  }, [pathname, mode]);
+
+  // After the copy swaps: the new copy enters, and focus follows it.
+  const swapped = useRef(false);
+  useLayoutEffect(() => {
+    if (!swapped.current) {
+      swapped.current = true;
+      return;
+    }
+
+    const band = bandRef.current;
+
+    if (band && motionAllowed()) {
+      cancelHeroMotion(band);
+      enterHero(band);
+    }
+
+    if (focusOnSwap.current) {
+      focusOnSwap.current = false;
+      headingRef.current?.focus({ preventScroll: true });
+    }
+  }, [shownMode]);
+
+  return (
+    <>
+      {intro ? (
+        <HeroBand
+          intro={intro}
+          showAction={actionModes.includes(shownMode)}
+          showPhotograph={shownMode === "overall"}
+          photo={photo}
+          entrance={entrance}
+          bandRef={bandRef}
+          headingRef={headingRef}
+          haloRef={haloRef}
+        />
+      ) : null}
+      {children}
+    </>
+  );
+}
+
+interface HeroBandProps {
+  readonly intro: ModeHeroIntro;
+  readonly showAction: boolean;
+  readonly showPhotograph: boolean;
+  readonly photo: HeroPhotograph | null;
+  readonly entrance: boolean;
+  readonly bandRef: Ref<HTMLElement>;
+  readonly headingRef: Ref<HTMLHeadingElement>;
+  readonly haloRef: Ref<HTMLDivElement>;
+}
+
+/*
+ * Each heading line sits in its own clipped line box, so it can rise into
+ * view. The padding and matching negative margin give the box room for
+ * accents and descenders without moving the line.
+ */
+const LINE_BOX = "block overflow-hidden pt-[0.1em] -mt-[0.1em] pb-[0.06em] -mb-[0.06em]";
+
+function HeroBand({
+  intro,
+  showAction,
+  showPhotograph,
+  photo,
+  entrance,
+  bandRef,
+  headingRef,
+  haloRef,
+}: HeroBandProps) {
+  const [first, second] = intro.headingLines;
+
+  /*
+   * The composition is the approved mockup's (UX3 7.6). The photograph is a
+   * layer behind the text, not a column beside it: on wide screens it fills
+   * the right 46% of the hero with its left edge masked into the dark, and the
+   * heading runs across that edge. A side-by-side column was tried first and
+   * left the name too little width — "WICAKSONO" broke at 1440 px.
+   *
+   * The hero fills the first screen below the header, with the text at the
+   * bottom, on all three modes.
+   */
+  return (
+    <section
+      ref={bandRef}
+      aria-labelledby={MODE_HERO_HEADING_ID}
+      data-surface="dark"
+      data-hero-entrance={entrance ? "" : undefined}
+      className="relative isolate flex min-h-[calc(100svh-var(--spacing-header))] items-end overflow-hidden bg-background text-text-primary"
+    >
+      {/* The pointer light (UX3 8.3). Decoration, driven from mode-hero-motion.ts. */}
+      <div
+        ref={haloRef}
+        aria-hidden="true"
+        className="pointer-events-none absolute top-0 left-0 -z-20 size-[38.75rem] rounded-full opacity-0 transition-opacity duration-700"
+        style={{
+          background:
+            "radial-gradient(closest-side, color-mix(in srgb, var(--color-accent) 22%, transparent), color-mix(in srgb, var(--color-accent) 8%, transparent) 55%, transparent)",
+        }}
+      />
+
+      {showPhotograph ? photo ? <Photograph photo={photo} /> : <PhotographPlaceholder /> : null}
+
+      <div className="relative mx-auto w-full max-w-(--spacing-content) px-5 pt-10 pb-[clamp(2.5rem,8vh,5.25rem)] sm:px-8 lg:px-12">
+        <div className="flex flex-col gap-5">
+          <p data-hero-rest="" className="text-kicker font-semibold text-text-secondary uppercase">
+            {intro.eyebrow}
+          </p>
+          {/*
+           * A space between the lines: they stack visually, but textContent
+           * joins adjacent elements without one, and the heading's accessible
+           * name would run the lines together — "Randi FajarWicaksono".
+           *
+           * Focusable from script only, for the mode change above. It is not
+           * a control, so it takes no focus ring.
+           *
+           * The second line is one long word at display size — "APPLICATION.",
+           * "DEPLOYMENT." `wrap-anywhere` lets it break inside the word, and
+           * only when the word cannot fit on a line by itself; without it, 200%
+           * zoom pushed the word past the edge of the page (WCAG 1.4.4).
+           */}
+          <h1
+            id={MODE_HERO_HEADING_ID}
+            ref={headingRef}
+            tabIndex={-1}
+            className="flex flex-col font-display uppercase wrap-anywhere focus:outline-none"
+          >
+            <span data-hero-line="" className={LINE_BOX}>
+              <span className="block text-display-hero-line-1 font-medium">{first}</span>
+            </span>{" "}
+            <span data-hero-line="" className={LINE_BOX}>
+              <span className="block text-display-hero-line-2 font-bold text-accent">{second}</span>
+            </span>
+          </h1>
+          {intro.description ? (
+            <p data-hero-rest="" className="max-w-[44ch] text-lead text-pretty text-text-secondary">
+              {intro.description}
+            </p>
+          ) : null}
+          {showAction ? (
+            <a
+              data-hero-rest=""
+              href={`#${intro.action.targetId}`}
+              className="group mt-2 inline-flex min-h-11 w-fit items-center gap-3.5 text-kicker font-semibold text-text-primary uppercase hover:text-accent"
+            >
+              <span
+                aria-hidden="true"
+                className="h-px w-11 bg-border transition-colors group-hover:bg-accent"
+              />
+              {intro.action.label}
+            </a>
+          ) : null}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/*
+ * Where the photograph sits (UX3 7.6): from 860 px the right 46% of the hero,
+ * its left edge masked into the dark; below that, the top of the hero, masked
+ * downward. Shared by the photograph and its placeholder.
+ */
+const PHOTOGRAPH_LAYER =
+  "absolute inset-x-0 top-0 bottom-[40%] -z-10 mask-b-from-70% min-[860px]:inset-y-0 min-[860px]:right-0 min-[860px]:left-auto min-[860px]:w-[46%] min-[860px]:mask-b-from-100% min-[860px]:mask-l-from-78%";
+
+/**
+ * The Overall hero's photograph (UX3 7.6). Preloaded, as the page's largest
+ * image, and filling a fixed layer, so it never shifts the layout.
+ */
+function Photograph({ photo }: { readonly photo: HeroPhotograph }) {
+  return (
+    <div data-photograph="" className={PHOTOGRAPH_LAYER}>
+      <Image
+        src={photo.src}
+        alt={photo.alt}
+        fill
+        preload
+        sizes="(min-width: 860px) 46vw, 100vw"
+        className="object-cover object-top"
+      />
+    </div>
+  );
+}
+
+/**
+ * The Overall hero's photograph, until Randi supplies it (UX3 7.6, OPEN-010).
+ *
+ * Laid out as the photograph will be, and labelled as a placeholder rather
+ * than disguised as one, so nobody reviewing staging mistakes it for the
+ * finished design. Hidden from assistive technology: it carries no
+ * information. On phones it fills the top of the hero and fades downward; from
+ * 860 px it fills the right 46% and fades leftward. The label sits where the
+ * mask is fully opaque, so it is never faded.
+ */
+function PhotographPlaceholder() {
+  return (
+    <div aria-hidden="true" data-photograph-placeholder="" className={PHOTOGRAPH_LAYER}>
+      <div className="flex h-full items-start bg-linear-to-b from-surface-muted to-surface px-6 pt-6 min-[860px]:items-end min-[860px]:pb-7 min-[860px]:pl-[30%]">
+        <p className="text-kicker font-semibold text-text-secondary uppercase">
+          Photograph · to be supplied
+        </p>
+      </div>
+    </div>
+  );
+}

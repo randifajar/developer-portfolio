@@ -13,9 +13,10 @@ import { defineSkill } from "@/domain/content/define";
  * OPEN-004. No classification changed; the review is what was missing, not the
  * values.
  *
- * Docker stays "currently-learning" deliberately. Containerisation is a
- * post-launch phase that has not been built yet, so any stronger claim would be
- * one this repository cannot support.
+ * Docker was "currently-learning" from launch until 2026-11-19, deliberately.
+ * On that date Randi classified Docker, Linux, Jenkins, and AWS as professional
+ * experience (SUP-018), because his infrastructure role now centres on them.
+ * See the note on the Docker record.
  *
  * There are no percentages, progress bars, or star ratings anywhere in the
  * model (FAC-SKILL-003) — a self-assigned number implies a precision nobody
@@ -79,23 +80,23 @@ export const skills = [
     sortOrder: 7,
   }),
   /*
-   * Docker stays "currently learning", and that is deliberate (V2-P0-003).
+   * Docker: professional experience since 2026-11-19 (SUP-018).
    *
-   * It also appears in the current role's technology list, which reads like a
-   * contradiction and is not one: using a technology on the job does not make
-   * it a skill Randi is prepared to claim independently. Confirmed by him on
-   * 2026-08-16 when the question was raised rather than assumed.
+   * From launch it was "currently learning", deliberately (V2-P0-003, confirmed
+   * by Randi on 2026-08-16): using a technology on the job did not yet make it a
+   * skill he was prepared to claim independently.
    *
-   * Recorded here because the apparent mismatch is the kind of thing a future
-   * reader — or a future assistant — will notice and "fix". Upgrading it would
-   * be inventing a claim on his behalf, which is the one thing the content
-   * rules forbid absolutely.
+   * The change is his, not an assistant's tidy-up. Asked directly on
+   * 2026-11-19, with the August reasoning in front of him, he classified Docker,
+   * Linux, Jenkins, and AWS as professional experience, because his
+   * infrastructure role now centres on them. The note stays so that the history
+   * explains the change, not only the present value.
    */
   defineSkill({
     id: "skill-docker",
     name: "Docker",
     group: "infrastructure-and-deployment",
-    classification: "currently-learning",
+    classification: "professional-experience",
     publicationStatus: "published",
     sortOrder: 8,
   }),
@@ -130,5 +131,35 @@ export const skills = [
     classification: "strong-working-skill",
     publicationStatus: "published",
     sortOrder: 12,
+  }),
+
+  /*
+   * Added 2026-11-19 with Randi's classification (SUP-018). All three appear on
+   * both of his résumés and are the substance of his infrastructure role. They
+   * sort after Docker within their group.
+   */
+  defineSkill({
+    id: "skill-jenkins",
+    name: "Jenkins",
+    group: "infrastructure-and-deployment",
+    classification: "professional-experience",
+    publicationStatus: "published",
+    sortOrder: 13,
+  }),
+  defineSkill({
+    id: "skill-linux",
+    name: "Linux",
+    group: "infrastructure-and-deployment",
+    classification: "professional-experience",
+    publicationStatus: "published",
+    sortOrder: 14,
+  }),
+  defineSkill({
+    id: "skill-aws",
+    name: "AWS",
+    group: "infrastructure-and-deployment",
+    classification: "professional-experience",
+    publicationStatus: "published",
+    sortOrder: 15,
   }),
 ];

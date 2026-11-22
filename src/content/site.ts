@@ -5,16 +5,19 @@ import { defineSiteConfig } from "@/domain/content/define";
  *
  * The public contact values here are Confirmed decisions, not placeholders:
  * DEC-014 (email), DEC-015 (GitHub), DEC-016 (LinkedIn), DEC-012 (public name),
- * DEC-013 (location). NFAC-PRIV-002 permits exactly this email to appear
- * publicly.
+ * SUP-015 (location, which replaced DEC-013). NFAC-PRIV-002 permits exactly
+ * this email to appear publicly.
  */
 export const siteConfig = defineSiteConfig({
   name: "Randi Fajar Wicaksono",
-  defaultTitle: "Randi Fajar Wicaksono — Backend Developer",
+  // Positioning follows the profile title (SUP-010, 2026-11-18).
+  defaultTitle: "Randi Fajar Wicaksono — Software Engineer · Backend & Infrastructure",
   titleTemplate: "%s — Randi Fajar Wicaksono",
   defaultDescription:
-    "Backend Developer based in Yogyakarta, Indonesia. Node.js, GraphQL, and MongoDB services, " +
-    "system integration, and AI-assisted development with human accountability.",
+    "Software engineer across backend and infrastructure, based in Sleman, Yogyakarta, " +
+    "Indonesia. " +
+    "Node.js, GraphQL, and MongoDB services, system integration, Jenkins CI/CD, and " +
+    "AI-assisted development with human accountability.",
   ownerName: "Randi Fajar Wicaksono",
   locale: "en",
   email: "randifajar2307@gmail.com",

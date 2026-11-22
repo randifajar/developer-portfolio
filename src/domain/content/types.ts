@@ -63,6 +63,20 @@ export const SKILL_GROUPS = [
 export type SkillGroup = (typeof SKILL_GROUPS)[number];
 
 /** Whether a case study describes personal or professional work. */
+/**
+ * The three V3 viewing modes, each a route (DEC-056): Overall at `/`, then
+ * `/backend` and `/infrastructure`.
+ */
+export const MODES = ["overall", "backend", "infrastructure"] as const;
+export type Mode = (typeof MODES)[number];
+
+/**
+ * The two engineering disciplines that V3 records are tagged with. A mode page
+ * selects the records of its discipline; Overall shows both.
+ */
+export const DISCIPLINES = ["backend", "infrastructure"] as const;
+export type Discipline = (typeof DISCIPLINES)[number];
+
 export const PROJECT_TYPES = ["personal", "professional"] as const;
 export type ProjectType = (typeof PROJECT_TYPES)[number];
 

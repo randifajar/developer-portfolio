@@ -14,10 +14,16 @@ For GitHub repository settings and security configuration, follow:
 
 ## Mandatory Branch Rule
 
-`production` is the only long-lived and production branch.
+`production` is the production branch. It has one long-lived companion,
+`staging`: pre-production, where the next release is assembled and reviewed on
+a Vercel Preview before one promotion pull request takes it live. Nothing else
+is long-lived. `staging` was added on 2026-11-18 at Randi's request, for V3 —
+see `docs/governance/git-workflow.md` section 2.
 
-Never modify application or documentation files directly on `production`.
-Create a short-lived task branch first.
+Never modify application or documentation files directly on `production` or
+`staging`. Create a short-lived task branch first: from `staging` for release
+work, from `production` only for a hotfix. The one direct push `staging`
+receives is the sync merge from `production` (git-workflow.md section 10).
 
 This is now enforced as well as required. The `Protect production` ruleset is
 active with no bypass actors, so it applies to the repository owner too: pull

@@ -1,14 +1,24 @@
 import type {
-  AIPractice,
+  CareerChapter,
+  Certification,
   ContactChannel,
+  DisciplineIntro,
+  Education,
+  EngineeringPractice,
   ExternalProfile,
+  Language,
   MediaAsset,
+  ModeIntro,
   ProfessionalProfile,
   ProjectCaseStudy,
+  ProjectOverview,
   Resume,
   TechnicalSkill,
+  ToolkitGroup,
+  WorkArea,
   WorkExperience,
 } from "@/domain/content/schemas";
+import { DISCIPLINES, MODES } from "@/domain/content/types";
 
 /**
  * Cross-record validation.
@@ -38,11 +48,22 @@ export interface ContentSet {
   readonly experience: readonly WorkExperience[];
   readonly projects: readonly ProjectCaseStudy[];
   readonly skills: readonly TechnicalSkill[];
-  readonly aiPractices: readonly AIPractice[];
   readonly resumes: readonly Resume[];
   readonly contactChannels: readonly ContactChannel[];
   readonly externalProfiles: readonly ExternalProfile[];
   readonly mediaAssets: readonly MediaAsset[];
+  // V3 records (UX/UI specification v3.0).
+  readonly modeIntros: readonly ModeIntro[];
+  readonly careerChapters: readonly CareerChapter[];
+  readonly education: readonly Education[];
+  readonly certifications: readonly Certification[];
+  readonly languages: readonly Language[];
+  readonly engineeringPractices: readonly EngineeringPractice[];
+  readonly toolkitGroups: readonly ToolkitGroup[];
+  readonly projectOverviews: readonly ProjectOverview[];
+  // The Backend and Infrastructure pages (UX3 7.2, 7.3), added in V3 P6.
+  readonly disciplineIntros: readonly DisciplineIntro[];
+  readonly workAreas: readonly WorkArea[];
 }
 
 /** Sections a Published project must not leave empty (PRD 5.3). */
@@ -84,11 +105,20 @@ export function validateContentSet(content: ContentSet): ValidationIssue[] {
     ["Work Experience", content.experience],
     ["Project Case Study", content.projects],
     ["Technical Skill", content.skills],
-    ["AI-Assisted Engineering Practice", content.aiPractices],
     ["Resume", content.resumes],
     ["Contact Channel", content.contactChannels],
     ["External Professional Profile", content.externalProfiles],
     ["Media Asset", content.mediaAssets],
+    ["Mode Intro", content.modeIntros],
+    ["Career Chapter", content.careerChapters],
+    ["Education", content.education],
+    ["Certification", content.certifications],
+    ["Language", content.languages],
+    ["Engineering Practice", content.engineeringPractices],
+    ["Toolkit Group", content.toolkitGroups],
+    ["Project Overview", content.projectOverviews],
+    ["Discipline Intro", content.disciplineIntros],
+    ["Work Area", content.workAreas],
   ];
 
   for (const [contentType, records] of idGroups) {
@@ -146,13 +176,15 @@ export function validateContentSet(content: ContentSet): ValidationIssue[] {
   /* Rule 4 — valid media references. -------------------------------------- */
   const mediaIds = new Set(content.mediaAssets.map((asset) => asset.id));
 
-  if (content.profile.photoAssetId && !mediaIds.has(content.profile.photoAssetId)) {
-    add({
-      rule: "valid-media-references",
-      contentType: "Professional Profile",
-      recordId: content.profile.id,
-      message: `References unknown media asset "${content.profile.photoAssetId}".`,
-    });
+  for (const assetId of [content.profile.photoAssetId, content.profile.heroPhotoAssetId]) {
+    if (assetId && !mediaIds.has(assetId)) {
+      add({
+        rule: "valid-media-references",
+        contentType: "Professional Profile",
+        recordId: content.profile.id,
+        message: `References unknown media asset "${assetId}".`,
+      });
+    }
   }
 
   for (const project of content.projects) {
@@ -184,32 +216,27 @@ export function validateContentSet(content: ContentSet): ValidationIssue[] {
     }
   }
 
-  for (const practice of content.aiPractices) {
-    for (const projectId of practice.relatedProjectIds ?? []) {
-      if (!projectIds.has(projectId)) {
-        add({
-          rule: "valid-project-references",
-          contentType: "AI-Assisted Engineering Practice",
-          recordId: practice.id,
-          message: `References unknown project "${projectId}".`,
-        });
-      }
+  /* Rule 6 — at most one active Published Resume per variant (FAC-RESUME-004). */
+  // Amended for V3 (DEC-059): one backend and one infrastructure résumé may both
+  // be active, since the Résumé menu offers one of each. Two of the same variant
+  // would still make "the" backend résumé ambiguous.
+  for (const variant of DISCIPLINES) {
+    const activePublishedResumes = content.resumes.filter(
+      (candidate) =>
+        candidate.variant === variant &&
+        candidate.isActive &&
+        candidate.publicationStatus === "published",
+    );
+
+    if (activePublishedResumes.length > 1) {
+      add({
+        rule: "single-active-resume",
+        contentType: "Resume",
+        message:
+          `${activePublishedResumes.length} ${variant} Resumes are both active and Published ` +
+          `(${activePublishedResumes.map((r) => r.id).join(", ")}). Exactly one per variant may be.`,
+      });
     }
-  }
-
-  /* Rule 6 — at most one active Published Resume (FAC-RESUME-004). --------- */
-  const activePublishedResumes = content.resumes.filter(
-    (candidate) => candidate.isActive && candidate.publicationStatus === "published",
-  );
-
-  if (activePublishedResumes.length > 1) {
-    add({
-      rule: "single-active-resume",
-      contentType: "Resume",
-      message:
-        `${activePublishedResumes.length} Resumes are both active and Published ` +
-        `(${activePublishedResumes.map((r) => r.id).join(", ")}). Exactly one may be.`,
-    });
   }
 
   /* Rule 7 — at most one Published Profile (FAC-PROFILE-004). -------------- */
@@ -225,8 +252,8 @@ export function validateContentSet(content: ContentSet): ValidationIssue[] {
   ][] = [
     ["Work Experience", content.experience],
     ["Project Case Study", content.projects],
-    ["AI-Assisted Engineering Practice", content.aiPractices],
     ["Media Asset", content.mediaAssets],
+    ["Project Overview", content.projectOverviews],
   ];
 
   for (const [contentType, records] of classifiedGroups) {
@@ -376,6 +403,128 @@ export function validateContentSet(content: ContentSet): ValidationIssue[] {
         contentType: "Media Asset",
         recordId: asset.id,
         message: `filePath "${asset.filePath}" must be a local path starting with "/".`,
+      });
+    }
+  }
+
+  /* Rule 16 — career chapters cite real roles, inside the chapter's year. -- */
+  // A chapter's year is editorial grouping; the roles it cites are the facts.
+  // So each cited id must resolve to an experience record, and the chapter's
+  // year must fall within that role's span — a current role is open-ended.
+  const experienceById = new Map(content.experience.map((role) => [role.id, role]));
+
+  for (const chapter of content.careerChapters) {
+    for (const experienceId of chapter.experienceIds) {
+      const role = experienceById.get(experienceId);
+
+      if (!role) {
+        add({
+          rule: "valid-experience-references",
+          contentType: "Career Chapter",
+          recordId: chapter.id,
+          message: `Cites experience "${experienceId}", which does not exist.`,
+        });
+        continue;
+      }
+
+      const startYear = Number(role.startDate.slice(0, 4));
+      const endYear = role.isCurrent ? Number.POSITIVE_INFINITY : Number(role.endDate?.slice(0, 4));
+
+      if (chapter.year < startYear || chapter.year > endYear) {
+        add({
+          rule: "chapter-year-within-roles",
+          contentType: "Career Chapter",
+          recordId: chapter.id,
+          message:
+            `Year ${chapter.year} falls outside "${experienceId}" (${role.startDate} – ` +
+            `${role.isCurrent ? "present" : role.endDate}). A chapter may only cite roles it spans.`,
+        });
+      }
+    }
+  }
+
+  /* Rule 17 — at most one Published intro per mode (UX3 7). --------------- */
+  // "At most", like Rule 6, so content can be drafted a mode at a time.
+  // Requiring one for every mode is release validation's job
+  // (published-mode-intros-required, added in V3 P5b with the mode pages).
+  for (const mode of MODES) {
+    const published = content.modeIntros.filter(
+      (intro) => intro.mode === mode && intro.publicationStatus === "published",
+    );
+
+    if (published.length > 1) {
+      add({
+        rule: "one-intro-per-mode",
+        contentType: "Mode Intro",
+        message:
+          `Mode "${mode}" has ${published.length} Published intros ` +
+          `(${published.map((intro) => intro.id).join(", ")}). Its hero needs one heading, not two.`,
+      });
+    }
+  }
+
+  /* Rule 18 — every Published intro names the engineer (V3-CONT-003). ----- */
+  // In the eyebrow or across the two heading lines; Overall does the latter.
+  for (const intro of content.modeIntros) {
+    if (intro.publicationStatus !== "published") continue;
+
+    const text = `${intro.eyebrow} ${intro.headingLines.join(" ")}`;
+
+    if (!text.includes(content.profile.fullName)) {
+      add({
+        rule: "intro-names-engineer",
+        contentType: "Mode Intro",
+        recordId: intro.id,
+        message:
+          `Neither the eyebrow nor the heading names "${content.profile.fullName}". Every ` +
+          "mode's hero must identify the engineer (V3-CONT-003).",
+      });
+    }
+  }
+
+  /* Rule 19 — work areas cite real roles of their own discipline. -------- */
+  // A work area restates what roles held. It may not cite a role that does
+  // not exist, nor one from the other discipline: its page would credit work
+  // to the wrong side of the timeline.
+  for (const area of content.workAreas) {
+    for (const experienceId of area.experienceIds) {
+      const role = experienceById.get(experienceId);
+
+      if (!role) {
+        add({
+          rule: "valid-experience-references",
+          contentType: "Work Area",
+          recordId: area.id,
+          message: `Cites experience "${experienceId}", which does not exist.`,
+        });
+      } else if (!role.disciplines.includes(area.discipline)) {
+        add({
+          rule: "work-area-discipline-matches",
+          contentType: "Work Area",
+          recordId: area.id,
+          message:
+            `Cites "${experienceId}", which is not tagged ${area.discipline}. A work area ` +
+            "may only restate roles of its own discipline.",
+        });
+      }
+    }
+  }
+
+  /* Rule 20 — at most one Published intro per discipline page. ------------ */
+  // "At most", like Rule 17: the page renders its opening only when there is
+  // one, and two would leave which one shows to registration order.
+  for (const discipline of DISCIPLINES) {
+    const published = content.disciplineIntros.filter(
+      (intro) => intro.discipline === discipline && intro.publicationStatus === "published",
+    );
+
+    if (published.length > 1) {
+      add({
+        rule: "single-discipline-intro",
+        contentType: "Discipline Intro",
+        message:
+          `${published.length} Published intros for the ${discipline} page ` +
+          `(${published.map((intro) => intro.id).join(", ")}). At most one may be.`,
       });
     }
   }

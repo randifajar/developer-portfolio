@@ -10,28 +10,11 @@
  * Exits non-zero on any violation (NFAC-TEST-001).
  */
 
-import { aiPractices } from "@/content/ai-practices";
-import { contactChannels, externalProfiles } from "@/content/contact";
-import { experience } from "@/content/experience";
-import { mediaAssets } from "@/content/media";
-import { profile } from "@/content/profile";
-import { projects } from "@/content/projects";
-import { resume } from "@/content/resume";
-import { skills } from "@/content/skills";
+import { contentSet } from "@/content/content-set";
 import { formatValidationIssues, validateContentSet } from "@/domain/content/validation";
 
 function main(): void {
-  const issues = validateContentSet({
-    profile,
-    experience,
-    projects,
-    skills,
-    aiPractices,
-    resumes: [resume],
-    contactChannels,
-    externalProfiles,
-    mediaAssets,
-  });
+  const issues = validateContentSet(contentSet);
 
   if (issues.length > 0) {
     console.error(formatValidationIssues(issues));
@@ -40,8 +23,10 @@ function main(): void {
 
   console.log("Content validation passed.");
   console.log(
-    `  ${projects.length} project(s), ${experience.length} experience record(s), ` +
-      `${skills.length} skill(s), ${aiPractices.length} AI practice(s).`,
+    `  ${contentSet.projects.length} project(s), ${contentSet.experience.length} experience ` +
+      `record(s), ${contentSet.skills.length} skill(s), ${contentSet.engineeringPractices.length} ` +
+      `engineering practice(s), ${contentSet.careerChapters.length} career chapter(s), ` +
+      `${contentSet.modeIntros.length} mode intro(s).`,
   );
 }
 

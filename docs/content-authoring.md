@@ -174,6 +174,44 @@ develop against placeholders, and the launch gate refuses them.
 
 ---
 
+## V3 records
+
+Added in V3 (UX/UI specification v3.0). The V3 pages read them through the
+selectors: on `staging` since V3 P5 and P6, on the live site from the V3
+release.
+
+| Module | Holds | Rules beyond the schema |
+|---|---|---|
+| `modes.ts` | The hero copy for Overall, Backend, Infrastructure | At most one Published intro per mode; every Published intro names you, in the eyebrow or across the two heading lines. A release needs one for every mode, since the intro's heading is that page's h1 |
+| `career.ts` | The three career chapters | Each chapter cites experience ids, never its own dates; every id must exist, and the chapter's year must fall within each role it cites |
+| `credentials.ts` | Education, certifications, languages | Exactly as your résumés state them |
+| `practices.ts` | "How I approach engineering" | Each item restates a résumé line; the module says which |
+| `toolkits.ts` | The grouped tool lists on the two mode pages | Names only, no levels. Nothing that shows how an employer's systems are wired (DEC-064) |
+| `discipline-pages.ts` | The Backend and Infrastructure pages below their heroes: each page's opening paragraph (and Infrastructure's scope line), and each page's four work areas | At most one Published intro per discipline. Each work area cites experience ids, which must exist and carry its discipline. The infrastructure text is held to an approved list in its test (DEC-064) |
+| `project-overviews.ts` | Six résumé projects shown briefly, with no case study and no route | General titles only, never an internal application name (DEC-060). A technology only where the project's résumé line names it. Draft until you confirm the titles (OPEN-011) |
+
+Five V3 fields sit on older records:
+
+- **`statement`, on the profile.** The Overall profile statement.
+- **`heroPhotoAssetId`, on the profile.** The Overall hero's photograph (UX3 7.6). Add the
+  image under `public/`, register it in `media.ts` as a published `professional-photograph`
+  with its alt text, width, and height, and point this field at it. Without it the hero
+  shows a labelled placeholder and release validation refuses the release (OPEN-010).
+- **`disciplines`, on every experience record.** `backend`, `infrastructure`, or both. It
+  decides which mode page shows the role, so it is required: a role tagged with
+  nothing would vanish from both.
+- **`disciplines`, on a case study.** Optional. It drives the projects filter, and
+  a case study without one appears only under "All".
+- **`variant`, on a résumé.** `backend` or `infrastructure` (DEC-059). One
+  active Published résumé per variant (FAC-RESUME-004, amended). The Résumé menu lists
+  only variants with a Published résumé, so adding one is a record, not a code change.
+
+The validation scripts and tests read one shared set, `src/content/content-set.ts`.
+A new content type goes there, and the `ContentSet` type makes forgetting it a
+compile error rather than a silent gap in validation.
+
+---
+
 ## When you are ready to launch
 
 Follow [`docs/release-checklist.md`](release-checklist.md) in order. Step 3

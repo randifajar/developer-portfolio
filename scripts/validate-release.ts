@@ -8,32 +8,12 @@
  * Exits non-zero on any violation (NFAC-TEST-001).
  */
 
-import { aiPractices } from "@/content/ai-practices";
-import { contactChannels, externalProfiles } from "@/content/contact";
-import { experience } from "@/content/experience";
-import { mediaAssets } from "@/content/media";
-import { profile } from "@/content/profile";
-import { projects } from "@/content/projects";
-import { resume } from "@/content/resume";
-import { skills } from "@/content/skills";
+import { contentSet } from "@/content/content-set";
 import { validateRelease } from "@/domain/content/release-validation";
 import { formatValidationIssues } from "@/domain/content/validation";
 
 function main(): void {
-  const issues = validateRelease(
-    {
-      profile,
-      experience,
-      projects,
-      skills,
-      aiPractices,
-      resumes: [resume],
-      contactChannels,
-      externalProfiles,
-      mediaAssets,
-    },
-    { siteUrl: process.env.SITE_URL },
-  );
+  const issues = validateRelease(contentSet, { siteUrl: process.env.SITE_URL });
 
   if (issues.length > 0) {
     console.error(formatValidationIssues(issues));

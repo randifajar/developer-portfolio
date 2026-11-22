@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { aiPractices } from "@/content/ai-practices";
 import { contactChannels, externalProfiles } from "@/content/contact";
+import { contentSet } from "@/content/content-set";
 import { experience } from "@/content/experience";
 import { mediaAssets } from "@/content/media";
 import { profile } from "@/content/profile";
@@ -11,6 +11,15 @@ import { validateRelease } from "@/domain/content/release-validation";
 import type { ContentSet } from "@/domain/content/validation";
 
 const SITE_URL = "https://example.com";
+
+/** A stand-in for the V3 hero photograph (OPEN-010), for the release-ready fixture. */
+/**
+ * The real hero portrait's id (OPEN-010, supplied 2026-11-21). Until then a
+ * stand-in record played this part in the release-ready set; the real one now
+ * does, so removing it from the content fails the hero tests below rather
+ * than leaving them exercising a fixture.
+ */
+const HERO_PHOTOGRAPH_ID = profile.heroPhotoAssetId;
 
 /**
  * A default parameter would treat an explicitly passed `undefined` as "not
@@ -27,17 +36,7 @@ function rulesFor(
 
 /** The real content set, exactly as it ships today. */
 function draftContent(): ContentSet {
-  return {
-    profile,
-    experience,
-    projects,
-    skills,
-    aiPractices,
-    resumes: [resume],
-    contactChannels,
-    externalProfiles,
-    mediaAssets,
-  };
+  return { ...contentSet };
 }
 
 /**
@@ -91,21 +90,28 @@ function releaseReadyContent(): ContentSet {
     })),
     projects: [cleanProject(projects[0]!, 1), cleanProject(projects[1]!, 2)],
     skills: skills.map((skill) => ({ ...skill, ...publish })),
-    aiPractices: aiPractices.map((practice) => ({
-      ...practice,
-      ...publish,
-      humanResponsibility: "Randi reviews every change and owns the final decision.",
-      verificationMethod: "Lint, type check, tests, and a production build must pass.",
-      correctedAssumption: undefined,
-    })),
     resumes: [{ ...resume, ...publish, isActive: true, version: "2026.08" }],
     contactChannels,
     externalProfiles,
-    mediaAssets: mediaAssets.map((asset) => ({
-      ...asset,
-      ...publish,
-      altText: "A real, descriptive alternative text.",
-    })),
+    mediaAssets: [
+      ...mediaAssets.map((asset) => ({
+        ...asset,
+        ...publish,
+        altText: "A real, descriptive alternative text.",
+      })),
+    ],
+    // The V3 records as they ship. They are release-ready already and are not
+    // the subject of these tests.
+    modeIntros: contentSet.modeIntros,
+    careerChapters: contentSet.careerChapters,
+    education: contentSet.education,
+    certifications: contentSet.certifications,
+    languages: contentSet.languages,
+    engineeringPractices: contentSet.engineeringPractices,
+    toolkitGroups: contentSet.toolkitGroups,
+    projectOverviews: contentSet.projectOverviews,
+    disciplineIntros: contentSet.disciplineIntros,
+    workAreas: contentSet.workAreas,
   };
 }
 
@@ -124,8 +130,42 @@ function releaseReadyContent(): ContentSet {
  * exactly how a gate quietly stops being a gate.
  */
 describe("release validation accepts the real content set", () => {
+  /**
+   * From V3 P10 until 2026-11-21 this asserted that exactly one issue remained,
+   * the missing hero photograph (OPEN-010), so that every other rule stayed
+   * guarded meanwhile. The photograph arrived on 2026-11-21, and this is the
+   * plain "passes" it was before.
+   */
   it("passes", () => {
     expect(validateRelease(draftContent(), { siteUrl: SITE_URL })).toEqual([]);
+  });
+
+  it("reports a hero photograph that is unset, unpublished, or without its size (UX3 7.6)", () => {
+    const ready = releaseReadyContent();
+    const rules = (content: ContentSet) => rulesFor(content);
+
+    expect(rules(ready)).not.toContain("published-hero-photograph-required");
+    expect(
+      rules({ ...ready, profile: { ...ready.profile, heroPhotoAssetId: undefined } }),
+    ).toContain("published-hero-photograph-required");
+    expect(
+      rules({
+        ...ready,
+        mediaAssets: ready.mediaAssets.map((asset) =>
+          asset.id === HERO_PHOTOGRAPH_ID
+            ? { ...asset, publicationStatus: "draft" as const }
+            : asset,
+        ),
+      }),
+    ).toContain("published-hero-photograph-required");
+    expect(
+      rules({
+        ...ready,
+        mediaAssets: ready.mediaAssets.map((asset) =>
+          asset.id === HERO_PHOTOGRAPH_ID ? { ...asset, width: undefined } : asset,
+        ),
+      }),
+    ).toContain("published-hero-photograph-required");
   });
 
   it("reports fewer than two Published projects (FAC-HOME-004)", () => {
@@ -202,6 +242,35 @@ describe("release validation accepts the real content set", () => {
   });
 });
 
+/**
+ * V3 P5b. The mode hero's heading is each mode page's h1, so a mode without a
+ * Published intro would ship a page with no h1 at all (NFAC-A11Y-003).
+ */
+describe("rule: a Published intro for every mode (UX3 7)", () => {
+  it("reports a mode whose intro is Draft or missing, and only that mode", () => {
+    const base = draftContent();
+    const withDraftBackend = {
+      ...base,
+      modeIntros: base.modeIntros.map((intro) =>
+        intro.mode === "backend" ? { ...intro, publicationStatus: "draft" as const } : intro,
+      ),
+    };
+    const withoutInfrastructure = {
+      ...base,
+      modeIntros: base.modeIntros.filter((intro) => intro.mode !== "infrastructure"),
+    };
+
+    const draftIssues = validateRelease(withDraftBackend, { siteUrl: SITE_URL }).filter(
+      (issue) => issue.rule === "published-mode-intros-required",
+    );
+    expect(draftIssues.map((issue) => issue.message)).toEqual([
+      'No Published intro for the "backend" mode, so its page would have no h1.',
+    ]);
+    expect(rulesFor(withoutInfrastructure)).toContain("published-mode-intros-required");
+    expect(rulesFor(base)).not.toContain("published-mode-intros-required");
+  });
+});
+
 describe("release validation accepts complete content", () => {
   it("passes on a fully published, placeholder-free content set", () => {
     const issues = validateRelease(releaseReadyContent(), { siteUrl: SITE_URL });
@@ -238,6 +307,34 @@ describe("rule: no published placeholders (NFAC-CONTENT-004)", () => {
     expect(rulesFor({ ...content, projects: [poisoned, second!] })).toContain(
       "no-published-placeholders",
     );
+  });
+
+  /**
+   * V3 P5b. The V3 records render on every mode page, and none of them was
+   * scanned until then: a TODO in a career chapter passed release validation.
+   */
+  it("scans the V3 records too: a career chapter, a practice, a toolkit", () => {
+    const content = releaseReadyContent();
+    const [chapter, ...chapters] = content.careerChapters;
+    const [practice, ...practices] = content.engineeringPractices;
+    const [toolkit, ...toolkits] = content.toolkitGroups;
+
+    expect(
+      rulesFor({ ...content, careerChapters: [{ ...chapter!, body: "TBD" }, ...chapters] }),
+    ).toContain("no-published-placeholders");
+    expect(
+      rulesFor({
+        ...content,
+        engineeringPractices: [{ ...practice!, description: "TODO: write" }, ...practices],
+      }),
+    ).toContain("no-published-placeholders");
+    expect(
+      rulesFor({
+        ...content,
+        toolkitGroups: [{ ...toolkit!, items: ["Lorem ipsum"] }, ...toolkits],
+      }),
+    ).toContain("no-published-placeholders");
+    expect(rulesFor(content)).not.toContain("no-published-placeholders");
   });
 
   it("ignores placeholders inside Draft records, which never reach the public site", () => {

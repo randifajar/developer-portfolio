@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 /**
  * The page's structural unit: one full-bleed band, one contained column.
  *
- * Every homepage section renders through this, which is what makes the surface
+ * Every page section renders through this, which is what makes the surface
  * system work. Before it, four sections put `max-w` on the `<section>` element
  * itself, so a background colour on them would have stopped at the content
  * width instead of spanning the viewport.
@@ -13,28 +13,28 @@ import type { ReactNode } from "react";
  * place rather than repeating `py-16` across seven files.
  */
 
-export type SectionSurface = "light" | "neutral" | "dark";
-
 /**
- * Surface emphasis, most to least (UX2 4.4).
+ * The five V3 surfaces (UX3 3, SUP-016). The tokens each one sets are in
+ * globals.css, and the contrast matrix checks every pairing on each.
  *
- * Exported because it is a product rule, not a styling detail: the AI Workflow
- * section may never sit above Work Experience or Selected Work. That rule
- * replaces SUP-007's mechanism, which is void now that every section carries a
- * band, and it is asserted in tests/components/section-surface.test.tsx —
- * SUP-007 has never had a test until now.
+ * v2 ranked its surfaces so that the AI Workflow section could never outrank
+ * Work Experience (SUP-007, `SURFACE_RANK`). V3 has no AI section (SUP-014),
+ * so the rank and its test went in V3 P5b; which section sits on which
+ * surface is now asserted section by section in
+ * tests/components/overall-page.test.tsx.
  */
-export const SURFACE_RANK: Record<SectionSurface, number> = {
-  dark: 3,
-  neutral: 2,
-  light: 1,
-};
+export type SectionSurface = "light" | "dark" | "navy" | "white" | "blue";
 
 interface SectionProps {
   readonly surface: SectionSurface;
   readonly children: ReactNode;
   /** Anchor target, when the section is linked from the navigation. */
   readonly id?: string;
+  /**
+   * The id of the section's heading. Naming the section makes it a region
+   * landmark, so a screen-reader user can move between sections by name.
+   */
+  readonly labelledBy?: string;
   /**
    * `prose` narrows the inner column for long-form reading. `content` is the
    * default page width.
@@ -67,12 +67,20 @@ export function Section({
   surface,
   children,
   id,
+  labelledBy,
   width = "content",
   className = "",
 }: SectionProps) {
   return (
-    <section id={id} data-surface={surface} className="bg-background text-text-primary">
+    <section
+      id={id}
+      aria-labelledby={labelledBy}
+      data-surface={surface}
+      className="bg-background text-text-primary"
+    >
+      {/* Rises into view as it is scrolled to (UX3 8.5; the rule is in globals.css). */}
       <div
+        data-reveal=""
         className={`mx-auto w-full px-5 py-16 sm:px-8 lg:px-12 ${WIDTH_CLASS[width]} ${className}`.trim()}
       >
         {children}

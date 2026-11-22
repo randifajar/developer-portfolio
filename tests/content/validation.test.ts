@@ -1,28 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { aiPractices } from "@/content/ai-practices";
 import { contactChannels, externalProfiles } from "@/content/contact";
+import { contentSet } from "@/content/content-set";
 import { experience } from "@/content/experience";
 import { mediaAssets } from "@/content/media";
 import { profile } from "@/content/profile";
 import { projects } from "@/content/projects";
 import { resume } from "@/content/resume";
-import { skills } from "@/content/skills";
 import type { ContentSet } from "@/domain/content/validation";
 import { formatValidationIssues, validateContentSet } from "@/domain/content/validation";
 
 /** The real content set, which must always validate cleanly. */
 function realContent(): ContentSet {
-  return {
-    profile,
-    experience,
-    projects,
-    skills,
-    aiPractices,
-    resumes: [resume],
-    contactChannels,
-    externalProfiles,
-    mediaAssets,
-  };
+  // A shallow copy, so a test that replaces one field cannot affect another test.
+  return { ...contentSet };
 }
 
 /** Rule names present in the result, for precise assertions. */
@@ -83,6 +73,15 @@ describe("rule: valid media references", () => {
     expect(rulesTriggeredBy(content)).toContain("valid-media-references");
   });
 
+  it("rejects a hero photograph referencing an unknown media asset (V3 P10)", () => {
+    const content = {
+      ...realContent(),
+      profile: { ...profile, heroPhotoAssetId: "media-missing" },
+    };
+
+    expect(rulesTriggeredBy(content)).toContain("valid-media-references");
+  });
+
   it("rejects a project referencing an unknown media asset", () => {
     const [first] = projects;
     const content = {
@@ -100,16 +99,6 @@ describe("rule: valid project references", () => {
     const content = {
       ...realContent(),
       experience: [{ ...first!, projectIds: ["project-missing"] }],
-    };
-
-    expect(rulesTriggeredBy(content)).toContain("valid-project-references");
-  });
-
-  it("rejects an AI practice referencing an unknown project", () => {
-    const [first] = aiPractices;
-    const content = {
-      ...realContent(),
-      aiPractices: [{ ...first!, relatedProjectIds: ["project-missing"] }],
     };
 
     expect(rulesTriggeredBy(content)).toContain("valid-project-references");
@@ -133,6 +122,30 @@ describe("rule: single active resume (FAC-RESUME-004)", () => {
       resumes: [
         { ...resume, isActive: true, publicationStatus: "published" as const },
         { ...resume, id: "resume-old", isActive: false, publicationStatus: "archived" as const },
+      ],
+    };
+
+    expect(rulesTriggeredBy(content)).not.toContain("single-active-resume");
+  });
+
+  /**
+   * FAC-RESUME-004 as amended for V3 (DEC-059): one active Published résumé
+   * per variant. A backend and an infrastructure résumé together are the
+   * intended state; the rule must not fire on them.
+   */
+  it("allows one active Published resume of each variant", () => {
+    const content = {
+      ...realContent(),
+      resumes: [
+        { ...resume, isActive: true, publicationStatus: "published" as const },
+        {
+          ...resume,
+          id: "resume-infrastructure",
+          variant: "infrastructure" as const,
+          publicPath: "/resume/infrastructure.pdf",
+          isActive: true,
+          publicationStatus: "published" as const,
+        },
       ],
     };
 

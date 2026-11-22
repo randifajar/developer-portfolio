@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { projects } from "@/content/projects";
 
 test.describe("public routes (NFAC-REL-001)", () => {
-  const publicRoutes = ["/", "/projects"];
+  const publicRoutes = ["/", "/backend", "/infrastructure", "/projects"];
 
   for (const route of publicRoutes) {
     test(`${route} returns a valid public result`, async ({ page }) => {
@@ -125,7 +125,13 @@ test.describe("registered projects are either public or indistinguishable from u
  * response listener.
  */
 test.describe("public pages log no browser errors", () => {
-  const routes = ["/", "/projects", "/projects/personal-developer-portfolio"];
+  const routes = [
+    "/",
+    "/backend",
+    "/infrastructure",
+    "/projects",
+    "/projects/personal-developer-portfolio",
+  ];
 
   for (const route of routes) {
     test(`${route} logs nothing to the console`, async ({ page }) => {
@@ -187,7 +193,7 @@ test.describe("security headers (NFAC-SEC-005)", () => {
  * with no h1, and the site was crawlable while it was an empty shell.
  */
 test.describe("every public page has exactly one h1 (NFAC-A11Y-003)", () => {
-  const routes = ["/", "/projects", "/this-route-does-not-exist"];
+  const routes = ["/", "/backend", "/infrastructure", "/projects", "/this-route-does-not-exist"];
 
   for (const route of routes) {
     test(`${route} has exactly one h1`, async ({ page }) => {
@@ -255,5 +261,32 @@ test.describe("post-launch indexing posture", () => {
     const canonical = await page.locator('link[rel="canonical"]').getAttribute("href");
 
     expect(canonical).toMatch(/^https?:\/\//);
+  });
+});
+
+/**
+ * V3 P9: the mode routes are discoverable and preview as themselves.
+ */
+test.describe("mode routes in the sitemap and link previews (V3 plan 3.9)", () => {
+  test("the sitemap lists both mode routes", async ({ request }) => {
+    const sitemap = await (await request.get("/sitemap.xml")).text();
+
+    for (const route of ["/backend", "/infrastructure"]) {
+      expect(sitemap, route).toMatch(new RegExp(`<loc>[^<]*${route}</loc>`));
+    }
+  });
+
+  test("each mode route has its own social card, and it is served", async ({ page, request }) => {
+    for (const route of ["/backend", "/infrastructure"]) {
+      await page.goto(route);
+      const image = await page.locator('meta[property="og:image"]').first().getAttribute("content");
+
+      expect(image, route).toContain(`${route}/opengraph-image`);
+
+      const { pathname, search } = new URL(image!);
+      const response = await request.get(`${pathname}${search}`);
+      expect(response.status(), route).toBe(200);
+      expect(response.headers()["content-type"], route).toContain("image/png");
+    }
   });
 });

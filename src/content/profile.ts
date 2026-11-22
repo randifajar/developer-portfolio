@@ -8,6 +8,16 @@ import { defineProfile } from "@/domain/content/define";
  * two-year progression from internship to full-time, and the disclosure of how
  * he uses AI tooling. Nothing here was written or embellished on his behalf.
  *
+ * Updated 2026-11-18 for his move to the infrastructure team (V3 plan, P0).
+ * Claude made the changes; no new claim was added. The title is the
+ * positioning Randi approved (D1, SUP-010). The headline is assembled from
+ * the backend and infrastructure descriptions in the V3.1 mockup he approved,
+ * and the first summary paragraph adds the move he confirmed that day.
+ * "Backend Developer" in the present tense was the only false statement here,
+ * and the availability wording was removed at his request (SUP-011). The
+ * reworded lines are listed in the pull request for his confirmation before
+ * promotion.
+ *
  * The AI paragraph is deliberately kept. NFAC-CONTENT-002 requires ownership
  * language to be accurate, and stating plainly which tools accelerate the work
  * and which decisions stay his is more credible to an interviewer than leaving
@@ -28,11 +38,21 @@ export const profile = defineProfile({
   // Full-stack capability is real and still stated where it is truthful — in
   // the case studies and the technologies list. It simply no longer competes
   // with the primary identity.
-  professionalTitle: "Backend Developer",
+  //
+  // Repositioned again on 2026-11-18 (SUP-010). Since August 2026 Randi has
+  // been an AI Delivery Engineer on the infrastructure team, so "Backend
+  // Developer" no longer described the present. The title names the span of
+  // his work rather than a job title; formal titles stay in the experience
+  // timeline. The middle dot is the approved V3.1 mockup's form, and it keeps
+  // "Name — Title" strings free of a second em dash.
+  professionalTitle: "Software Engineer · Backend & Infrastructure",
 
+  // Availability clause removed 2026-11-18 at Randi's request (SUP-011). The
+  // rest is the noun phrase from the approved mockup's two mode descriptions,
+  // so it claims no present-tense activity beyond the confirmed current role.
   headline:
-    "Backend Developer building Node.js, GraphQL, and MongoDB systems, open to backend and " +
-    "software engineering opportunities.",
+    "Backend services in Node.js, GraphQL, and MongoDB, and the Jenkins pipelines and " +
+    "AWS environments that deliver them.",
 
   // Repositioned, not rewritten. This is Randi's own approved v1 wording with
   // exactly two changes: the opening no longer leads with "backend-focused
@@ -42,16 +62,25 @@ export const profile = defineProfile({
   // 110 words, against the 100-150 target. The drop from 126 is the removed
   // closer.
   //
+  // 2026-11-18: three changes for the move to the infrastructure team, all
+  // statements of fact Randi confirmed. "a Backend Developer" became "a
+  // software engineer"; the first sentence gained the move itself; "My work
+  // centers on" became "My backend work centers on". The second paragraph moved
+  // to the present perfect, because aggregation pipelines and CORS tracing were
+  // the backend role's work, not necessarily today's. 125 words, counted.
+  //
   // The AI paragraph keeps the tool names. A generic "AI-assisted tools" was
   // considered and rejected: naming what he actually uses is the disclosure,
   // and vagueness there reads worse to an interviewer than specificity.
   summary:
-    "I'm a Backend Developer with more than two years of hands-on experience, progressing from " +
-    "internship to contract and full-time backend roles. My work centers on Node.js, GraphQL, " +
-    "MongoDB, APIs, data processing, background jobs, and integrations used in academic and " +
-    "administrative workflows.\n\n" +
-    "I regularly work on problems that cross application and environment boundaries: designing " +
-    "aggregation pipelines, integrating supporting services, tracing database and CORS issues, " +
+    "I'm a software engineer with more than two years of hands-on experience, progressing from " +
+    "internship to contract and full-time backend roles, and in August 2026 to the " +
+    "infrastructure team as an AI Delivery Engineer. My backend work centers on Node.js, " +
+    "GraphQL, MongoDB, APIs, data processing, background jobs, and integrations used in " +
+    "academic and administrative workflows.\n\n" +
+    "I have regularly worked on problems that cross application and environment boundaries: " +
+    "designing aggregation pipelines, integrating supporting services, tracing database and " +
+    "CORS issues, " +
     "investigating memory and background-job failures, and validating changes across " +
     "development, staging, pre-production, and production environments.\n\n" +
     "I use Codex, Claude Code, and ChatGPT to accelerate analysis, planning, implementation, " +
@@ -59,33 +88,38 @@ export const profile = defineProfile({
     "validation, technical decisions, code review, regression checking, security, and final " +
     "verification.",
 
-  // Confirmed: DEC-013.
-  location: "Yogyakarta, Indonesia",
+  // The V3 Overall profile statement (UX3 7.1). The first paragraph is the
+  // wording proposed in the V3.1 mockup and approved by Randi on 2026-11-19
+  // (OPEN-009). The second restates facts the experience records hold: one
+  // employer, the sector, and the dates of the first and latest roles.
+  statement:
+    "I began my engineering career building backend services and data workflows. Over time, " +
+    "the problems expanded beyond application code into deployment pipelines, infrastructure " +
+    "configuration, and the operational systems behind reliable releases.\n\n" +
+    "All of it has been at Zettabyte Pte Ltd, on software for higher-education platforms: " +
+    "from an internship in July 2024, through contract and full-time backend roles, to the " +
+    "infrastructure team in August 2026.",
 
-  // Neutral wording, v1.1 Issue 3. "Open to remote opportunities" excluded
-  // hybrid and onsite roles that Randi would consider, and no onsite, hybrid,
-  // or relocation availability has been confirmed — so this states openness
-  // without inventing a form of it.
-  //
-  // Renamed from remoteAvailability on 2026-08-25 (Q10). v1.1 changed the value
-  // from "Open to remote opportunities" to "Open to opportunities" but left the
-  // field name, judging the rename not worth widening a corrective release. v2
-  // then deferred it again. Twice-deferred is a decision by attrition, so it was
-  // made deliberately instead: the name said remote, the value does not, and a
-  // field whose name contradicts its content is the kind of small untruth this
-  // repository exists to argue against.
-  //
-  // Reader-visible output is unchanged. Only the identifier moved.
-  availabilityStatement: "Open to opportunities",
+  // SUP-015, 2026-11-19: as in the experience records and on both résumés.
+  // DEC-013 had "Yogyakarta, Indonesia".
+  location: "Sleman, Yogyakarta, Indonesia",
 
-  // DEC-004 listed Full-Stack Developer second. Removed in v1.1 for the same
-  // reason as the title: it competed with the backend-first identity.
-  targetRoles: ["Backend Developer", "Backend Engineer", "Software Engineer"],
+  // There is no availability field any more. "Open to opportunities" (SUP-004,
+  // renamed availabilityStatement in Q10) was removed on 2026-11-18 at Randi's
+  // request, together with the field, so that it cannot quietly return
+  // (SUP-011, FAC-PROFILE-001 amended).
+  //
+  // Nor is there a target-roles field. The list (SUP-003) was removed on
+  // 2026-11-19 at Randi's request, with the field, for the same reason
+  // (SUP-017).
 
   // DEC-019. The image was supplied on 2026-08-08, so the asset it points at
   // is Published too and the Hero renders with a photograph.
   photoAssetId: "media-profile-photograph",
 
+  // OPEN-010, resolved 2026-11-21: the V3 hero's larger portrait (UX3 7.6).
+  heroPhotoAssetId: "media-hero-photograph",
+
   publicationStatus: "published",
-  updatedAt: "2026-08-08",
+  updatedAt: "2026-11-19",
 });

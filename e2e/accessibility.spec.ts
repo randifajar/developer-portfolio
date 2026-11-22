@@ -32,6 +32,17 @@ async function waitUntilRendered(page: Page): Promise<void> {
   await page.waitForLoadState("domcontentloaded");
   await page.evaluate(() => document.fonts.ready);
   await page.waitForLoadState("networkidle");
+  // V3 P8: let time-based animations, such as the hero entrance, finish, so
+  // the scan sees the page at rest. Scroll-driven ones never finish without
+  // scrolling, so they are left out; they move content, never fade it.
+  await page.evaluate(() =>
+    Promise.all(
+      document
+        .getAnimations()
+        .filter((animation) => animation.timeline === document.timeline)
+        .map((animation) => animation.finished.catch(() => undefined)),
+    ),
+  );
 }
 
 /**
@@ -82,6 +93,9 @@ const [firstPublished] = publishedProjects;
 
 const PAGE_TYPES = [
   { name: "Home", path: "/" },
+  // V3 mode routes (DEC-056).
+  { name: "Backend", path: "/backend" },
+  { name: "Infrastructure", path: "/infrastructure" },
   { name: "Projects Index", path: "/projects" },
   {
     /*
@@ -115,16 +129,20 @@ test("Home passes an accessibility scan at mobile width", async ({ page }) => {
   expect(await blockingViolations(page)).toEqual([]);
 });
 
-test("the open mobile menu passes an accessibility scan", async ({ page }) => {
+test("the open Résumé menu passes an accessibility scan", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
-  await page.goto("/");
+  await page.goto("/backend");
   await waitUntilRendered(page);
 
-  // The only interactive state in the application. Scanning only the closed
-  // page would leave the drawer, its focus handling, and its contrast
-  // unverified.
-  await page.getByRole("button", { name: /open menu/i }).click();
-  await expect(page.getByRole("navigation", { name: /site navigation/i })).toBeVisible();
+  // The header's one interactive state since V3 replaced the mobile menu with
+  // it (UX3 6.3). Scanning only the closed page would leave the popover, its
+  // items, and its contrast unverified. On /backend, so the "this page" marker
+  // is part of the scan.
+  await page
+    .getByRole("banner")
+    .getByRole("button", { name: /résumé/i })
+    .click();
+  await expect(page.locator("#resume-menu")).toBeVisible();
 
   expect(await blockingViolations(page)).toEqual([]);
 });

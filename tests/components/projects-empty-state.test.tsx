@@ -25,12 +25,12 @@ describe("ProjectsEmptyState", () => {
     expect(screen.getByRole("link", { name: /return home/i })).toHaveAttribute("href", ROUTES.home);
   });
 
-  it("falls back to the contact section when no channel is Published", () => {
+  it("falls back to the footer's contact section when no channel is Published", () => {
     render(<ProjectsEmptyState />);
 
     expect(screen.getByRole("link", { name: /^contact$/i })).toHaveAttribute(
       "href",
-      `${ROUTES.home}#${SECTION_IDS.contact}`,
+      `#${SECTION_IDS.contact}`,
     );
   });
 

@@ -14,12 +14,13 @@
 import type { HexColor } from "./contrast";
 
 /**
- * The three surfaces from UX2 4.3.
+ * The surfaces: V3's five (UX3 3, SUP-016). v2's `neutral` went in V3 P5b,
+ * with the Skills section that was its last user.
  *
  * `light` is also the `:root` default, so a component outside any surface scope
  * still resolves sane values.
  */
-export const SURFACE_NAMES = ["light", "neutral", "dark"] as const;
+export const SURFACE_NAMES = ["light", "dark", "navy", "white", "blue"] as const;
 export type SurfaceName = (typeof SURFACE_NAMES)[number];
 
 export type TokenMap = Readonly<Record<string, HexColor>>;
@@ -108,11 +109,11 @@ export function parseSurfaceTokens(source: string): SurfaceTokens {
     return block === null ? {} : readColors(block);
   };
 
-  return {
-    light: { ...base, ...surfaceBlock("light") },
-    neutral: { ...base, ...surfaceBlock("neutral") },
-    dark: { ...base, ...surfaceBlock("dark") },
-  };
+  // Every surface listed in SURFACE_NAMES, so a new surface cannot be declared
+  // in the stylesheet and silently left out of the contrast matrix.
+  return Object.fromEntries(
+    SURFACE_NAMES.map((name) => [name, { ...base, ...surfaceBlock(name) }]),
+  ) as SurfaceTokens;
 }
 
 /**

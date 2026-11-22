@@ -98,18 +98,26 @@ The Not Found copy is tested against phrases like "not yet published" and
 
 Splitting these is what makes it possible to build against placeholder content.
 
-**Structural** (`npm run validate:content`) runs on every pull request. Fifteen
-cross-record rules — uniqueness, references, one active Resume, no Published
-private content, complete Published projects. Passes today.
+**Structural** (`npm run validate:content`) runs on every pull request. Eighteen
+cross-record rules — uniqueness, references, at most one active résumé per
+variant, no Published private content, complete Published projects, career
+chapters inside their roles' dates, at most one intro per mode, every intro
+naming the engineer. Passes today.
 
-**Release** (`npm run validate:release`) runs before launch only. Adds the
-launch-readiness rules and a deep placeholder scan. **Fails today, by design.**
+**Release** (`npm run validate:release`) runs before a release. It adds the
+launch-readiness rules — among them, since V3 P5b, a Published intro for every
+mode, because a mode without one would render no h1 — and a deep placeholder
+scan across every Published record type. It failed for the whole of v1's
+development, by design, and passed from 2026-08-09, when the launch content was
+completed. From V3 P10 it failed on one condition, deliberately: the V3 hero
+photograph was not supplied yet (OPEN-010). It arrived on 2026-11-21, and the gate
+passes again.
 
-That failure is the mechanism keeping Draft content out of production. If it
-ever passes on incomplete content, the safety property is gone. A test asserts
-it fails on the current content, and a second fixture proves it can pass on
-complete content — without that pair, the failing assertion would be
-meaningless.
+That gate is the mechanism keeping Draft content out of production: Draft
+records are ignored, and Published ones must be complete. Each rule is asserted
+in both directions — it fires against content that violates it and stays quiet
+on the real content — because a broken rule and a satisfied one otherwise look
+identical.
 
 The placeholder scan skips non-rendered keys such as ids, because an id like
 `experience-placeholder-current` is internal bookkeeping no visitor reads.
@@ -118,11 +126,33 @@ The placeholder scan skips non-rendered keys such as ids, because an id like
 
 ## Client JavaScript
 
-Exactly one Client Component: `src/components/layout/mobile-navigation.tsx`.
+V3 allows six Client Components (DEC-057, Technical Design 13.4). All six exist
+on `staging`:
 
-Everything else is a Server Component. `Header` composes the mobile menu but
-stays server-rendered — marking it `"use client"` would pull the whole
-navigation tree into the browser bundle for one toggle.
+| Component | Why it runs in the browser |
+|---|---|
+| `mode-switch.tsx` | The current mode comes from the pathname |
+| `resume-menu.tsx` | Arrow keys, focus on open, and the "this page" marker. Open, close, and Escape are the native Popover API, so the menu works without JavaScript |
+| `copy-email.tsx` | Clipboard access; it renders nothing where the browser cannot copy |
+| `mode-hero.tsx` | The hero of the three mode routes, in the `(modes)` layout so it persists across a mode change (V3 P5). It picks the intro by pathname, owns scroll and focus after a mode change (UX3 6.5), and animates the change (V3 P8, with `mode-hero-motion.ts`: Web Animations, the pointer light, nothing under reduced motion) |
+| `overall/career-journey.tsx` | Pins the career chapters on wide screens with motion allowed, and follows the scroll position (V3 P8). Stacked without JavaScript, below 900 px, and under reduced motion |
+| `project/project-filter.tsx` | The projects filter, its state in `?discipline=` (V3 P7). It also exports `ProjectsBackLink`, the case study's way back to the filtered view. Without JavaScript every project shows |
+
+`resume-menu.tsx` also exports `ResumeMenuTrigger`, a second button that opens
+the same menu, used by the Overall page's Explore further. It is part of the
+menu, not a seventh island.
+
+`ModeHero` wraps the page below it rather than sitting beside it. React runs
+layout effects children first, so the router's scroll handler for the page
+runs before the hero's reset, and the reset decides where a mode change lands.
+The layout reads the intros on the server and passes them in as plain data.
+
+v2's `mobile-navigation.tsx` was removed in P4 with the mobile menu: the V3
+header has no menu.
+
+Everything else is a Server Component. `Header` and `Footer` compose the
+islands but stay server-rendered — marking them `"use client"` would pull the
+whole chrome and everything it imports into the browser bundle.
 
 Markdown rendering has raw HTML **disabled** and it stays that way. Enabling
 `rehype-raw` would turn every content field into an injection surface. Three
@@ -136,17 +166,20 @@ become live elements.
 ```text
 src/
 ├── app/          Routes, metadata, sitemap, robots, OG image
+│   └── (modes)/  Overall, Backend, Infrastructure, sharing one layout and hero
 ├── components/
-│   ├── layout/   Header, mobile navigation, Footer
+│   ├── layout/   Header, mode switch, Résumé menu, mode hero, Footer, Section
+│   ├── overall/  The seven sections of the Overall page (V3 P5)
+│   ├── modes/    The Backend and Infrastructure sections (V3 P6)
+│   ├── shared/   Pieces two pages share, such as the project rows
 │   ├── project/  Card, sections, responsibility split, navigation
-│   ├── sections/ The seven homepage sections
-│   └── ui/       Six primitives everything composes from
+│   └── ui/       Primitives everything composes from
 ├── content/      Typed content modules — the only data source
 ├── domain/
 │   ├── content/  Types, schemas, define helpers, validation, selectors
 │   ├── metadata/ Metadata construction
 │   └── projects/ Delivery status labels, adjacent navigation
-└── lib/          Constants, environment parsing
+└── lib/          Constants, environment parsing, date and count formatting
 ```
 
 `domain/` holds pure logic and is where the correctness-critical tests live.

@@ -21,26 +21,84 @@ import { defineExperience } from "@/domain/content/define";
  * (NFAC-SEC-002, NFAC-PRIV-004).
  *
  * Ordering is by sortOrder within the current-role-first rule the selector
- * applies, so the progression reads intern to contract to full-time in
- * reverse.
+ * applies, so the progression reads intern to contract to full-time to the
+ * infrastructure team in reverse.
+ *
+ * 2026-11-18 (V3 plan, P0). Randi confirmed that day that he has been an AI
+ * Delivery Engineer on the infrastructure team since August 2026, and that the
+ * Backend Developer role ran from April 2025 to July 2026. The new role's
+ * responsibilities and contribution are his infrastructure resume's bullets.
+ * Two pieces of system architecture are generalized ("reverse proxies" for the
+ * named proxies, "AWS email-event delivery" for the named AWS services), in
+ * keeping with the sanitized class below. On 2026-11-19 Randi set that as the
+ * level for the whole site (DEC-064): tools are named, and how the employer's
+ * systems are wired is not. The new role's summary is the infrastructure
+ * description from the V3.1 mockup he approved.
+ *
+ * 2026-11-19 (V3 plan, P2). The company is spelled "Zettabyte Pte Ltd", Randi's
+ * choice and the spelling of his infrastructure résumé (DEC-063); the site said
+ * "ZettaByte", and his backend résumé mixes the two. The backend role gained the
+ * audit-log contribution, verbatim from his infrastructure résumé, so the site
+ * and the résumé list the same work (NFAC-CONTENT-005).
  */
 export const experience = [
   defineExperience({
-    id: "experience-zettabyte-backend-developer",
+    id: "experience-zettabyte-ai-delivery-engineer",
 
-    companyName: "ZettaByte Pte Ltd",
-    position: "Backend Developer",
+    companyName: "Zettabyte Pte Ltd",
+    position: "AI Delivery Engineer, Infrastructure Team",
 
-    startDate: "2025-04-01",
+    startDate: "2026-08-01",
     isCurrent: true,
 
     locationOrArrangement: "Sleman, Yogyakarta, Indonesia",
 
     summary:
-      "I develop and maintain backend services and data-processing flows for academic and " +
-      "administrative applications. My work covers API and database design, service " +
+      "I work on Jenkins delivery pipelines, Linux and Docker environments on AWS, and the " +
+      "troubleshooting behind reliable releases.",
+
+    responsibilities: [
+      "Maintain and standardize Jenkins CI/CD pipelines across multiple repositories, incorporating security and quality checks, branch-based deployment workflows, and role-based access controls for staging, pre-production, and production environments.",
+      "Support Linux-hosted Docker Compose services behind reverse proxies, investigating TLS routing, environment variables, duplicate containers, failed deployments, and service connectivity.",
+      "Troubleshoot AWS email-event delivery, dead-letter routing, cloud-region mismatches, and application configuration issues across environments.",
+    ],
+
+    contributions: [
+      "Migrated Jenkins build execution to an Ubuntu-based AWS EC2 agent, configuring Docker Buildx, QEMU, AWS CLI, and headless Chrome. Resolved WebSocket connectivity, Nginx reverse-proxy, file-permission, and environment PATH issues.",
+    ],
+
+    // Jenkins, Linux, and AWS gained skill records on 2026-11-19, when Randi
+    // classified them, with Docker, as professional experience (SUP-018). Git is
+    // evidenced by the branch-based deployment workflows.
+    technologyIds: ["skill-jenkins", "skill-docker", "skill-linux", "skill-aws", "skill-git"],
+
+    disciplines: ["infrastructure"],
+
+    confidentialityClass: "sanitized",
+    publicationStatus: "published",
+    sortOrder: 1,
+  }),
+
+  defineExperience({
+    id: "experience-zettabyte-backend-developer",
+
+    companyName: "Zettabyte Pte Ltd",
+    position: "Backend Developer",
+
+    startDate: "2025-04-01",
+    endDate: "2026-07-01",
+    isCurrent: false,
+
+    locationOrArrangement: "Sleman, Yogyakarta, Indonesia",
+
+    // Past tense since 2026-11-18; the final sentence states the move, in the
+    // same form the two earlier roles use for their progression.
+    summary:
+      "I developed and maintained backend services and data-processing flows for academic and " +
+      "administrative applications. My work covered API and database design, service " +
       "integrations, background processing, multi-environment troubleshooting, requirement " +
-      "analysis, regression assessment, and verification of changes before release.",
+      "analysis, regression assessment, and verification of changes before release. In " +
+      "August 2026 I moved to the infrastructure team as an AI Delivery Engineer.",
 
     responsibilities: [
       "Develop and maintain Node.js and GraphQL backend services and MongoDB data-processing flows for academic and administrative applications.",
@@ -53,6 +111,7 @@ export const experience = [
     contributions: [
       "Built GraphQL queries and reusable MongoDB aggregation pipelines for dynamic fields, filtering, sorting, pagination, and Excel export while reducing duplicated retrieval logic.",
       "Contributed to email, notification, Excel, PDF, and document-processing integrations, including background jobs, delivery-status handling, environment configuration, and cross-service troubleshooting.",
+      "Built a Node.js audit-log service using Redis and BullMQ to record actors, business actions, affected entities, request context, and failures for traceability.",
     ],
 
     technologyIds: [
@@ -65,15 +124,17 @@ export const experience = [
       "skill-ai-assisted-engineering",
     ],
 
+    disciplines: ["backend"],
+
     confidentialityClass: "sanitized",
     publicationStatus: "published",
-    sortOrder: 1,
+    sortOrder: 2,
   }),
 
   defineExperience({
     id: "experience-zettabyte-backend-developer-contract",
 
-    companyName: "ZettaByte Pte Ltd",
+    companyName: "Zettabyte Pte Ltd",
     position: "Backend Developer, Contract",
 
     startDate: "2024-11-01",
@@ -108,15 +169,17 @@ export const experience = [
       "skill-git",
     ],
 
+    disciplines: ["backend"],
+
     confidentialityClass: "sanitized",
     publicationStatus: "published",
-    sortOrder: 2,
+    sortOrder: 3,
   }),
 
   defineExperience({
     id: "experience-zettabyte-backend-developer-intern",
 
-    companyName: "ZettaByte Pte Ltd",
+    companyName: "Zettabyte Pte Ltd",
     position: "Backend Developer Intern",
 
     startDate: "2024-07-01",
@@ -143,8 +206,10 @@ export const experience = [
 
     technologyIds: ["skill-nodejs", "skill-mongodb", "skill-rest-apis", "skill-git"],
 
+    disciplines: ["backend"],
+
     confidentialityClass: "sanitized",
     publicationStatus: "published",
-    sortOrder: 3,
+    sortOrder: 4,
   }),
 ];

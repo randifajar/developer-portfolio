@@ -6,17 +6,26 @@
  */
 
 /**
- * Homepage section anchors.
+ * In-page anchors: the Overall page's linked sections and the footer.
  *
- * The navigation links to these and the corresponding sections declare them as
- * `id` attributes (UX 6.3, FAC-NAV-002).
+ * The links and the sections they target both read these, so neither can be
+ * renamed without the other. v2's header linked homepage sections by id
+ * (FAC-NAV-002); the V3 header does not (UX3 6.1).
  */
 export const SECTION_IDS = {
-  about: "about",
-  projects: "projects",
-  experience: "experience",
-  skills: "skills",
-  aiWorkflow: "ai-workflow",
+  // V3 Overall (UX3 7.1). `profile` is the Overall hero's action target, so it
+  // must match the mode intro in src/content/modes.ts.
+  profile: "profile",
+  career: "career",
+  work: "work",
+  education: "education",
+  // The Backend and Infrastructure hero actions' targets (UX3 7.2, 7.3): the
+  // first section of each page. They must match the mode intros in
+  // src/content/modes.ts.
+  backendWork: "backend-work",
+  infrastructureWork: "infrastructure-work",
+  // The footer, on every page (UX3 7.7). v2's Contact section and its other
+  // anchors — about, experience, projects, skills, ai-workflow — went in P5.
   contact: "contact",
 } as const;
 
@@ -36,10 +45,22 @@ export const MAIN_CONTENT_ID = "main-content";
 export const RESUME_PATH = "/resume.pdf";
 
 /**
+ * The two disciplines' display names: the mode switch's labels, and the
+ * labels a project row shows for its disciplines (UX3 7.1, 7.4).
+ */
+export const DISCIPLINE_LABELS = {
+  backend: "Backend",
+  infrastructure: "Infrastructure",
+} as const;
+
+/**
  * Public route paths.
  */
 export const ROUTES = {
   home: "/",
+  // The two V3 mode routes (DEC-056). `home` doubles as the Overall mode.
+  backend: "/backend",
+  infrastructure: "/infrastructure",
   projects: "/projects",
   projectDetail: (slug: string) => `/projects/${slug}`,
 } as const;

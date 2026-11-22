@@ -69,14 +69,23 @@ All criteria in this document are `P0` or `P1`.
   - `Randi Fajar Wicaksono`
   - The approved professional title
   - The approved headline
-  - `Yogyakarta, Indonesia`
-  - Availability
+  - `Sleman, Yogyakarta, Indonesia`
+- The page does not state availability.
 
 > **Amended in v1.1 (Issue 3).** This bullet read "Remote-work availability".
 > The neutral wording adopted in SUP-004 states that Randi is open without
 > asserting a form of availability that has not been confirmed, so the criterion
 > now requires availability to be shown rather than requiring it to be remote.
 > The visitor-facing guarantee is unchanged.
+>
+> **Amended again on 2026-11-18 (SUP-011).** Randi asked for the availability
+> statement to be removed altogether. The criterion now forbids it instead of
+> requiring it, and the `availabilityStatement` field is gone from the schema,
+> so it cannot return without a schema change.
+>
+> **Location amended on 2026-11-19 (SUP-015).** "Sleman, Yogyakarta, Indonesia",
+> as in the experience records and on both résumés; it was `Yogyakarta,
+> Indonesia` (DEC-013).
 
 **Acceptance evidence**
 - Homepage screenshot on desktop
@@ -178,6 +187,13 @@ All criteria in this document are `P0` or `P1`.
 - The destination heading is visible.
 - Keyboard navigation remains usable.
 
+> **Superseded by the V3 header (UX3 6, approved 2026-11-18).** The V3 header
+> holds the mode switch and the Résumé menu only; it lists no homepage
+> sections. Sections are reached by scrolling and by in-page actions, Projects
+> and every mode from the footer on every page (UX3 6.4). This criterion stays
+> as the record of v2. On `staging` since V3 P4; on the live site from the V3
+> release.
+
 ---
 
 ## FAC-NAV-003 — Navigate to the Projects Index
@@ -269,6 +285,12 @@ All criteria in this document are `P0` or `P1`.
   8. Contact
   9. Footer
 
+> **Superseded by the V3 Overall page (SUP-012, UX3 7.1).** Hero, profile,
+> engineering focus, career, selected work, how I approach engineering,
+> education and credentials, explore further, then the footer. On `staging`
+> since V3 P5, asserted by `tests/components/overall-page.test.tsx`; on the
+> live site from the V3 release.
+
 ---
 
 ## FAC-HOME-002 — Show primary calls to action
@@ -281,6 +303,11 @@ All criteria in this document are `P0` or `P1`.
 **Then**
 - A `View Projects` action is available.
 - A Resume action is available when an active Resume exists.
+
+> **Amended for V3 (UX3 6.3, 7.1).** The Overall hero's one action is
+> "Explore the journey", into the profile. The Résumé moved to the header,
+> one click away on every page, and projects are reached from selected work,
+> Explore further, and the footer (UX3 6.4). On `staging` since V3 P5.
 
 ---
 
@@ -319,6 +346,12 @@ All criteria in this document are `P0` or `P1`.
 - Two project cards are shown.
 - No empty placeholder card is shown.
 - No fake `Coming Soon` project is shown.
+
+> **Amended for V3 (UX3 7.1).** The Overall page's selected work lists
+> featured case studies that have a discipline, then published overviews, as
+> rows. The personal portfolio has no discipline, so it is listed on the
+> projects page only. The rule against filler stands: with one case study and
+> no published overview, the section shows one row. On `staging` since V3 P5.
 
 ---
 
@@ -375,6 +408,16 @@ All criteria in this document are `P0` or `P1`.
   - Selected responsibilities
   - Selected contributions when available
   - Relevant technologies
+
+> **V3.** The Overall page shows each role's title and dates in the career
+> chapters, and the current role and company in the profile. The full entries
+> are on the mode pages, since V3 P6:
+>
+> - **Backend.** Every backend role, with its summary, responsibilities and
+>   contributions as separate lists, and technologies.
+> - **Infrastructure.** The current role's title and dates in the transition
+>   facts, its summary as the hero description, and its responsibilities and
+>   contribution as the four work areas.
 
 ---
 
@@ -654,6 +697,9 @@ All criteria in this document are `P0` or `P1`.
 **Then**
 - Skills are organized into approved practical groups.
 
+> **V3.** Tools are grouped per discipline as the toolkits of the Backend and
+> Infrastructure pages (UX3 7.2, 7.3), on `staging` since V3 P6.
+
 ---
 
 ## FAC-SKILL-002 — Display evidence-oriented classifications
@@ -668,6 +714,12 @@ All criteria in this document are `P0` or `P1`.
   - Strong Working Skill
   - Professional Experience
   - Currently Learning
+
+> **Amended for V3 (DEC-067, 2026-11-22).** The approved V3.1 design replaces
+> the Skills section with toolkits that carry no levels, so no V3 page shows a
+> classification, and Randi accepted that. The classifications stay in the
+> skills records, where SUP-018 set them. The criterion applies wherever a
+> classification is displayed; V3 has no such surface.
 
 ---
 
@@ -716,6 +768,12 @@ All criteria in this document are `P0` or `P1`.
   - Review process
   - Testing and verification
 
+> **Superseded in V3 (SUP-014).** V3 has no AI section; AI-assisted practice
+> is stated in the engineering approach ("Own the AI's output") and in a
+> project overview. The section left `staging` with the v2 homepage in V3 P5,
+> and its records, schema, and release rule in P5b. On the live site until the
+> V3 release.
+
 ---
 
 ## FAC-AI-002 — Preserve human accountability
@@ -728,6 +786,11 @@ All criteria in this document are `P0` or `P1`.
 **Then**
 - The content does not present AI as the owner of final technical decisions.
 - Randi remains explicitly responsible for review and validation.
+
+> **Still in force in V3.** With the AI records gone (V3 P5b), the schema no
+> longer enforces the pairing; a test does instead, on the engineering practice
+> that states it: "AI tools speed up analysis and testing; the decisions and
+> checks stay mine." (`tests/content/selectors-real-content.test.ts`).
 
 ---
 
@@ -806,6 +869,11 @@ All criteria in this document are `P0` or `P1`.
 
 **Then**
 - Publication fails until exactly one active Resume remains.
+
+> **Amended for V3 (DEC-059).** The rule now applies per variant. There are two
+> résumés, backend and infrastructure, and one active Published résumé of each
+> is the intended state. Two active Published résumés of the same variant still
+> fail. Implemented as cross-record rule 6.
 
 ---
 
