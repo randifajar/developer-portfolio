@@ -13,18 +13,13 @@ import type { ContentSet } from "@/domain/content/validation";
 const SITE_URL = "https://example.com";
 
 /** A stand-in for the V3 hero photograph (OPEN-010), for the release-ready fixture. */
-const HERO_PHOTOGRAPH = {
-  id: "media-hero-photograph",
-  type: "professional-photograph" as const,
-  filePath: "/images/hero-photograph.jpg",
-  altText: "A portrait, for the hero.",
-  width: 1600,
-  height: 2000,
-  ownerType: "profile" as const,
-  ownerId: "profile-randi-fajar-wicaksono",
-  confidentialityClass: "public" as const,
-  publicationStatus: "published" as const,
-};
+/**
+ * The real hero portrait's id (OPEN-010, supplied 2026-11-21). Until then a
+ * stand-in record played this part in the release-ready set; the real one now
+ * does, so removing it from the content fails the hero tests below rather
+ * than leaving them exercising a fixture.
+ */
+const HERO_PHOTOGRAPH_ID = profile.heroPhotoAssetId;
 
 /**
  * A default parameter would treat an explicitly passed `undefined` as "not
@@ -84,7 +79,6 @@ function releaseReadyContent(): ContentSet {
       ...publish,
       headline: "Backend engineering, integrations, and AI-assisted delivery.",
       summary: "A real professional summary describing genuine experience and direction.",
-      heroPhotoAssetId: HERO_PHOTOGRAPH.id,
     },
     experience: experience.map((role) => ({
       ...role,
@@ -105,7 +99,6 @@ function releaseReadyContent(): ContentSet {
         ...publish,
         altText: "A real, descriptive alternative text.",
       })),
-      HERO_PHOTOGRAPH,
     ],
     // The V3 records as they ship. They are release-ready already and are not
     // the subject of these tests.
@@ -138,17 +131,13 @@ function releaseReadyContent(): ContentSet {
  */
 describe("release validation accepts the real content set", () => {
   /**
-   * Except for one thing, deliberately: the V3 hero photograph (OPEN-010).
-   * Until Randi supplies it the Overall hero shows a labelled placeholder, and
-   * the release is refused. Asserting the exact list keeps every other rule
-   * guarded — anything else failing on real content still fails this test —
-   * and when the photograph arrives, this fails too, as the signal to make it
-   * the plain "passes" it was until V3 P10.
+   * From V3 P10 until 2026-11-21 this asserted that exactly one issue remained,
+   * the missing hero photograph (OPEN-010), so that every other rule stayed
+   * guarded meanwhile. The photograph arrived on 2026-11-21, and this is the
+   * plain "passes" it was before.
    */
-  it("passes, except for the hero photograph still to come (OPEN-010)", () => {
-    expect(
-      validateRelease(draftContent(), { siteUrl: SITE_URL }).map((issue) => issue.rule),
-    ).toEqual(["published-hero-photograph-required"]);
+  it("passes", () => {
+    expect(validateRelease(draftContent(), { siteUrl: SITE_URL })).toEqual([]);
   });
 
   it("reports a hero photograph that is unset, unpublished, or without its size (UX3 7.6)", () => {
@@ -163,7 +152,7 @@ describe("release validation accepts the real content set", () => {
       rules({
         ...ready,
         mediaAssets: ready.mediaAssets.map((asset) =>
-          asset.id === HERO_PHOTOGRAPH.id
+          asset.id === HERO_PHOTOGRAPH_ID
             ? { ...asset, publicationStatus: "draft" as const }
             : asset,
         ),
@@ -173,7 +162,7 @@ describe("release validation accepts the real content set", () => {
       rules({
         ...ready,
         mediaAssets: ready.mediaAssets.map((asset) =>
-          asset.id === HERO_PHOTOGRAPH.id ? { ...asset, width: undefined } : asset,
+          asset.id === HERO_PHOTOGRAPH_ID ? { ...asset, width: undefined } : asset,
         ),
       }),
     ).toContain("published-hero-photograph-required");

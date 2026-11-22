@@ -76,7 +76,6 @@ describe("ModeSwitch (UX3 6.2)", () => {
 describe("ResumeMenu (UX3 6.3)", () => {
   const items: readonly ResumeMenuItem[] = [
     { variant: "backend", label: "Backend résumé", href: "/resume.pdf" },
-    { variant: "infrastructure", label: "Infrastructure résumé", href: null },
   ];
 
   it("is a native popover that the button controls, so it works without JavaScript", () => {
@@ -95,13 +94,6 @@ describe("ResumeMenu (UX3 6.3)", () => {
     expect(link).toHaveAttribute("href", "/resume.pdf");
     expect(link).toHaveAttribute("target", "_blank");
     expect(link.getAttribute("rel")).toContain("noopener");
-  });
-
-  it("offers no download for a résumé that awaits approval (FAC-RESUME-003)", () => {
-    render(<ResumeMenu items={items} />);
-
-    expect(screen.queryByRole("link", { name: /infrastructure résumé/i, hidden: true })).toBeNull();
-    expect(screen.getByText("PDF available after approval")).toBeInTheDocument();
   });
 
   it("marks the résumé that matches the current page", () => {
@@ -156,14 +148,42 @@ describe("Header (UX3 6.1)", () => {
     expect(within(banner).getAllByRole("link")).toHaveLength(3);
   });
 
-  it("offers the backend résumé and shows the infrastructure one as awaiting approval", () => {
+  it("lists the backend résumé alone, and nothing for a variant without a PDF (D6, FAC-RESUME-003)", () => {
     render(<Header />);
     const banner = screen.getByRole("banner");
 
     expect(
       within(banner).getByRole("link", { name: /backend résumé/i, hidden: true }),
     ).toHaveAttribute("href", "/resume.pdf");
-    expect(within(banner).getByText("PDF available after approval")).toBeInTheDocument();
+    expect(within(banner).queryByText(/infrastructure résumé/i)).toBeNull();
+    expect(within(banner).queryByText(/after approval/i)).toBeNull();
+  });
+
+  /*
+   * The list follows the content, not a hard-coded variant: publishing an
+   * infrastructure résumé needs a record, not a code change. The content is
+   * swapped for one where the only résumé is the infrastructure variant.
+   */
+  it("lists whichever variant has a Published résumé", async () => {
+    vi.resetModules();
+    const { resume } = await import("@/content/resume");
+    vi.doMock("@/content/resume", () => ({
+      resume: { ...resume, variant: "infrastructure", publicPath: "/resume/infrastructure.pdf" },
+    }));
+
+    try {
+      const { Header: HeaderFromContent } = await import("@/components/layout/header");
+      render(<HeaderFromContent />);
+      const banner = screen.getByRole("banner");
+
+      expect(
+        within(banner).getByRole("link", { name: /infrastructure résumé/i, hidden: true }),
+      ).toHaveAttribute("href", "/resume/infrastructure.pdf");
+      expect(within(banner).queryByText(/backend résumé/i)).toBeNull();
+    } finally {
+      vi.doUnmock("@/content/resume");
+      vi.resetModules();
+    }
   });
 });
 

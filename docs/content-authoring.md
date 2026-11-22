@@ -195,7 +195,7 @@ Five V3 fields sit on older records:
 - **`statement`, on the profile.** The Overall profile statement.
 - **`heroPhotoAssetId`, on the profile.** The Overall hero's photograph (UX3 7.6). Add the
   image under `public/`, register it in `media.ts` as a published `professional-photograph`
-  with its alt text, width, and height, and point this field at it. Until then the hero
+  with its alt text, width, and height, and point this field at it. Without it the hero
   shows a labelled placeholder and release validation refuses the release (OPEN-010).
 - **`disciplines`, on every experience record.** `backend`, `infrastructure`, or both. It
   decides which mode page shows the role, so it is required: a role tagged with
@@ -203,7 +203,8 @@ Five V3 fields sit on older records:
 - **`disciplines`, on a case study.** Optional. It drives the projects filter, and
   a case study without one appears only under "All".
 - **`variant`, on a résumé.** `backend` or `infrastructure` (DEC-059). One
-  active Published résumé per variant (FAC-RESUME-004, amended).
+  active Published résumé per variant (FAC-RESUME-004, amended). The Résumé menu lists
+  only variants with a Published résumé, so adding one is a record, not a code change.
 
 The validation scripts and tests read one shared set, `src/content/content-set.ts`.
 A new content type goes there, and the `ContentSet` type makes forgetting it a

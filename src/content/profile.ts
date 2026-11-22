@@ -117,6 +117,9 @@ export const profile = defineProfile({
   // is Published too and the Hero renders with a photograph.
   photoAssetId: "media-profile-photograph",
 
+  // OPEN-010, resolved 2026-11-21: the V3 hero's larger portrait (UX3 7.6).
+  heroPhotoAssetId: "media-hero-photograph",
+
   publicationStatus: "published",
   updatedAt: "2026-11-19",
 });
