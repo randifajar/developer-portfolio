@@ -307,7 +307,10 @@ test.describe("the sitemap and link previews (V3 plan 3.9)", () => {
     const routes = await previewedRoutes(request);
 
     // Hiding every case study would otherwise empty half of this loop silently.
-    expect(routes.some((route) => route.startsWith("/projects/"))).toBe(true);
+    expect(
+      routes.some((route) => route.startsWith("/projects/")),
+      "no case study is public, so no case-study card was checked",
+    ).toBe(true);
 
     for (const route of routes) {
       await page.goto(route);
