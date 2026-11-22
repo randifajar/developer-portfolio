@@ -5,9 +5,9 @@
 - **Product Name:** Randi Fajar Wicaksono Developer Portfolio
 - **Document Type:** Decision Ledger
 - **Version:** 1.0
-- **Status:** Updated for V3 decisions (approved 2026-11-18 and 2026-11-19; not yet released)
+- **Status:** Updated for V3 decisions (approved 2026-11-18, 2026-11-19, 2026-11-21 and 2026-11-22; not yet released)
 - **Owner:** Randi Fajar Wicaksono
-- **Last Updated:** 2026-11-19
+- **Last Updated:** 2026-11-22
 
 ---
 
@@ -114,6 +114,12 @@ implements a row cites it.
 | DEC-062 | Motion (V3) | **A mode change animates the persistent hero** with the Web Animations API: exit about 220 ms, settled about 0.75 s after the click, and a later click cancels an earlier sequence. The career sequence pins only at 900 px and wider with motion allowed; section reveals are CSS scroll-driven animations; the pointer light runs only on a fine pointer. Under reduced motion all of it is off and every function remains. Extends DEC-053. Built on `staging` in V3 P8, with entrance and reveal moving without fading (UX3 8.6, as built). | Confirmed | Approved V3.1 mockup, 2026-11-18 |
 | DEC-063 | Company name | **"Zettabyte Pte Ltd"**, as on Randi's infrastructure résumé. Corrected on the site in #102. *Correction:* the question put to him said both résumés used "Zettabyte"; the backend résumé in fact mixes the two spellings ("ZettaByte" twice, "Zettabyte" once), so it disagrees with the site until it is replaced. | Confirmed | Randi, 2026-11-19 (V3 plan D12) |
 | DEC-064 | Infrastructure detail | **Tools are named; how the employer's systems are wired is not.** Jenkins, EC2, Ubuntu, Docker Buildx and Nginx appear as on the résumé; the proxy layer in front of hosted services and the AWS email-event service chain are described generically. This is the level P0 shipped, now the rule for the whole site. | Confirmed | Randi, 2026-11-19 (V3 plan I3) |
+| DEC-065 | Case-study section headings (V3) | **The plain section names stay** (Context, Problem, Responsibility, …). The approved V3.1 mockup gave the Jury Process Management case study narrative headlines; they would be new claims, and none was approved, so none ships. | Confirmed | Randi, 2026-11-22 (V3 content and design calls) |
+| DEC-066 | "Not an SRE title" (V3) | **Stated once, on the Infrastructure page** ("A delivery and infrastructure role, not an SRE title"). The mockup's career panel also carried the line; the career section does not. | Confirmed | Randi, 2026-11-22 (V3 content and design calls) |
+| DEC-067 | Skill classification (V3) | **V3 displays no skill classification.** The approved design replaced the Skills section with toolkits that carry no levels. The classifications stay in the skills records (SUP-018), and FAC-SKILL-002 is amended. | Confirmed | Randi, 2026-11-22 (V3 content and design calls) |
+| DEC-068 | Mode labels (V3) | **Title case** (Overall · Backend · Infrastructure), not the mockup's uppercase: title case is tested to keep the header on one row at 390 px (UX3 5); uppercase is wider and untested. | Confirmed | Randi, 2026-11-22 (V3 content and design calls) |
+| DEC-069 | Infrastructure tense (V3) | **Ongoing work in the present tense, completed work in the past**, as the experience record has it. The mockup used the past tense throughout. | Confirmed | Randi, 2026-11-22 (V3 content and design calls) |
+| DEC-070 | Not Found page (V3) | **Keeps its v2 layout for the V3 release.** UX3 specifies no V3 design for it; it works, and passes the link check. | Confirmed | Randi, 2026-11-22 (V3 content and design calls) |
 
 ---
 
@@ -135,7 +141,7 @@ the two easiest to overlook in a column of seven identical values.
 | OPEN-007 | Custom domain at launch | Open Decision — still the Vercel subdomain |
 | OPEN-008 | Docker, Linux and Jenkins classification (V3 plan D9) | **Resolved** 2026-11-19 — all four, with AWS, are professional experience (SUP-018) |
 | OPEN-009 | Proposed V3 wording: profile statement, engineering headline, transition sentence (V3 plan I4) | **Resolved** 2026-11-19 — Randi approved all three as proposed in the V3.1 mockup |
-| OPEN-011 | Titles of the six project overviews (DEC-060) | Open Decision — working titles. Randi, 2026-11-19: "all in here is draft, we can revise it later". The overviews stay Draft until he confirms or renames them |
+| OPEN-011 | Titles of the six project overviews (DEC-060) | Open Decision — working titles. Randi, 2026-11-19: "all in here is draft, we can revise it later". The overviews stay Draft until he confirms or renames them. They stay Draft for the V3 release (Randi, 2026-11-22) |
 | OPEN-010 | V3 hero photograph (V3 plan I1) | **Resolved** 2026-11-21 — Randi supplied a larger version of the v2 portrait, 1254×1254, published as `media-hero-photograph`; release validation passes again. The 400×400 portrait from OPEN-005 was too small for the hero. The rule stays (`published-hero-photograph-required`), so the hero cannot ship with its placeholder |
 
 ---
