@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { type APIRequestContext, type Page, expect, test } from "@playwright/test";
 import { projects } from "@/content/projects";
 
 test.describe("public routes (NFAC-REL-001)", () => {
@@ -265,9 +265,28 @@ test.describe("post-launch indexing posture", () => {
 });
 
 /**
- * V3 P9: the mode routes are discoverable and preview as themselves.
+ * V3 P9: the mode routes are discoverable, and every public route previews as
+ * itself (V3 plan 3.9). The Projects index and the case studies were added
+ * after V3 shipped without their cards.
  */
-test.describe("mode routes in the sitemap and link previews (V3 plan 3.9)", () => {
+test.describe("the sitemap and link previews (V3 plan 3.9)", () => {
+  const registeredRoutes = projects.map((project) => `/projects/${project.slug}`);
+
+  /** The fixed public routes, then every registered case study that is public. */
+  async function previewedRoutes(request: APIRequestContext): Promise<string[]> {
+    const routes = ["/", "/backend", "/infrastructure", "/projects"];
+
+    for (const route of registeredRoutes) {
+      if ((await request.get(route)).status() === 200) routes.push(route);
+    }
+
+    return routes;
+  }
+
+  function metaContent(page: Page, selector: string): Promise<string | null> {
+    return page.locator(selector).first().getAttribute("content");
+  }
+
   test("the sitemap lists both mode routes", async ({ request }) => {
     const sitemap = await (await request.get("/sitemap.xml")).text();
 
@@ -276,17 +295,89 @@ test.describe("mode routes in the sitemap and link previews (V3 plan 3.9)", () =
     }
   });
 
-  test("each mode route has its own social card, and it is served", async ({ page, request }) => {
-    for (const route of ["/backend", "/infrastructure"]) {
+  test("each public route has its own social card, and it is served", async ({ page, request }) => {
+    const routes = await previewedRoutes(request);
+
+    // Hiding every case study would otherwise empty half of this loop silently.
+    expect(routes.some((route) => route.startsWith("/projects/"))).toBe(true);
+
+    for (const route of routes) {
       await page.goto(route);
-      const image = await page.locator('meta[property="og:image"]').first().getAttribute("content");
-
-      expect(image, route).toContain(`${route}/opengraph-image`);
-
+      const image = await metaContent(page, 'meta[property="og:image"]');
+      expect(image, `${route} declares no og:image`).toBeTruthy();
       const { pathname, search } = new URL(image!);
+
+      // Its own card, not an ancestor's: the home card sits at the root and
+      // every other route's under its own path. Mode cards add a hash suffix.
+      expect(pathname, route).toMatch(
+        new RegExp(`^${route === "/" ? "" : route}/opengraph-image(-\\w+)?$`),
+      );
+      expect(await metaContent(page, 'meta[name="twitter:image"]'), route).toBe(image);
+
       const response = await request.get(`${pathname}${search}`);
       expect(response.status(), route).toBe(200);
       expect(response.headers()["content-type"], route).toContain("image/png");
+
+      // The size it is served at, read from the PNG rather than from the
+      // og:image:width tag that claims it: the IHDR chunk holds width and height
+      // as big-endian integers at bytes 16 and 20.
+      const png = await response.body();
+      expect([png.readUInt32BE(16), png.readUInt32BE(20)], route).toEqual([1200, 630]);
+    }
+  });
+
+  /**
+   * /projects once set no `twitter` fields, so it previewed on X with the home
+   * page's title and description under its own Open Graph ones.
+   */
+  test("each route's preview on X says what its Open Graph preview says", async ({
+    page,
+    request,
+  }) => {
+    for (const route of await previewedRoutes(request)) {
+      await page.goto(route);
+
+      expect(await metaContent(page, 'meta[name="twitter:title"]'), route).toBe(
+        await metaContent(page, 'meta[property="og:title"]'),
+      );
+      expect(await metaContent(page, 'meta[name="twitter:description"]'), route).toBe(
+        await metaContent(page, 'meta[property="og:description"]'),
+      );
+    }
+  });
+
+  /**
+   * The card route keeps the page's privacy guarantee (DEC-047, FAC-NAV-006): a
+   * hidden case study's card is byte-identical to an unknown slug's. The card
+   * path comes from a public case study's og:image, so the check runs against
+   * the route actually served and cannot pass on a 404 for a path that was
+   * never a card.
+   */
+  test("a hidden case study's card cannot be told apart from an unknown slug's", async ({
+    page,
+    request,
+  }) => {
+    const publicRoute = (await previewedRoutes(request)).find((route) =>
+      route.startsWith("/projects/"),
+    );
+    expect(publicRoute, "no public case study to take the card path from").toBeDefined();
+
+    await page.goto(publicRoute!);
+    const image = await metaContent(page, 'meta[property="og:image"]');
+    const cardOf = (route: string) => new URL(image!).pathname.replace(publicRoute!, route);
+
+    expect((await request.get(cardOf(publicRoute!))).status()).toBe(200);
+
+    const unknown = await request.get(cardOf("/projects/definitely-not-a-real-project"));
+    expect(unknown.status()).toBe(404);
+    const unknownBody = await unknown.text();
+
+    for (const route of registeredRoutes) {
+      if ((await request.get(route)).status() === 200) continue;
+
+      const response = await request.get(cardOf(route));
+      expect(response.status(), route).toBe(404);
+      expect(await response.text(), route).toBe(unknownBody);
     }
   });
 });

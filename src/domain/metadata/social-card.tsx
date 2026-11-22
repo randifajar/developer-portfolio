@@ -6,11 +6,14 @@ import {
   getPublishedProfile,
   getSiteConfig,
 } from "@/domain/content/selectors";
+import type { ProjectCaseStudy } from "@/domain/content/schemas";
 import type { Mode } from "@/domain/content/types";
 import { parseSurfaceTokens } from "@/domain/design/tokens";
+import { projectsIndexPreview } from "@/domain/metadata/build-metadata";
 
 /**
- * The social sharing cards (UX 18.3; V3 plan 3.9): one per mode route.
+ * The social sharing cards (UX 18.3; V3 plan 3.9): the site's, and one for
+ * each mode route, the Projects index, and each Published case study.
  *
  * Typographic only. UX 18.3 forbids a project screenshot here, because a
  * screenshot could carry confidential detail into a link preview that appears
@@ -92,6 +95,34 @@ export function modeCardText(mode: Exclude<Mode, "overall">): SocialCardText | n
   return intro
     ? { kicker: intro.eyebrow, headline: intro.headingLines.join(" "), detail: intro.description }
     : null;
+}
+
+/** The Projects index's card: its heading and the description its link preview carries. */
+export function projectsCardText(): SocialCardText {
+  const { title, description } = projectsIndexPreview;
+
+  return { kicker: getSiteConfig().ownerName, headline: title, detail: description };
+}
+
+/**
+ * The line above a case study's title. On its own it is also the `alt` of every
+ * case study's card, because Next takes a card's alt as one constant per route
+ * file rather than one per project.
+ */
+export function caseStudyCardKicker(): string {
+  return `${getSiteConfig().ownerName} · Case study`;
+}
+
+/**
+ * A case study's card: its title and summary, the only project fields approved
+ * for a link preview (NFAC-SEC-006; the note at the top of build-metadata.ts).
+ * The parameter's type exposes nothing else, so reading a confidentiality note
+ * or an internal detail here would take a deliberate cast.
+ */
+export function caseStudyCardText(
+  project: Pick<ProjectCaseStudy, "title" | "summary">,
+): SocialCardText {
+  return { kicker: caseStudyCardKicker(), headline: project.title, detail: project.summary };
 }
 
 export function renderSocialCard({ kicker, headline, accent, detail }: SocialCardText) {

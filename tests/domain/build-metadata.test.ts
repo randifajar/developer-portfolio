@@ -101,6 +101,21 @@ describe("projects index metadata", () => {
   it("canonicalises to /projects", () => {
     expect(buildProjectsIndexMetadata().alternates?.canonical).toBe("/projects");
   });
+
+  /**
+   * V3 shipped this route without `twitter` fields, so it inherited the root's:
+   * a link to /projects previewed on X with the home page's title and
+   * description.
+   */
+  it("gives the preview on X its own title and description (NFAC-SEO-001)", () => {
+    const metadata = buildProjectsIndexMetadata();
+
+    expect(metadata.twitter?.title).toBe("Projects — Randi Fajar Wicaksono");
+    expect(metadata.twitter?.title).toBe(metadata.openGraph?.title);
+    expect(metadata.twitter?.description).toBe(metadata.description);
+    expect(metadata.twitter?.title).not.toBe(buildRootMetadata().twitter?.title);
+    expect(JSON.stringify(metadata.twitter)).toContain("summary_large_image");
+  });
 });
 
 describe("project metadata", () => {
