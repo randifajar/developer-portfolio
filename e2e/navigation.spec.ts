@@ -283,8 +283,16 @@ test.describe("the sitemap and link previews (V3 plan 3.9)", () => {
     return routes;
   }
 
-  function metaContent(page: Page, selector: string): Promise<string | null> {
-    return page.locator(selector).first().getAttribute("content");
+  /**
+   * A meta tag's content, or null when the page has none. Counted first because
+   * getAttribute waits for a missing element until the test times out, which
+   * turned "this route has no og:image" into a 30-second timeout naming no route.
+   * The head is server-rendered, so it is complete once goto resolves.
+   */
+  async function metaContent(page: Page, selector: string): Promise<string | null> {
+    const meta = page.locator(selector);
+
+    return (await meta.count()) > 0 ? meta.first().getAttribute("content") : null;
   }
 
   test("the sitemap lists both mode routes", async ({ request }) => {
@@ -364,6 +372,7 @@ test.describe("the sitemap and link previews (V3 plan 3.9)", () => {
 
     await page.goto(publicRoute!);
     const image = await metaContent(page, 'meta[property="og:image"]');
+    expect(image, `${publicRoute} declares no og:image`).toBeTruthy();
     const cardOf = (route: string) => new URL(image!).pathname.replace(publicRoute!, route);
 
     expect((await request.get(cardOf(publicRoute!))).status()).toBe(200);
