@@ -194,6 +194,8 @@ describe("the Projects and case study cards", () => {
   /**
    * The rule build-metadata.ts follows for a project's link preview, applied to
    * its image: the title and summary, never a field not meant for a preview.
+   * The project passed in carries such fields; exact equality on the card's
+   * text is what rules each of them out, in any position.
    */
   it("shows a case study's title and summary and nothing else (NFAC-SEC-006)", async () => {
     useRealContent();
@@ -207,16 +209,11 @@ describe("the Projects and case study cards", () => {
       context: "Internal context detail.",
     } as unknown as ProjectCaseStudy;
 
-    const card = caseStudyCardText(project);
-    const serialised = JSON.stringify(card);
-
-    expect(card).toEqual({
+    expect(caseStudyCardText(project)).toEqual({
       kicker: "Randi Fajar Wicaksono · Case study",
       headline: "Alpha Project",
       detail: "A public summary of the work.",
     });
-    expect(serialised).not.toContain("SENSITIVE NOTE");
-    expect(serialised).not.toContain("Internal context detail");
   });
 
   /**
