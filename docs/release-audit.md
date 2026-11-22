@@ -1350,8 +1350,52 @@ Unlike v2, V3 changed claims, and each came from Randi:
 
 ### Production verification
 
-**Pending.** This section is completed after the promotion merges, with
-`release-checklist.md` step 9 run against the live site.
+**Live on 2026-11-22.** Randi merged the promotion (#120) at 22:13 (UTC+7) as
+`904eb85` on `production`. Its tree is identical to `staging`'s (`78156c3`), and
+Vercel reported the Production Deployment complete at 22:13:48. CI passed on
+`904eb85`: `quality`, `e2e`, and `audit`.
+
+`release-checklist.md` step 9 ran twice against
+https://randi-fajar-wicaksono.vercel.app, at 22:15 and 22:25, since builds can
+differ before propagation settles. The site gave the same result in both runs:
+
+| Check | Result |
+|---|---|
+| `/`, `/backend`, `/infrastructure`, `/projects`, both case studies: 200, V3 headings, canonical on the production domain | Pass |
+| `/projects` lists both Published case studies, and each opens directly | Pass |
+| `/resume.pdf` and the hero portrait are byte-identical to the files in `904eb85`; the portrait carries no metadata chunk and loads through `/_next/image` | Pass |
+| An unknown route, an unknown project slug, and an overview's id used as a slug: 404, "Page not found" | Pass |
+| No Draft overview title, summary, or contribution in any page's HTML, its DOM text, or the client JavaScript it loads | Pass. Two overview titles are also Backend work-area titles, and appear on `/backend` only |
+| GitHub, LinkedIn, and the email address are linked from every page; the GitHub profile answers 200 | Pass |
+| The sitemap lists exactly the six Published pages, each 200; `robots.txt` allows the site and names the sitemap | Pass |
+| No horizontal overflow at 320 px, on every page above | Pass |
+| Page text: no phone number, no email address but the public one, and none of the design reference's names, the service names DEC-064 keeps out of public text, or the internal application names | Pass |
+| `/`, `/backend`, `/infrastructure`: complete Open Graph and Twitter metadata, and a 1200×630 card of the declared size | Pass |
+| `/projects` and both case studies: a social card | **Not met**, below |
+
+One check changed between the runs, and it was the script, not the site. In the
+first run, the email check read the DOM text with no space between elements, so
+"Get in touch.", the address, and "Copy" fused into one token and the check
+failed. The page HTML held only the public address. The corrected check passed in
+the second run.
+
+**`/projects` and the case studies have no social card.** Plan 3.9 lists Open
+Graph images for both. P9 built cards for the two mode routes only, and no test
+covers the other pages. Their metadata sets Open Graph fields without an image,
+and neither route has a card of its own, so a shared link to them previews
+without one. The projects index also sets no Twitter fields, so its preview on X
+carries the home page's title and description. The code behind both is unchanged
+since v2, on the same Next.js version and lockfile, so the gap is older than V3.
+Separately, the cards' text shows uneven word spacing in places, for example
+between "Software" and "Engineer". Both are listed under "Outstanding after v3".
+
+`staging` was then synced with `production` (`git-workflow.md` §10): `2b0ac97`, a
+merge commit with no file changes, pushed after `npm run check` and
+`npm run test:e2e` passed on it.
+
+Not checked by Claude: LinkedIn and the email action, which need a human
+(LinkedIn answers automated requests with HTTP 999); Lighthouse; and how each
+platform renders a shared link.
 
 ### Outstanding after v3
 
@@ -1361,5 +1405,6 @@ Unlike v2, V3 changed claims, and each came from Randi:
 | LinkedIn, GitHub, and the email action, step 5 | Randi, by hand. The link check reports them as `manual` |
 | Lighthouse on the preview, step 8 | Not run. The preview sits behind Vercel login, and Lighthouse is not installed in this repository |
 | Overview titles (OPEN-011) | Open. The six overviews stay Draft |
+| Social cards for `/projects` and each case study (plan 3.9) | Open, found at production verification. The projects index also lacks Twitter fields of its own, and the cards' word spacing is uneven in places |
 | Safe project visuals (OPEN-006), custom domain (OPEN-007) | Open, unchanged since v2 |
 | The v2 résumé lists Backend Developer as current | By Randi's decision (D6). Only a new PDF from him changes it |
