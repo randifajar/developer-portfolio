@@ -1237,3 +1237,129 @@ this crash appear. Re-run alone: 211 passed, zero crash markers.
 | #94, typescript-eslint 8.73.0 | **Closed** — merged as `c77fdf6`. Full audit, dev included, reports zero |
 | CV, LinkedIn, applications | Outside the repository. Any copy of the old URL now opens someone else's portfolio |
 | `eslint-config-next` 16.3.0 alongside `next` 16.4.6 | No advisory; noted so the mismatch reads as known |
+
+---
+
+## 2026-11-22 — v3 "Cinematic Blue Editorial" release
+
+| | |
+|---|---|
+| Commits audited | `0d8b998` … `257d728` on `staging`, twenty squash merges (PRs #99–#118), and the pull request that adds this entry |
+| Deployment | `https://randi-fajar-wicaksono.vercel.app`, through one promotion pull request, `staging` → `production` |
+| Content state | Changed, deliberately: the current role, the positioning, and the V3 records. Every change came from Randi; see "Content changes" |
+| Purpose | Release V3, built under `docs/plans/2026-11-18-v3-implementation-plan.md`, and record what building and gating it surfaced |
+
+V3 is the first release assembled on `staging` (`git-workflow.md` §2, added
+2026-11-18). Every phase merged there while `production` stayed on `25a31d5`, so the
+live site was never half old and half new.
+
+### What shipped
+
+| Phase | Outcome | PR |
+|---|---|---|
+| — | `staging` established as the pre-production branch | #100 |
+| P0 | The current role brought up to date; the availability statement removed | #99 |
+| P1 | V3 decisions recorded; UX/UI specification v3.0 | #101 |
+| P2 | The 2026-11-19 content decisions; V3 content records; project overviews and résumé variants | #102, #103, #104 |
+| P3 | Design system | #105 |
+| P4 | Header, footer, and mode routes | #106 |
+| P5 | Overall page with the persistent mode hero; AI practice records and the neutral surface retired | #107, #108 |
+| P6 | Backend and Infrastructure pages | #109 |
+| P7 | Projects index with a discipline filter; case-study restyle | #110 |
+| P8 | Mode-change animation, hero entrance, pointer light, reveal; pinned career sequence | #111, #112 |
+| P9 | Mode routes in the sitemap; a social card per mode | #113 |
+| P10 | Header and hero hardening; the release held for the photograph | #114 |
+| — | The v2 documents describe the design reference generically | #115 |
+| — | The plan's status brought up to date | #117 |
+| — | CI's browser install bounded and retried | #116 |
+| I1, I2 | The hero portrait; the résumé decision | #118 |
+
+### Content changes
+
+Unlike v2, V3 changed claims, and each came from Randi:
+
+- **The current role.** AI Delivery Engineer on the infrastructure team since
+  August 2026; Backend Developer ends July 2026 (P0). The availability statement is
+  removed (SUP-011).
+- **The positioning.** Software Engineer · Backend & Infrastructure (SUP-010).
+- **Smaller corrections.** The company is spelled "Zettabyte Pte Ltd" (DEC-063).
+  The target-roles list is removed (SUP-017). Docker, Linux, Jenkins, and AWS are
+  professional experience (SUP-018).
+- **Proposed wording.** The profile statement, the engineering headline, and the
+  transition sentence were approved on 2026-11-19 (OPEN-009).
+- **Infrastructure detail.** Tools are named; how the employer's systems are wired
+  is not (DEC-064).
+- **Not shipped.** The six project overviews stay Draft until Randi confirms their
+  titles (OPEN-011).
+
+### How it was gated
+
+- **Every phase.** `npm run check` and `npm run test:e2e` ran locally, never
+  concurrently, and `quality` and `e2e` ran in CI.
+- **Who merged.** Randi merged P0 to P4 (#99–#106). From P5 on, Claude merged into
+  `staging` under approvals Randi gave in the conversation: a standing one on
+  2026-11-20 for the implementation phases, and one per pull request after that.
+  Each of those merges was confirmed to produce the tree that had been tested. The
+  promotion to `production` is his.
+- **Release validation.** It failed from P10 until the photograph arrived (#118), by
+  design: a release rule refused the hero's placeholder.
+- **The final gate.** `SITE_URL=https://randi-fajar-wicaksono.vercel.app npm run
+  release:check`, on the tree being promoted. Its output is recorded in the promotion
+  pull request, since this entry is part of that tree.
+
+### What building it surfaced
+
+1. **A test asserted a width the specification never named.** P10's header test
+   also checked 375 px. Chromium on Windows kept the header on one row there;
+   Chromium on Linux, in CI, wrapped it (#114). The test now asserts only the widths
+   UX3 5 names, 390 and 360 px.
+2. **The browser install could take the whole `e2e` job.** On #114 a slow Ubuntu
+   mirror, at about 50 kB/s, used the job's 25 minutes before any test ran, and
+   GitHub reported the job as "cancelled". #116 bounds the step and retries it. Its
+   first `staging` run installed in 101 s, on the first attempt.
+3. **Load on a shared machine failed a test again.** A local `e2e` run for #117
+   failed one Chromium navigation test while another session's gate ran on the same
+   machine. On a quiet machine the same tree passed, and that test failed in none of
+   the ten CI runs checked. The 2026-11-17 entry records the same class of failure.
+4. **Public text named what it should not.**
+   - #99's description quoted the proxy and AWS email-service names that #99 itself
+     had generalised. It was edited, and Randi deleted its four earlier revisions
+     from GitHub's edit history.
+   - Three v2 documents named the design reference; #115 describes it generically.
+   - The old text of the three documents stays in git history, which is not
+     rewritten, and copies of the old description may exist outside GitHub.
+
+### Decisions taken at the release
+
+- **The hero portrait** (OPEN-010, resolved 2026-11-21). A larger version of the v2
+  portrait, committed without its embedded metadata chunk at Randi's request, and
+  otherwise pixel-identical to the file he supplied.
+- **The résumé** (D6, decided 2026-11-21). The v2 PDF stays the only résumé, as it
+  is. Its phone number stays public, and it still lists the backend role as current
+  while the site shows the infrastructure role from August 2026.
+  - The Résumé menu lists the backend résumé alone.
+  - `/resume.pdf` keeps its address, so no redirect was needed.
+- **Content and design calls** (DEC-065 to DEC-070, 2026-11-22). Case-study
+  sections keep their plain names. "Not an SRE title" is stated on the
+  Infrastructure page only. V3 shows no skill classification (FAC-SKILL-002
+  amended). Mode labels stay in title case. Infrastructure work keeps the present
+  tense for ongoing work. The Not Found page keeps its v2 layout.
+- **`Protect staging`**, created 2026-11-21 (ruleset 27785593). It blocks deletion
+  and force pushes, and nothing more, so the sync merge from `production` can still
+  be pushed.
+
+### Production verification
+
+**Pending.** This section is completed after the promotion merges, with
+`release-checklist.md` step 9 run against the live site.
+
+### Outstanding after v3
+
+| Item | State |
+|---|---|
+| Content approval, checklist step 3 | Randi only: every Published string read and confirmed |
+| LinkedIn, GitHub, and the email action, step 5 | Randi, by hand. The link check reports them as `manual` |
+| Lighthouse on the preview, step 8 | Not run. The preview sits behind Vercel login, and Lighthouse is not installed in this repository |
+| Overview titles (OPEN-011) | Open. The six overviews stay Draft |
+| Safe project visuals (OPEN-006), custom domain (OPEN-007) | Open, unchanged since v2 |
+| The v2 résumé lists Backend Developer as current | By Randi's decision (D6). Only a new PDF from him changes it |

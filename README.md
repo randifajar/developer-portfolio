@@ -1,18 +1,18 @@
 # Developer Portfolio
 
-Personal developer portfolio of **Randi Fajar Wicaksono**, a backend developer
-based in Yogyakarta, Indonesia.
+Personal developer portfolio of **Randi Fajar Wicaksono**, a software engineer
+across backend and infrastructure, based in Sleman, Yogyakarta, Indonesia.
 
-It presents professional experience, selected project case studies, technical
-skills, and an account of AI-assisted engineering practice — with the
-truthfulness and confidentiality rules enforced in code rather than left to
-review.
+It presents his work in three modes — Overall, Backend, and Infrastructure —
+with his career, selected case studies, and the engineering approach behind
+them. The truthfulness and confidentiality rules are enforced in code rather
+than left to review.
 
 **Live:** <https://randi-fajar-wicaksono.vercel.app/>
 
-**Status:** Production. Version 2 is deployed, indexed, and verified against
-[`docs/release-checklist.md`](docs/release-checklist.md) rather than inferred
-from a successful build. `npm run release:check` passes end to end: formatting,
+**Status:** Production. Version 3 is deployed from `production`, and each
+release is verified against [`docs/release-checklist.md`](docs/release-checklist.md)
+rather than inferred from a successful build. `npm run release:check` passes end to end: formatting,
 linting, strict type checking, content validation, unit and component tests, a
 production build, release validation, link validation, end-to-end and
 accessibility tests across three browser engines, and a production dependency
@@ -48,7 +48,9 @@ is the only path from content to pages, and it applies a single eligibility
 rule: Published, and classified Public or Sanitized. Project routes are
 generated at build time from that selector, so an unpublished project has no
 route, no sitemap entry, and no metadata — its absence is what hides it, not a
-runtime check.
+runtime check. The three modes (`/`, `/backend`, `/infrastructure`) share one
+layout whose hero persists across a mode change, and only six client components
+run in the browser.
 
 Full detail: [`docs/architecture.md`](docs/architecture.md).
 
@@ -77,16 +79,19 @@ a secret. It falls back to `http://localhost:3000` in development.
 
 ## Commands
 
-| Command                    | Purpose                                                       |
-| -------------------------- | ------------------------------------------------------------- |
-| `npm run dev`              | Development server                                            |
-| `npm run build`            | Production build                                              |
-| `npm run check`            | Format, lint, typecheck, content validation, tests, build     |
-| `npm run test:run`         | Unit and component tests                                      |
-| `npm run test:e2e`         | End-to-end and accessibility tests against a production build |
-| `npm run validate:content` | Structural content validation                                 |
-| `npm run validate:release` | Launch gate — content completeness and placeholder scan       |
-| `npm run audit:prod`       | Production dependency audit                                   |
+| Command                    | Purpose                                                                               |
+| -------------------------- | ------------------------------------------------------------------------------------- |
+| `npm run dev`              | Development server                                                                    |
+| `npm run build`            | Production build                                                                      |
+| `npm run check`            | Format, lint, typecheck, content validation, tests, build                             |
+| `npm run test:run`         | Unit and component tests                                                              |
+| `npm run test:e2e`         | End-to-end and accessibility tests against a production build                         |
+| `npm run validate:content` | Structural content validation                                                         |
+| `npm run validate:release` | Launch gate — content completeness and placeholder scan                               |
+| `npm run check:links`      | Link validation — every public link and file resolves (needs network)                 |
+| `npm run check:contrast`   | Prints the colour contrast matrix; the gate itself is a test                          |
+| `npm run audit:prod`       | Production dependency audit                                                           |
+| `npm run release:check`    | The whole release gate: `check`, release and link validation, end-to-end tests, audit |
 
 `npm run check` is what CI runs. Run it before opening a pull request.
 
@@ -96,17 +101,24 @@ a secret. It falls back to `http://localhost:3000` in development.
 
 ```text
 src/content/
-├── site.ts          Site name, links, metadata defaults
-├── profile.ts       Professional identity
-├── experience.ts    Work history
-├── skills.ts        Technical skills and classification
-├── ai-practices.ts  AI-assisted engineering workflow
-├── resume.ts        Active Resume metadata
-├── contact.ts       Email and external profiles
-├── media.ts         Images and their alt text
+├── site.ts               Site name, links, metadata defaults
+├── profile.ts            Professional identity
+├── modes.ts              The hero copy for each of the three modes
+├── career.ts             The career chapters on the Overall page
+├── experience.ts         Work history
+├── discipline-pages.ts   The Backend and Infrastructure pages below their heroes
+├── practices.ts          How I approach engineering
+├── toolkits.ts           Grouped tool lists on the Backend and Infrastructure pages
+├── skills.ts             Technical skills and classification
+├── credentials.ts        Education, certifications, and languages
+├── resume.ts             Active Resume metadata
+├── contact.ts            Email and external profiles
+├── media.ts              Images and their alt text
+├── project-overviews.ts  Résumé projects shown briefly, without a case study
+├── content-set.ts        Every record, assembled for validation
 └── projects/
-    ├── index.ts     The project registry
-    └── *.ts         One module per case study
+    ├── index.ts          The project registry
+    └── *.ts              One module per case study
 ```
 
 ### Adding or updating a project
@@ -170,7 +182,8 @@ exercised against a deliberately violating fixture instead.
 
 ## CI/CD
 
-Pull requests to `production` run three jobs, two of which are required:
+Pull requests to `production` and `staging`, and pushes to either, run three
+jobs, two of which are required:
 `quality` (format, lint, typecheck, content validation, tests, build) and `e2e`
 (all three browser engines plus accessibility). The job names are matched by
 exact string in the branch ruleset, so renaming one silently detaches the
@@ -190,7 +203,9 @@ verified manually against [`docs/release-checklist.md`](docs/release-checklist.m
 
 `production` is protected by a branch ruleset with no bypass actors, so it
 applies to the repository owner too: pull request required, squash merge only,
-both checks green, linear history, force pushes and deletions blocked.
+both checks green, linear history, force pushes and deletions blocked. `staging`
+has its own ruleset, which blocks deletion and force pushes and nothing more, so
+the sync merge from `production` can still be pushed directly.
 
 The release audit workflow is manual rather than automatic, because running the
 full gate on every push would be slow without being more informative. Running it
@@ -241,7 +256,7 @@ Raw AI session exports are never published.
 | [`docs/content-authoring.md`](docs/content-authoring.md) | How to write and publish content truthfully            |
 | [`docs/product/`](docs/product/)                         | PRD, acceptance criteria, UX/UI spec, technical design |
 | [`docs/governance/`](docs/governance/)                   | Git workflow and GitHub configuration                  |
-| [`docs/plans/`](docs/plans/)                             | Implementation plan                                    |
+| [`docs/plans/`](docs/plans/)                             | Implementation plans, for v1 and V3                    |
 
 ---
 
