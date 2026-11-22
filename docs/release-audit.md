@@ -1394,16 +1394,42 @@ merge commit with no file changes, pushed after `npm run check` and
 `npm run test:e2e` passed on it.
 
 Not checked by Claude: LinkedIn and the email action, which need a human
-(LinkedIn answers automated requests with HTTP 999); Lighthouse; and how each
-platform renders a shared link.
+(LinkedIn answers automated requests with HTTP 999), and how each platform
+renders a shared link.
+
+**The remaining checklist steps, completed the same evening:**
+
+- **Step 3, content approval.** Randi read the published text and confirmed that
+  every claim is true.
+- **Step 5, links by hand.** Randi opened LinkedIn, GitHub, and the email action;
+  all three work.
+- **Step 8, performance.** Run by Claude at Randi's request, through PageSpeed
+  Insights (Lighthouse 13.6.0) at 23:22, against production rather than the
+  preview, since V3 was live. One run per page:
+
+| Page | Device | Performance | Accessibility | Best Practices | SEO | LCP | CLS | TBT |
+|---|---|---|---|---|---|---|---|---|
+| `/` | Mobile | 97 | 100 | 100 | 100 | 1.2 s | 0 | 10 ms |
+| `/` | Desktop | 100 | 100 | 100 | 100 | 0.5 s | 0 | 10 ms |
+| `/projects` | Mobile | 100 | 100 | 100 | 100 | 0.9 s | 0 | 20 ms |
+| `/projects` | Desktop | 100 | 100 | 100 | 100 | 0.2 s | 0 | 10 ms |
+| `/projects/jury-process-management-integration` | Mobile | 100 | 100 | 100 | 100 | 0.9 s | 0 | 10 ms |
+| `/projects/jury-process-management-integration` | Desktop | 100 | 100 | 100 | 100 | 0.2 s | 0 | 10 ms |
+
+LCP of at most 2.5 s, CLS of at most 0.1, and a Performance score of at least 90
+hold on every page (NFAC-PERF-001, NFAC-PERF-002). INP has no measurement yet: the
+Chrome User Experience Report holds too little real-world data for these pages,
+and Total Blocking Time, the lab's stand-in, is 10–20 ms. The one slow figure is
+the home page's Speed Index on mobile: 4.4 s, against 0.9 s for the other two
+pages on mobile. Its cause was not investigated.
 
 ### Outstanding after v3
 
 | Item | State |
 |---|---|
-| Content approval, checklist step 3 | Randi only: every Published string read and confirmed |
-| LinkedIn, GitHub, and the email action, step 5 | Randi, by hand. The link check reports them as `manual` |
-| Lighthouse on the preview, step 8 | Not run. The preview sits behind Vercel login, and Lighthouse is not installed in this repository |
+| Content approval, checklist step 3 | **Done** 2026-11-22. Randi confirmed every claim is true |
+| LinkedIn, GitHub, and the email action, step 5 | **Done** 2026-11-22, by Randi, by hand |
+| Lighthouse, step 8 | **Done** 2026-11-22, against production; see "Production verification". INP waits for real-user data |
 | Overview titles (OPEN-011) | Open. The six overviews stay Draft |
 | Social cards for `/projects` and each case study (plan 3.9) | Open, found at production verification. The projects index also lacks Twitter fields of its own, and the cards' word spacing is uneven in places |
 | Safe project visuals (OPEN-006), custom domain (OPEN-007) | Open, unchanged since v2 |
