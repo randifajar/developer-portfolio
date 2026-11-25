@@ -53,7 +53,7 @@
     "eslint-config-prettier": "10.1.8",
     "jsdom": "30.0.1",
     "prettier": "3.9.6",
-    "tailwindcss": "4.3.3",
+    "tailwindcss": "4.3.5",
     "tsx": "4.23.15",
     "typescript": "6.0.3",
     "vitest": "4.1.12"
