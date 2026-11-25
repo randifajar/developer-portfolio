@@ -15,6 +15,17 @@ updates:
       prefix: chore
       include: scope
 
+    # Tailwind releases its packages as one version, and @tailwindcss/postcss,
+    # which compiles the site's CSS, requires tailwindcss at exactly its own
+    # version. Updating tailwindcss alone, as Dependabot proposed in #125, makes
+    # npm install both versions and leaves the compiler on the old one. Grouped,
+    # the packages arrive in one pull request.
+    groups:
+      tailwind:
+        patterns:
+          - "tailwindcss"
+          - "@tailwindcss/*"
+
     # Three packages are held back deliberately. Without these rules Dependabot
     # reopens the same pull requests every Monday, each failing CI for a known
     # reason — and a recurring red check trains everyone to stop reading them.

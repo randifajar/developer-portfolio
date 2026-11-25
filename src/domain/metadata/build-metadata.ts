@@ -17,7 +17,8 @@ import { ROUTES } from "@/lib/constants";
  * Only fields already approved for public display are used. A project's
  * metadata comes from its title and summary — never from a confidentiality
  * note, internal identifier, or any field not intended for a link preview
- * (NFAC-SEC-006).
+ * (NFAC-SEC-006). Its social card is held to the same two fields
+ * (social-card.tsx).
  */
 
 /** Metadata shared by every route. */
@@ -70,38 +71,50 @@ export function buildRootMetadata(): Metadata {
   };
 }
 
-/** Metadata for the Projects Index. */
+/**
+ * The Projects Index's own words for a link preview. Its social card shows the
+ * same ones, so the card cannot say something the preview does not.
+ */
+export const projectsIndexPreview = {
+  title: "Projects",
+  description:
+    "Selected project case studies covering the problem, my responsibility, the technical " +
+    "approach, and how each result was verified.",
+} as const;
+
+/**
+ * Metadata for the Projects Index.
+ *
+ * It sets its own `twitter` fields. Without them the route inherits the root's,
+ * and a link to it previewed on X with the home page's title and description.
+ */
 export function buildProjectsIndexMetadata(): Metadata {
   const siteConfig = getSiteConfig();
-  const description =
-    "Selected project case studies covering the problem, my responsibility, the technical " +
-    "approach, and how each result was verified.";
+  const { title, description } = projectsIndexPreview;
 
   return {
-    title: "Projects",
+    title,
     description,
     alternates: { canonical: ROUTES.projects },
     openGraph: {
       type: "website",
-      title: `Projects — ${siteConfig.ownerName}`,
+      title: `${title} — ${siteConfig.ownerName}`,
       description,
       url: absoluteUrl(ROUTES.projects),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} — ${siteConfig.ownerName}`,
+      description,
     },
   };
 }
 
 /**
- * Metadata for a single Project Detail page.
- *
- * Called only after the route has resolved a publicly eligible project, so an
- * unpublished project can never reach this function.
- */
-/**
  * Metadata for a V3 mode route, `/backend` or `/infrastructure` (DEC-056).
  *
  * The description is the mode intro's, so a link preview says what the page
- * says. Per-route social images arrive with V3 P9; until then the default card
- * stands in.
+ * says. The image is the route's own card, from its opengraph-image file.
  */
 export function buildModeMetadata(mode: "backend" | "infrastructure"): Metadata {
   const siteConfig = getSiteConfig();
@@ -127,6 +140,13 @@ export function buildModeMetadata(mode: "backend" | "infrastructure"): Metadata 
   };
 }
 
+/**
+ * Metadata for a single Project Detail page.
+ *
+ * Called only after the route has resolved a publicly eligible project, so an
+ * unpublished project can never reach this function. The image is the case
+ * study's own card, from src/app/projects/[slug]/opengraph-image.tsx.
+ */
 export function buildProjectMetadata(project: ProjectCaseStudy): Metadata {
   const siteConfig = getSiteConfig();
   const canonical = ROUTES.projectDetail(project.slug);

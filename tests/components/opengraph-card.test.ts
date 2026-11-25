@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import type { ProjectCaseStudy } from "@/domain/content/schemas";
 
 /**
  * The social sharing card derives its text from content, not from literals.
@@ -150,5 +151,149 @@ describe("the mode cards follow their intros", () => {
     };
 
     expect(alt).toBe("Randi Fajar Wicaksono — Software Engineer · Backend & Infrastructure");
+  });
+});
+
+/**
+ * The Projects index and each Published case study preview as themselves (V3
+ * plan 3.9). V3 shipped without either card, so a shared link to them previewed
+ * with no image at all.
+ */
+describe("the Projects and case study cards", () => {
+  // doMock outlives resetModules, and earlier tests in this file mocked content.
+  // These read the real records unless a test mocks its own.
+  afterEach(() => {
+    vi.doUnmock("@/content/projects");
+  });
+
+  function useRealContent(): void {
+    vi.resetModules();
+    vi.doUnmock("@/content/profile");
+    vi.doUnmock("@/content/modes");
+    vi.doUnmock("@/content/projects");
+  }
+
+  it("names the Projects index by its heading", async () => {
+    useRealContent();
+    const { alt } = (await import("@/app/projects/opengraph-image")) as { alt: string };
+
+    expect(alt).toBe("Randi Fajar Wicaksono — Projects");
+  });
+
+  it("shows the words the Projects index's link preview carries", async () => {
+    useRealContent();
+    const { projectsCardText } = await import("@/domain/metadata/social-card");
+    const { buildProjectsIndexMetadata } = await import("@/domain/metadata/build-metadata");
+    const metadata = buildProjectsIndexMetadata();
+    const card = projectsCardText();
+
+    expect(card.headline).toBe(metadata.title);
+    expect(card.detail).toBe(metadata.description);
+  });
+
+  /**
+   * The rule build-metadata.ts follows for a project's link preview, applied to
+   * its image: the title and summary, never a field not meant for a preview.
+   * The project passed in carries such fields; exact equality on the card's
+   * text is what rules each of them out, in any position.
+   */
+  it("shows a case study's title and summary and nothing else (NFAC-SEC-006)", async () => {
+    useRealContent();
+    const { caseStudyCardText } = await import("@/domain/metadata/social-card");
+    const project = {
+      slug: "alpha-project",
+      title: "Alpha Project",
+      summary: "A public summary of the work.",
+      confidentialityNote: "SENSITIVE NOTE THAT MUST NOT APPEAR ON THE CARD",
+      role: "Backend Developer",
+      context: "Internal context detail.",
+    } as unknown as ProjectCaseStudy;
+
+    expect(caseStudyCardText(project)).toEqual({
+      kicker: "Randi Fajar Wicaksono · Case study",
+      headline: "Alpha Project",
+      detail: "A public summary of the work.",
+    });
+  });
+
+  /**
+   * The card route carries the page's own guard (FAC-NAV-006, DEC-047): a card
+   * exists for each publicly eligible case study and for no other slug. The
+   * registry is mocked rather than asking a selector which projects are hidden,
+   * which would be circular.
+   */
+  describe("for each Published case study and no other slug (FAC-NAV-006)", () => {
+    const base = {
+      featured: true,
+      updatedAt: "2026-01-01",
+      summary: "Summary.",
+      technologyIds: [],
+    };
+
+    async function loadCardRoute() {
+      vi.resetModules();
+      vi.doUnmock("@/content/profile");
+      vi.doMock("@/content/projects", () => ({
+        projects: [
+          {
+            ...base,
+            id: "p-public",
+            slug: "public-study",
+            title: "Public Study",
+            publicationStatus: "published",
+            confidentialityClass: "public",
+            featuredPriority: 1,
+          },
+          {
+            ...base,
+            id: "p-draft",
+            slug: "draft-study",
+            title: "Draft Study",
+            publicationStatus: "draft",
+            confidentialityClass: "public",
+            featuredPriority: 2,
+          },
+          {
+            ...base,
+            id: "p-restricted",
+            slug: "restricted-study",
+            title: "Restricted Study",
+            publicationStatus: "published",
+            confidentialityClass: "restricted",
+            featuredPriority: 3,
+          },
+        ],
+      }));
+
+      return (await import("@/app/projects/[slug]/opengraph-image")) as {
+        dynamicParams: boolean;
+        generateStaticParams: () => { slug: string }[];
+        default: (props: { params: Promise<{ slug: string }> }) => Promise<Response>;
+      };
+    }
+
+    it("generates a card only for the publicly eligible case study", async () => {
+      const route = await loadCardRoute();
+
+      expect(route.generateStaticParams()).toEqual([{ slug: "public-study" }]);
+    });
+
+    it("refuses every slug it did not generate, without rendering it", async () => {
+      const route = await loadCardRoute();
+
+      expect(route.dynamicParams).toBe(false);
+    });
+
+    // The default export is called only with slugs it must refuse, so it stops
+    // before ImageResponse, which the header of this file keeps out of tests.
+    it("never renders a hidden or unknown slug, even if asked directly", async () => {
+      const route = await loadCardRoute();
+
+      for (const slug of ["draft-study", "restricted-study", "never-registered"]) {
+        await expect(route.default({ params: Promise.resolve({ slug }) }), slug).rejects.toThrow(
+          "NEXT_HTTP_ERROR_FALLBACK;404",
+        );
+      }
+    });
   });
 });

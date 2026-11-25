@@ -1350,16 +1350,88 @@ Unlike v2, V3 changed claims, and each came from Randi:
 
 ### Production verification
 
-**Pending.** This section is completed after the promotion merges, with
-`release-checklist.md` step 9 run against the live site.
+**Live on 2026-11-22.** Randi merged the promotion (#120) at 22:13 (UTC+7) as
+`904eb85` on `production`. Its tree is identical to `staging`'s (`78156c3`), and
+Vercel reported the Production Deployment complete at 22:13:48. CI passed on
+`904eb85`: `quality`, `e2e`, and `audit`.
+
+`release-checklist.md` step 9 ran twice against
+https://randi-fajar-wicaksono.vercel.app, at 22:15 and 22:25, since builds can
+differ before propagation settles. The site gave the same result in both runs:
+
+| Check | Result |
+|---|---|
+| `/`, `/backend`, `/infrastructure`, `/projects`, both case studies: 200, V3 headings, canonical on the production domain | Pass |
+| `/projects` lists both Published case studies, and each opens directly | Pass |
+| `/resume.pdf` and the hero portrait are byte-identical to the files in `904eb85`; the portrait carries no metadata chunk and loads through `/_next/image` | Pass |
+| An unknown route, an unknown project slug, and an overview's id used as a slug: 404, "Page not found" | Pass |
+| No Draft overview title, summary, or contribution in any page's HTML, its DOM text, or the client JavaScript it loads | Pass. Two overview titles are also Backend work-area titles, and appear on `/backend` only |
+| GitHub, LinkedIn, and the email address are linked from every page; the GitHub profile answers 200 | Pass |
+| The sitemap lists exactly the six Published pages, each 200; `robots.txt` allows the site and names the sitemap | Pass |
+| No horizontal overflow at 320 px, on every page above | Pass |
+| Page text: no phone number, no email address but the public one, and none of the design reference's names, the service names DEC-064 keeps out of public text, or the internal application names | Pass |
+| `/`, `/backend`, `/infrastructure`: complete Open Graph and Twitter metadata, and a 1200×630 card of the declared size | Pass |
+| `/projects` and both case studies: a social card | **Not met**, below |
+
+One check changed between the runs, and it was the script, not the site. In the
+first run, the email check read the DOM text with no space between elements, so
+"Get in touch.", the address, and "Copy" fused into one token and the check
+failed. The page HTML held only the public address. The corrected check passed in
+the second run.
+
+**`/projects` and the case studies have no social card.** Plan 3.9 lists Open
+Graph images for both. P9 built cards for the two mode routes only, and no test
+covers the other pages. Their metadata sets Open Graph fields without an image,
+and neither route has a card of its own, so a shared link to them previews
+without one. The projects index also sets no Twitter fields, so its preview on X
+carries the home page's title and description. The code behind both is unchanged
+since v2, on the same Next.js version and lockfile, so the gap is older than V3.
+Separately, the cards' text shows uneven word spacing in places, for example
+between "Software" and "Engineer". Both are listed under "Outstanding after v3".
+
+`staging` was then synced with `production` (`git-workflow.md` §10): `2b0ac97`, a
+merge commit with no file changes, pushed after `npm run check` and
+`npm run test:e2e` passed on it.
+
+Not checked by Claude: LinkedIn and the email action, which need a human
+(LinkedIn answers automated requests with HTTP 999), and how each platform
+renders a shared link.
+
+**The remaining checklist steps, completed the same evening:**
+
+- **Step 3, content approval.** Randi read the published text and confirmed that
+  every claim is true.
+- **Step 5, links by hand.** Randi opened LinkedIn, GitHub, and the email action;
+  all three work.
+- **Step 8, performance.** Run by Claude at Randi's request, through PageSpeed
+  Insights (Lighthouse 13.6.0) at 23:22, against production rather than the
+  preview, since V3 was live. One run per page:
+
+| Page | Device | Performance | Accessibility | Best Practices | SEO | LCP | CLS | TBT |
+|---|---|---|---|---|---|---|---|---|
+| `/` | Mobile | 97 | 100 | 100 | 100 | 1.2 s | 0 | 10 ms |
+| `/` | Desktop | 100 | 100 | 100 | 100 | 0.5 s | 0 | 10 ms |
+| `/projects` | Mobile | 100 | 100 | 100 | 100 | 0.9 s | 0 | 20 ms |
+| `/projects` | Desktop | 100 | 100 | 100 | 100 | 0.2 s | 0 | 10 ms |
+| `/projects/jury-process-management-integration` | Mobile | 100 | 100 | 100 | 100 | 0.9 s | 0 | 10 ms |
+| `/projects/jury-process-management-integration` | Desktop | 100 | 100 | 100 | 100 | 0.2 s | 0 | 10 ms |
+
+LCP of at most 2.5 s, CLS of at most 0.1, and a Performance score of at least 90
+hold on every page (NFAC-PERF-001, NFAC-PERF-002). INP has no measurement yet: the
+Chrome User Experience Report holds too little real-world data for these pages,
+and Total Blocking Time, the lab's stand-in, is 10–20 ms. The one slow figure is
+the home page's Speed Index on mobile: 4.4 s, against 0.9 s for the other two
+pages on mobile. Its cause was not investigated.
 
 ### Outstanding after v3
 
 | Item | State |
 |---|---|
-| Content approval, checklist step 3 | Randi only: every Published string read and confirmed |
-| LinkedIn, GitHub, and the email action, step 5 | Randi, by hand. The link check reports them as `manual` |
-| Lighthouse on the preview, step 8 | Not run. The preview sits behind Vercel login, and Lighthouse is not installed in this repository |
+| Content approval, checklist step 3 | **Done** 2026-11-22. Randi confirmed every claim is true |
+| LinkedIn, GitHub, and the email action, step 5 | **Done** 2026-11-22, by Randi, by hand |
+| Lighthouse, step 8 | **Done** 2026-11-22, against production; see "Production verification". INP waits for real-user data |
 | Overview titles (OPEN-011) | Open. The six overviews stay Draft |
+| Social cards for `/projects` and each case study (plan 3.9) | **Closed on `staging`** by #123 (`e98aa3b`). Claude merged it at Randi's request, given in the conversation, on 2026-11-23 at 00:45 (UTC+7), and `staging`'s tree after the merge is the one tested. `/projects` and each Published case study now have their own 1200×630 card, served as `og:image` and `twitter:image`. The projects index also has Twitter fields of its own. CI passed on `e98aa3b`: `quality`, `audit`, and `e2e` (353 passed, 4 skipped). #123 left three privacy checks unbroken, because the session that built it was refused the edits that break them. After the merge, at Randi's choice, a second Claude session broke each check on the merged tree (`a99371a`) and restored every edit. All four breaks failed as they should; #124 lists them. They also showed that `dynamicParams = false` is what makes a card's 404 the site's 404 page. With it set to true, the handler's own `notFound()` answers instead, with an empty body. The cards were not viewed on the staging Preview, which needs a Vercel login. Production gets them with the next promotion or a hotfix, as Randi decides |
+| Uneven word spacing on the cards | Open; the cause was found in #123. Satori, which `next/og` bundles, places each word by its unkerned width but draws it kerned, so the gap after a word grows by that word's own kerning: about 5–6 px after "Software" and after "Yogyakarta,". Nothing small fixes it in the site's code. Whether a later Satori changes it was not checked |
 | Safe project visuals (OPEN-006), custom domain (OPEN-007) | Open, unchanged since v2 |
 | The v2 résumé lists Backend Developer as current | By Randi's decision (D6). Only a new PDF from him changes it |
