@@ -23,13 +23,37 @@ import { projectsIndexPreview } from "@/domain/metadata/build-metadata";
  * cards cannot drift from the site. The routes build only their words; the
  * layout and palette are here, once.
  *
- * The typeface stays the renderer's default sans. Geist is loaded through
- * next/font, which applies to the document and not to ImageResponse; using it
- * here would mean fetching and embedding the font file on every render, for a
- * difference nobody sees at thumbnail size.
+ * The typeface is Geist, the site's own, in the two weights the cards draw
+ * (DEC-078). The site loads Geist through next/font, which applies to the
+ * document and not to ImageResponse, so the cards read the font files from the
+ * repository at build time instead, like the palette below. Nothing is fetched.
  */
 
 export const SOCIAL_CARD_SIZE = { width: 1200, height: 630 };
+
+/**
+ * Geist Regular and Bold, the official release's files (v1.9.2, under the SIL
+ * Open Font License in OFL.txt beside them; see the README there).
+ *
+ * Both weights are needed, because giving the renderer any font replaces its
+ * built-in one. Before this, the cards used that built-in font: Geist Regular
+ * alone, registered as bold as well, so `fontWeight: 700` drew the regular face
+ * and no headline was ever bold (#123).
+ */
+export const SOCIAL_CARD_FONT_DIRECTORY = "src/assets/fonts/geist";
+export const SOCIAL_CARD_FONT_FILES = [
+  { file: "Geist-Regular.ttf", weight: 400 },
+  { file: "Geist-Bold.ttf", weight: 700 },
+] as const;
+
+function socialCardFonts() {
+  return SOCIAL_CARD_FONT_FILES.map(({ file, weight }) => ({
+    name: "Geist",
+    data: readFileSync(join(process.cwd(), SOCIAL_CARD_FONT_DIRECTORY, file)),
+    weight,
+    style: "normal" as const,
+  }));
+}
 
 /**
  * The card's palette, read from the stylesheet that ships: the dark surface,
@@ -139,7 +163,7 @@ export function renderSocialCard({ kicker, headline, accent, detail }: SocialCar
         gap: 24,
         backgroundColor: palette.background,
         padding: 80,
-        fontFamily: "sans-serif",
+        fontFamily: "Geist",
       }}
     >
       <div style={{ display: "flex", height: 8, width: 120, backgroundColor: palette.accent }} />
@@ -172,6 +196,6 @@ export function renderSocialCard({ kicker, headline, accent, detail }: SocialCar
         </div>
       ) : null}
     </div>,
-    SOCIAL_CARD_SIZE,
+    { ...SOCIAL_CARD_SIZE, fonts: socialCardFonts() },
   );
 }

@@ -129,7 +129,7 @@ ledger, as DEC-071 to DEC-080 alongside the decisions above.
 | 2 | Publish five project overviews | 1 | **Done** in #135 |
 | 3 | Staging Preview review checklist | 9 | A review of the checklist |
 | 4 | Post-deployment smoke check | 5 | A review of the new workflow, which needs to write issues |
-| 5 | Card headline weight | 6, B | Nothing more: approved |
+| 5 | Card headline weight | 6, B | **Done** on `staging` |
 | 6 | Card word spacing check | 7 | **Done:** deferred (section 4) |
 | 7 | Randi W01 in the README and documentation | 12, C | Nothing more: approved |
 | 8 | Naming migration proposal | 12 | Approval before any rename |
@@ -446,6 +446,7 @@ ledger, as DEC-071 to DEC-080 alongside the decisions above.
   for the next promotion.
 - **Item 2, #135.** The five project overviews are Published on `staging`, and the AI-assisted one
   stays Draft. They reach production with the next promotion.
+- **Item 5.** The social-card headlines are drawn in a real Geist Bold, from the official release with its licence. The release audit records the finding, its cause, the fix, and its verification.
 - **Item 6.** The card word spacing is deferred: no routine update fixes it, and the release
   audit's "Outstanding after v3" row records why and when to look again.
 - **Item 1.** The infrastructure role ends on 27 November 2026, with no role current. It is shown

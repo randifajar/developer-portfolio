@@ -297,3 +297,91 @@ describe("the Projects and case study cards", () => {
     });
   });
 });
+
+/**
+ * DEC-078. No card headline was bold (#123): the renderer's built-in font was
+ * Geist Regular alone, registered as bold as well. The cards now bring Geist's
+ * real Regular and Bold files. These read the files' own tables rather than
+ * trusting their names, so a swapped or mislabelled file fails here.
+ */
+describe("the social cards draw Geist in its real Regular and Bold faces (DEC-078)", () => {
+  /** A TrueType file's family and style names (name IDs 1, 2) and OS/2 weight class. */
+  function inspectFont(data: Buffer) {
+    const tables = new Map<string, number>();
+    for (let index = 0; index < data.readUInt16BE(4); index++) {
+      const record = 12 + index * 16;
+      tables.set(data.toString("latin1", record, record + 4), data.readUInt32BE(record + 8));
+    }
+
+    const os2 = tables.get("OS/2");
+    const name = tables.get("name");
+    if (os2 === undefined || name === undefined) {
+      throw new Error("not a TrueType file with OS/2 and name tables");
+    }
+
+    const names = new Map<number, string>();
+    const storage = name + data.readUInt16BE(name + 4);
+    for (let index = 0; index < data.readUInt16BE(name + 2); index++) {
+      const record = name + 6 + index * 12;
+      const platform = data.readUInt16BE(record);
+      const id = data.readUInt16BE(record + 6);
+      if ((id === 1 || id === 2) && platform === 3 && !names.has(id)) {
+        const start = storage + data.readUInt16BE(record + 10);
+        const bytes = Buffer.from(data.subarray(start, start + data.readUInt16BE(record + 8)));
+        names.set(id, bytes.swap16().toString("utf16le"));
+      }
+    }
+
+    return { family: names.get(1), style: names.get(2), weightClass: data.readUInt16BE(os2 + 4) };
+  }
+
+  it("ships each weight it registers, and each file is the weight it claims", async () => {
+    const { readFileSync } = await import("node:fs");
+    const { resolve } = await import("node:path");
+    const { SOCIAL_CARD_FONT_DIRECTORY, SOCIAL_CARD_FONT_FILES } =
+      await import("@/domain/metadata/social-card");
+
+    expect(SOCIAL_CARD_FONT_FILES.map((font) => font.weight)).toEqual([400, 700]);
+
+    for (const { file, weight } of SOCIAL_CARD_FONT_FILES) {
+      const font = inspectFont(
+        readFileSync(resolve(process.cwd(), SOCIAL_CARD_FONT_DIRECTORY, file)),
+      );
+
+      expect(font.family, file).toBe("Geist");
+      expect(font.style, file).toBe(weight === 700 ? "Bold" : "Regular");
+      expect(font.weightClass, file).toBe(weight);
+    }
+  });
+
+  it("keeps the font licence beside the fonts", async () => {
+    const { readFileSync } = await import("node:fs");
+    const { resolve } = await import("node:path");
+    const { SOCIAL_CARD_FONT_DIRECTORY } = await import("@/domain/metadata/social-card");
+
+    const licence = readFileSync(
+      resolve(process.cwd(), SOCIAL_CARD_FONT_DIRECTORY, "OFL.txt"),
+      "utf8",
+    );
+
+    expect(licence).toContain("SIL Open Font License, Version 1.1");
+    expect(licence).toContain("The Geist Project Authors");
+  });
+
+  it("renders with those fonts, not the renderer's default", async () => {
+    const { readFileSync } = await import("node:fs");
+    const { resolve } = await import("node:path");
+
+    const source = readFileSync(
+      resolve(process.cwd(), "src/domain/metadata/social-card.tsx"),
+      "utf8",
+    );
+    const marker = source.indexOf("export function renderSocialCard");
+    expect(marker, "the renderer moved; point this guard at it").toBeGreaterThan(0);
+    const renderer = source.slice(marker);
+
+    expect(renderer).toContain('fontFamily: "Geist"');
+    expect(renderer).toContain("fonts: socialCardFonts()");
+    expect(renderer).not.toContain('"sans-serif"');
+  });
+});
