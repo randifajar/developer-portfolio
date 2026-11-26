@@ -5,7 +5,7 @@
 | Field | Value |
 |---|---|
 | Date | 2026-11-18 |
-| Status | **Approved 2026-11-18** ("approved, use your recommendations"). Randi also asked for a pre-production environment, so the integration branch is `staging` (D5, section 6). On 2026-11-19 he settled D12 (Zettabyte), D9 (professional experience), the infrastructure detail level (DEC-064) and the proposed wording (approved), and asked for the target-roles list to be removed. P0 to P10 are merged into `staging` (#99 to #114). On 2026-11-21 Randi supplied the photograph (I1) and decided the résumé (I2, D6), and on 2026-11-22 the content and design calls (DEC-065 to DEC-070). Randi merged the promotion (#120) on 2026-11-22, and V3 is released (P11): production verification and the sync back into `staging` are recorded in the v3 release-audit entry. The overview titles are working titles (OPEN-011). The Open Graph images 3.9 lists for `/projects` and each case study were missing from the release and have since been built in `staging` (3.9) |
+| Status | **Approved 2026-11-18** ("approved, use your recommendations"). Randi also asked for a pre-production environment, so the integration branch is `staging` (D5, section 6). On 2026-11-19 he settled D12 (Zettabyte), D9 (professional experience), the infrastructure detail level (DEC-064) and the proposed wording (approved), and asked for the target-roles list to be removed. P0 to P10 are merged into `staging` (#99 to #114). On 2026-11-21 Randi supplied the photograph (I1) and decided the résumé (I2, D6), and on 2026-11-22 the content and design calls (DEC-065 to DEC-070). Randi merged the promotion (#120) on 2026-11-22, and V3 is released (P11): production verification and the sync back into `staging` are recorded in the v3 release-audit entry. The overview titles are working titles (OPEN-011). The Open Graph images 3.9 lists for `/projects` and each case study were missing from the release and have since been built, and are live since the promotion of 2026-11-26 (#129; 3.9) |
 | Approved design | V3.1 review mockup, approved 2026-11-18. It stays on Randi's machine by his decision (2026-11-19); `docs/product/PORTFOLIO_UX_UI_SPEC_v3.0.md` records the design |
 | Inputs | V3 master requirements v1.0, the V3.1 improvement brief, the backend and infrastructure résumés, the repository at `25a31d5` |
 | Decision and merge authority | Randi Fajar Wicaksono, per pull request |
@@ -296,8 +296,8 @@ renderer. The index's card shows its heading and the description its link previe
 case study's card shows its title and summary, the only project fields approved for a link
 preview (NFAC-SEC-006), and exists for each Published case study and no other slug, under the
 page's own guard. `/projects` also sets its own `twitter` title and description, which it had
-inherited from the home page. The change is in `staging`, so production gets it with the next
-promotion or a hotfix.
+inherited from the home page. The change reached production with the promotion of 2026-11-26
+(#129).
 - **Unchanged.** Robots. Canonical URLs keep coming from `SITE_URL` (`src/lib/environment.ts`).
 
 ---
