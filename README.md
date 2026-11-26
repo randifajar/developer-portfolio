@@ -1,12 +1,25 @@
-# Developer Portfolio
+# Randi W01
 
-Personal developer portfolio of **Randi Fajar Wicaksono**, a software engineer
-across backend and infrastructure, based in Sleman, Yogyakarta, Indonesia.
+_An evolving engineering identity._
+
+**Randi W01** is the personal engineering portfolio of **Randi Fajar
+Wicaksono**, a software engineer across backend and infrastructure, based in
+Sleman, Yogyakarta, Indonesia. W01 is its designation, the first generation
+under this identity, and its design identity is Cinematic Blue Editorial.
 
 It presents his work in three modes — Overall, Backend, and Infrastructure —
 with his career, selected case studies, and the engineering approach behind
 them. The truthfulness and confidentiality rules are enforced in code rather
 than left to review.
+
+Randi W01 is one project in Randi's personal engineering collection, alongside
+Regulus AL01. The two are independent: neither depends on the other, and they
+do not integrate.
+
+The project name belongs to the repository and its records. The website itself
+leads with Randi's name. The repository, the Vercel project, and the package
+keep their current names for now. Releases keep their version numbers, Version
+1 through Version 3 so far.
 
 **Live:** <https://randi-fajar-wicaksono.vercel.app/>
 
