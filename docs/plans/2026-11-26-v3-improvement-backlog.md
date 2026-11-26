@@ -131,7 +131,7 @@ ledger, as DEC-071 to DEC-080 alongside the decisions above.
 | 4 | Post-deployment smoke check | 5 | A review of the new workflow, which needs to write issues |
 | 5 | Card headline weight | 6, B | **Done** on `staging` |
 | 6 | Card word spacing check | 7 | **Done:** deferred (section 4) |
-| 7 | Randi W01 in the README and documentation | 12, C | Nothing more: approved |
+| 7 | Randi W01 in the README and documentation | 12, C | **Done** on `staging` |
 | 8 | Naming migration proposal | 12 | Approval before any rename |
 | 9 | Home page mobile performance investigation | 10 | Approval of any significant change |
 | 10 | Jenkins CI/CD case study | 3 | Answers to the proposal's questions; content approval |
@@ -453,3 +453,4 @@ ledger, as DEC-071 to DEC-080 alongside the decisions above.
   as the most recent role, and its wording is in the past tense (DEC-072). It is on `staging`, and
   needs Randi's content approval before the promotion that takes it live.
 - **Item 14.** The Overall page's Résumé row takes its wording from the published résumés: "Résumé — Backend engineering résumé." today, and both variants by itself once both are published (DEC-074).
+- **Item 7.** The README opens with "Randi W01" and its tagline, and names Regulus AL01 as an independent project in Randi's collection. The decision ledger carries the name in its title, and the package description has it too. The package name is unchanged, and the website still leads with Randi's name (DEC-071).
