@@ -2,8 +2,13 @@ import Link from "next/link";
 import { ResumeMenuTrigger } from "@/components/layout/resume-menu";
 import { Section } from "@/components/layout/section";
 import { Eyebrow } from "@/components/ui/eyebrow";
-import { getPublishedProjectOverviews, getPublishedProjects } from "@/domain/content/selectors";
-import { ROUTES } from "@/lib/constants";
+import {
+  getPublishedProjectOverviews,
+  getPublishedProjects,
+  getPublishedResumeVariants,
+} from "@/domain/content/selectors";
+import type { Discipline } from "@/domain/content/types";
+import { DISCIPLINE_LABELS, ROUTES } from "@/lib/constants";
 import { countedNoun } from "@/lib/numbers";
 
 /**
@@ -19,10 +24,38 @@ import { countedNoun } from "@/lib/numbers";
  * pieces of work, by discipline" is a count, so it is counted here from what
  * is published.
  *
- * Résumés opens the header's menu rather than repeating it, so the two can
- * never list different résumés.
+ * The Résumé row opens the header's menu rather than repeating it, so the two
+ * can never list different résumés. Its wording comes from the résumés that are
+ * published (DEC-074). It used to say "Résumés — Backend and infrastructure
+ * versions." as fixed copy, which was untrue while only the backend résumé
+ * existed.
  */
 const HEADING_ID = "explore-heading";
+
+/**
+ * The Résumé row's label and description, from the variants that have a
+ * Published résumé (DEC-074). One reads "Résumé — Backend engineering résumé.";
+ * two read "Résumés — Backend and infrastructure versions." With none, there
+ * is no row, since nothing would open.
+ */
+export function describeResumes(
+  variants: readonly Discipline[],
+): { readonly label: string; readonly description: string } | null {
+  const [only] = variants;
+
+  if (only === undefined) {
+    return null;
+  }
+  if (variants.length === 1) {
+    return { label: "Résumé", description: `${DISCIPLINE_LABELS[only]} engineering résumé.` };
+  }
+
+  const names = variants.map((variant, index) =>
+    index === 0 ? DISCIPLINE_LABELS[variant] : DISCIPLINE_LABELS[variant].toLowerCase(),
+  );
+
+  return { label: "Résumés", description: `${names.join(" and ")} versions.` };
+}
 
 const ROW_CLASS =
   "flex w-full items-center justify-between gap-6 border-t border-border py-6 text-left hover:text-accent";
@@ -36,6 +69,7 @@ interface Destination {
 
 export function ExploreSection() {
   const workCount = getPublishedProjects().length + getPublishedProjectOverviews().length;
+  const resumes = describeResumes(getPublishedResumeVariants());
 
   const destinations: readonly Destination[] = [
     {
@@ -85,22 +119,24 @@ export function ExploreSection() {
               </Link>
             </li>
           ))}
-          <li>
-            <ResumeMenuTrigger
-              aria-labelledby="explore-resumes"
-              aria-describedby="explore-resumes-description"
-              className={ROW_CLASS}
-            >
-              <RowText
-                id="explore-resumes"
-                label="Résumés"
-                description="Backend and infrastructure versions."
-              />
-              <span aria-hidden="true" className="text-page-title text-accent">
-                ↗
-              </span>
-            </ResumeMenuTrigger>
-          </li>
+          {resumes ? (
+            <li>
+              <ResumeMenuTrigger
+                aria-labelledby="explore-resumes"
+                aria-describedby="explore-resumes-description"
+                className={ROW_CLASS}
+              >
+                <RowText
+                  id="explore-resumes"
+                  label={resumes.label}
+                  description={resumes.description}
+                />
+                <span aria-hidden="true" className="text-page-title text-accent">
+                  ↗
+                </span>
+              </ResumeMenuTrigger>
+            </li>
+          ) : null}
         </ul>
       </div>
     </Section>

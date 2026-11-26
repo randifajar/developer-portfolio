@@ -3,7 +3,7 @@ import { contentSet } from "@/content/content-set";
 import { projectOverviews } from "@/content/project-overviews";
 import { projects } from "@/content/projects";
 import { projectOverviewSchema } from "@/domain/content/schemas";
-import { getPublishedResumeFor } from "@/domain/content/selectors";
+import { getPublishedResumeFor, getPublishedResumeVariants } from "@/domain/content/selectors";
 import { validateContentSet } from "@/domain/content/validation";
 
 /**
@@ -154,5 +154,9 @@ describe("résumé variants (DEC-059)", () => {
   it("offers the backend résumé and no infrastructure résumé (D6)", () => {
     expect(getPublishedResumeFor("backend")?.variant).toBe("backend");
     expect(getPublishedResumeFor("infrastructure")).toBeNull();
+  });
+
+  it("lists only the variants with a Published résumé, which the copy is derived from (DEC-074)", () => {
+    expect(getPublishedResumeVariants()).toEqual(["backend"]);
   });
 });

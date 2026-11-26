@@ -259,11 +259,12 @@ test.describe("Overall page (UX3 7.1)", () => {
     await expect(page.getByRole("region", { name: "Profile" })).toBeInViewport();
   });
 
-  test("Résumés in Explore further opens the header's menu, and Escape returns to it", async ({
+  test("the Résumé row in Explore further opens the header's menu, and Escape returns to it", async ({
     page,
   }) => {
     const explore = page.getByRole("region", { name: "Explore further" });
-    const resumes = explore.getByRole("button", { name: "Résumés" });
+    // "Résumé" with one published résumé, "Résumés" with both (DEC-074).
+    const resumes = explore.getByRole("button", { name: /^Résumés?$/ });
     const menu = page.locator("#resume-menu");
 
     await resumes.click();

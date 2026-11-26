@@ -35,7 +35,7 @@ import type {
   WorkExperience,
 } from "@/domain/content/schemas";
 import type { Discipline, Mode, PublicationStatus, SkillGroup } from "@/domain/content/types";
-import { SKILL_GROUPS, isPubliclyEligible } from "@/domain/content/types";
+import { DISCIPLINES, SKILL_GROUPS, isPubliclyEligible } from "@/domain/content/types";
 import { getAdjacentProjects } from "@/domain/projects/project-navigation";
 
 /**
@@ -361,6 +361,16 @@ export function getPublishedProjectOverviews(discipline?: Discipline): readonly 
  */
 export function getPublishedResumeFor(variant: Discipline): Resume | null {
   return resume.variant === variant ? getActiveResume() : null;
+}
+
+/**
+ * The disciplines that have a Published résumé, in discipline order. Wording
+ * that names the available résumés is derived from this rather than written
+ * into the copy (DEC-074), so publishing the second variant (DEC-073) changes
+ * that wording by itself.
+ */
+export function getPublishedResumeVariants(): readonly Discipline[] {
+  return DISCIPLINES.filter((variant) => getPublishedResumeFor(variant) !== null);
 }
 
 /** The Published opening of a discipline's page (UX3 7.2, 7.3), or null. */

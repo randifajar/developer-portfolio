@@ -2,6 +2,7 @@ import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import ModesLayout from "@/app/(modes)/layout";
 import OverallPage from "@/app/(modes)/page";
+import { describeResumes } from "@/components/overall/explore-section";
 
 /**
  * The Overall page against the real, unmocked content (UX3 7.1).
@@ -189,7 +190,7 @@ describe("Overall content (UX3 7.1)", () => {
     expect(education.getByText("Professional working proficiency")).toBeVisible();
   });
 
-  it("offers the onward paths, with Résumés opening the header's menu", () => {
+  it("offers the onward paths, with the Résumé row opening the header's menu", () => {
     renderOverall();
     const explore = within(screen.getByRole("region", { name: "Explore further" }));
 
@@ -202,9 +203,34 @@ describe("Overall content (UX3 7.1)", () => {
       /^\w+ pieces? of work, by discipline\.$/,
     );
 
-    const resumes = explore.getByRole("button", { name: "Résumés" });
+    // Only the backend résumé is published, so the row names that one (DEC-074).
+    const resumes = explore.getByRole("button", { name: "Résumé" });
     expect(resumes).toHaveAttribute("popovertarget", "resume-menu");
-    expect(resumes).toHaveAccessibleDescription("Backend and infrastructure versions.");
+    expect(resumes).toHaveAccessibleDescription("Backend engineering résumé.");
+  });
+});
+
+describe("the Résumé row's wording comes from the published résumés (DEC-074)", () => {
+  it("names the one published résumé", () => {
+    expect(describeResumes(["backend"])).toEqual({
+      label: "Résumé",
+      description: "Backend engineering résumé.",
+    });
+    expect(describeResumes(["infrastructure"])).toEqual({
+      label: "Résumé",
+      description: "Infrastructure engineering résumé.",
+    });
+  });
+
+  it("names both once both are published, with no copy change", () => {
+    expect(describeResumes(["backend", "infrastructure"])).toEqual({
+      label: "Résumés",
+      description: "Backend and infrastructure versions.",
+    });
+  });
+
+  it("offers no row when no résumé is published, since nothing would open", () => {
+    expect(describeResumes([])).toBeNull();
   });
 });
 
