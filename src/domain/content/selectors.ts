@@ -316,8 +316,8 @@ export function getPublishedToolkit(discipline: Discipline): readonly ToolkitGro
  * Published project overviews, optionally for one discipline (DEC-060).
  *
  * Overviews have no slug, so nothing here can produce a route; the case-study
- * selectors above never see them. While their titles are working titles
- * (OPEN-011) they are Draft, and this returns an empty list.
+ * selectors above never see them. Five are Published since 2026-11-26; the
+ * sixth stays Draft by Randi's decision, and this never returns it (OPEN-011).
  */
 export function getPublishedProjectOverviews(discipline?: Discipline): readonly ProjectOverview[] {
   const published = publishedInOrder(projectOverviews);

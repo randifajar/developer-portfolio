@@ -128,7 +128,7 @@ describe("Overall content (UX3 7.1)", () => {
     expect(chapters.map(linksIn)).toEqual([[], ["/backend"], ["/infrastructure"]]);
   });
 
-  it("shows the case study with a discipline, linked, and no draft overview", () => {
+  it("shows the case study with a discipline, linked, then the first three overviews", () => {
     renderOverall();
     const work = within(
       screen.getByRole("region", { name: "Backend and infrastructure, side by side." }),
@@ -140,10 +140,17 @@ describe("Overall content (UX3 7.1)", () => {
       }),
     ).toHaveAttribute("href", "/projects/jury-process-management-integration");
 
-    // The personal portfolio has no discipline (UX3 7.4); the overviews are
-    // Draft until their titles are confirmed (OPEN-011).
+    // The approved mockup's four rows: the case study, then the first three
+    // Published overviews, which have no page of their own and never link
+    // (DEC-060). The personal portfolio has no discipline (UX3 7.4).
+    expect(work.getAllByRole("heading", { level: 3 }).map((h) => h.textContent)).toEqual([
+      "Jury Process Management Integration",
+      "Jenkins CI/CD Migration and Agent Modernization",
+      "Notification Hub and AWS Email Events",
+      "Configurable Data Tables and Export Workflows",
+    ]);
+    expect(work.getAllByRole("link", { name: /^Read the case study/ })).toHaveLength(1);
     expect(work.queryByText("Personal Developer Portfolio")).toBeNull();
-    expect(work.queryByText("Jenkins CI/CD Migration and Agent Modernization")).toBeNull();
     expect(work.getByRole("link", { name: "All projects" })).toHaveAttribute("href", "/projects");
   });
 

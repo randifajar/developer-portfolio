@@ -2,11 +2,13 @@ import { defineProjectOverview } from "@/domain/content/define";
 
 /**
  * Project overviews — six résumé projects shown briefly, with no case study
- * and no route (DEC-060). DRAFT.
+ * and no route (DEC-060). Five PUBLISHED, one DRAFT.
  *
- * Draft because the titles are working titles. Randi, 2026-11-19: "all in here
- * is draft, we can revise it later" (OPEN-011). They become Published only when
- * he confirms or renames them; a test holds them at Draft until then.
+ * The titles were working titles until 2026-11-26 (OPEN-011; Randi, 2026-11-19:
+ * "all in here is draft, we can revise it later"). On 2026-11-26 he kept the
+ * first five titles and summaries as they are and approved them for
+ * publication. The sixth stays Draft by his decision; its record says why. A
+ * test holds each record to that decision.
  *
  * Sources, line by line:
  *
@@ -40,7 +42,7 @@ export const projectOverviews = [
     technologies: ["Jenkins", "AWS EC2", "Docker Buildx"],
     disciplines: ["infrastructure"],
     confidentialityClass: "sanitized",
-    publicationStatus: "draft",
+    publicationStatus: "published",
     sortOrder: 1,
   }),
 
@@ -55,7 +57,7 @@ export const projectOverviews = [
     technologies: ["AWS"],
     disciplines: ["infrastructure", "backend"],
     confidentialityClass: "sanitized",
-    publicationStatus: "draft",
+    publicationStatus: "published",
     sortOrder: 2,
   }),
 
@@ -72,7 +74,7 @@ export const projectOverviews = [
     technologies: ["GraphQL", "MongoDB"],
     disciplines: ["backend"],
     confidentialityClass: "sanitized",
-    publicationStatus: "draft",
+    publicationStatus: "published",
     sortOrder: 3,
   }),
 
@@ -86,7 +88,7 @@ export const projectOverviews = [
       "integrations, including background jobs and cross-service troubleshooting.",
     disciplines: ["backend"],
     confidentialityClass: "sanitized",
-    publicationStatus: "draft",
+    publicationStatus: "published",
     sortOrder: 4,
   }),
 
@@ -103,7 +105,7 @@ export const projectOverviews = [
     technologies: ["GraphQL", "MongoDB"],
     disciplines: ["backend", "infrastructure"],
     confidentialityClass: "sanitized",
-    publicationStatus: "draft",
+    publicationStatus: "published",
     sortOrder: 5,
   }),
 
@@ -118,6 +120,9 @@ export const projectOverviews = [
       "applications, using AI tools for debugging, testing, and code reviews.",
     disciplines: ["backend", "infrastructure"],
     confidentialityClass: "sanitized",
+    // Draft by Randi's decision of 2026-11-26. He would rather show AI-assisted
+    // development through his engineering practice and his technical
+    // contributions than present the use of AI as a project of its own.
     publicationStatus: "draft",
     sortOrder: 6,
   }),

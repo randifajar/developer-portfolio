@@ -368,3 +368,5 @@
 
 - **#133.** Dependabot uses its default labels. It is on `staging`, and under decision 8 it waits
   for the next promotion.
+- **Item 2, #135.** The five project overviews are Published on `staging`, and the AI-assisted one
+  stays Draft. They reach production with the next promotion.

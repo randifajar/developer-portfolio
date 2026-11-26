@@ -1,5 +1,22 @@
 import { expect, test } from "@playwright/test";
 import { projects } from "@/content/projects";
+import {
+  getPublishedCaseStudiesFor,
+  getPublishedProjectOverviews,
+  getPublishedProjects,
+} from "@/domain/content/selectors";
+
+/**
+ * What the filter shows, derived from the content rather than typed in, so
+ * publishing more work does not mean editing these tests. The page lists the
+ * Published case studies, then the Published overviews, and a filter keeps that
+ * order.
+ */
+const backendRows = [
+  ...getPublishedCaseStudiesFor("backend"),
+  ...getPublishedProjectOverviews("backend"),
+].map((row) => row.title);
+const allRowCount = getPublishedProjects().length + getPublishedProjectOverviews().length;
 
 test.describe("Projects Index (FAC-PROJECTS-001, 004)", () => {
   test.beforeEach(async ({ page }) => {
@@ -124,11 +141,13 @@ test.describe("Projects filter (UX3 7.4, 7.5)", () => {
     await page.goto("/projects");
     await page.waitForLoadState("networkidle");
 
+    // The personal portfolio has no discipline, so Backend is always a narrower
+    // list than All; without that, this test could not tell a filter from none.
+    expect(backendRows.length).toBeLessThan(allRowCount);
+
     await page.getByRole("button", { name: /^Backend/ }).click();
     await expect(page).toHaveURL(/\?discipline=backend$/);
-    await expect(list(page).getByRole("heading", { level: 3 })).toHaveText([
-      "Jury Process Management Integration",
-    ]);
+    await expect(list(page).getByRole("heading", { level: 3 })).toHaveText(backendRows);
 
     await page.reload();
     await page.waitForLoadState("networkidle");
@@ -136,7 +155,7 @@ test.describe("Projects filter (UX3 7.4, 7.5)", () => {
       "aria-pressed",
       "true",
     );
-    await expect(list(page).getByRole("heading", { level: 3 })).toHaveCount(1);
+    await expect(list(page).getByRole("heading", { level: 3 })).toHaveText(backendRows);
   });
 
   test("survives a visit to a case study, by Back and by the back link", async ({ page }) => {
@@ -150,7 +169,7 @@ test.describe("Projects filter (UX3 7.4, 7.5)", () => {
 
     await page.goBack();
     await expect(page).toHaveURL(/\?discipline=backend$/);
-    await expect(list(page).getByRole("heading", { level: 3 })).toHaveCount(1);
+    await expect(list(page).getByRole("heading", { level: 3 })).toHaveText(backendRows);
 
     await page.goForward();
     // The case study's own back link, in the page — not the footer's Projects.
@@ -178,6 +197,6 @@ test.describe("Projects filter without JavaScript", () => {
 
     await expect(
       page.getByRole("region", { name: "Project list" }).getByRole("heading", { level: 3 }),
-    ).toHaveCount(2);
+    ).toHaveCount(allRowCount);
   });
 });
