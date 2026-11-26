@@ -14,9 +14,10 @@ import { defineDisciplineIntro, defineWorkArea } from "@/domain/content/define";
  *   chain. They read here as the infrastructure experience record does,
  *   "reverse proxies" and "AWS email-event delivery", and a test holds the
  *   text to an approved list so nothing more specific returns unnoticed.
- * - **Tense.** The infrastructure role is current, so its ongoing work is in
- *   the present tense, as the experience record has it. The mockup had the
- *   past tense throughout.
+ * - **Tense.** While the infrastructure role was current, its ongoing work
+ *   was in the present tense (DEC-069). The role ended on 27 November 2026, so
+ *   all of its work is completed work and reads in the past tense, as the
+ *   mockup had it throughout (DEC-072).
  *
  * Each work area cites the roles it restates. A cross-record rule checks that
  * they exist and belong to the area's discipline.
@@ -41,10 +42,12 @@ export const disciplineIntros = [
     // The first sentence is from the infrastructure résumé. The second is the
     // bridge between the two résumés that the mockup proposed; Randi approved
     // it on 2026-11-19 (OPEN-009).
+    // Past tense since the role ended on 27 November 2026 (DEC-072); the
+    // approved wording otherwise.
     lead:
       "After two years of building backend services, I moved to the infrastructure team in " +
-      "August 2026. The backend foundation stayed: most delivery problems I now trace start or " +
-      "end in application code.",
+      "August 2026. The backend foundation stayed: most delivery problems I traced there started " +
+      "or ended in application code.",
     // The approved mockup's Scope fact (UX3 7.3).
     scope: "A delivery and infrastructure role, not an SRE title",
     publicationStatus: "published",
@@ -138,7 +141,7 @@ export const workAreas = [
     label: "CI/CD",
     title: "Quality, security and access",
     body:
-      "Maintain and standardize Jenkins CI/CD pipelines across multiple repositories, with " +
+      "Maintained and standardized Jenkins CI/CD pipelines across multiple repositories, with " +
       "security and quality checks, branch-based deployment workflows, and role-based access " +
       "controls for staging, pre-production and production.",
     experienceIds: ["experience-zettabyte-ai-delivery-engineer"],
@@ -152,7 +155,7 @@ export const workAreas = [
     label: "Linux & containers",
     title: "Services behind the proxy",
     body:
-      "Support Linux-hosted Docker Compose services behind reverse proxies, investigating TLS " +
+      "Supported Linux-hosted Docker Compose services behind reverse proxies, investigating TLS " +
       "routing, environment variables, duplicate containers, failed deployments and service " +
       "connectivity.",
     experienceIds: ["experience-zettabyte-ai-delivery-engineer"],
@@ -166,7 +169,7 @@ export const workAreas = [
     label: "AWS",
     title: "Email-event delivery",
     body:
-      "Troubleshoot AWS email-event delivery, dead-letter routing, cloud-region mismatches and " +
+      "Troubleshot AWS email-event delivery, dead-letter routing, cloud-region mismatches and " +
       "application configuration across environments.",
     experienceIds: ["experience-zettabyte-ai-delivery-engineer"],
     publicationStatus: "published",

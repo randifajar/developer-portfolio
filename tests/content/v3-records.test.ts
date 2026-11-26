@@ -106,12 +106,33 @@ describe("V3 cross-record rules", () => {
   });
 
   it("accept a current role for any later year", () => {
-    // The current role is open-ended, so a 2027 chapter may cite it.
+    // A current role is open-ended, so a 2027 chapter may cite it. No real role
+    // has been current since 27 November 2026 (DEC-072), so this makes the
+    // infrastructure role current for the test.
+    const experience = contentSet.experience.map((role) => {
+      if (role.id !== "experience-zettabyte-ai-delivery-engineer") {
+        return role;
+      }
+      const { endDate: _ended, ...open } = role;
+      return { ...open, isCurrent: true };
+    });
     const chapters = careerChapters.map((chapter) =>
       chapter.year === 2026 ? { ...chapter, year: 2027 } : chapter,
     );
 
-    expect(rulesTriggeredBy({ ...contentSet, careerChapters: chapters })).not.toContain(
+    expect(rulesTriggeredBy({ ...contentSet, experience, careerChapters: chapters })).not.toContain(
+      "chapter-year-within-roles",
+    );
+  });
+
+  it("reject a later year for a role that has ended", () => {
+    // The infrastructure role ended in November 2026 (DEC-072), so a 2027
+    // chapter may not cite it.
+    const chapters = careerChapters.map((chapter) =>
+      chapter.year === 2026 ? { ...chapter, year: 2027 } : chapter,
+    );
+
+    expect(rulesTriggeredBy({ ...contentSet, careerChapters: chapters })).toContain(
       "chapter-year-within-roles",
     );
   });

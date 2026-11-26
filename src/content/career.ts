@@ -58,9 +58,10 @@ export const careerChapters = [
     label: "Delivering & operating",
     headline: "Beyond the application.",
     body:
+      // Past tense since the role ended on 27 November 2026 (DEC-072).
       "In August 2026 I joined the infrastructure team. I migrated Jenkins build execution to an " +
-      "Ubuntu-based AWS EC2 agent, maintain and standardize CI/CD pipelines with quality and " +
-      "security checks, and troubleshoot Docker services and AWS email-event delivery across " +
+      "Ubuntu-based AWS EC2 agent, maintained and standardized CI/CD pipelines with quality and " +
+      "security checks, and troubleshot Docker services and AWS email-event delivery across " +
       "environments.",
     experienceIds: ["experience-zettabyte-ai-delivery-engineer"],
     publicationStatus: "published",

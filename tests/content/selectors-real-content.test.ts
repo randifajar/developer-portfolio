@@ -3,6 +3,7 @@ import {
   getActiveResume,
   getAdjacentPublishedProjects,
   getFeaturedProjects,
+  getMostRecentExperience,
   getPublishedContactChannels,
   getPublishedEngineeringPractices,
   getPublishedExperience,
@@ -128,13 +129,20 @@ describe("the professional identity is public", () => {
 });
 
 describe("employment history and resume are public", () => {
-  it("exposes all four roles, the infrastructure role current and first (FAC-EXP-001)", () => {
+  /**
+   * DEC-072, 2026-11-27: the infrastructure role ended on Randi's last working
+   * day, 27 November 2026. No role is current; the infrastructure role is the
+   * most recent and still leads, and the history keeps all four roles.
+   */
+  it("exposes all four roles, the infrastructure role most recent and first (FAC-EXP-001)", () => {
     const roles = getPublishedExperience();
 
     expect(roles).toHaveLength(4);
     expect(roles[0]?.position).toBe("AI Delivery Engineer, Infrastructure Team");
-    expect(roles[0]?.isCurrent).toBe(true);
-    expect(roles.filter((role) => role.isCurrent)).toHaveLength(1);
+    expect(roles.filter((role) => role.isCurrent)).toHaveLength(0);
+    expect(roles[0]?.endDate).toBe("2026-11-01");
+    expect(getMostRecentExperience()?.id).toBe("experience-zettabyte-ai-delivery-engineer");
+    expect(getMostRecentExperience("backend")?.id).toBe("experience-zettabyte-backend-developer");
   });
 
   /**

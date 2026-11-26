@@ -85,6 +85,10 @@ describe("Overall content (UX3 7.1)", () => {
     const facts = within(screen.getByRole("region", { name: "Profile" }));
 
     expect(facts.getByText("Sleman, Yogyakarta, Indonesia")).toBeVisible();
+    // The role ended on 27 November 2026, so it is the most recent, never the
+    // current one (DEC-072).
+    expect(facts.getByText("Most recent role")).toBeVisible();
+    expect(facts.queryByText("Current role")).toBeNull();
     expect(facts.getByText("AI Delivery Engineer, Infrastructure Team")).toBeVisible();
     expect(facts.getByText("Zettabyte Pte Ltd")).toBeVisible();
     expect(facts.getByText(/^\d+\+ years? in software delivery$/)).toBeVisible();
@@ -105,7 +109,8 @@ describe("Overall content (UX3 7.1)", () => {
       ["Backend Developer Intern", "Jul 2024 – Oct 2024"],
       ["Backend Developer, Contract", "Nov 2024 – Mar 2025"],
       ["Backend Developer", "Apr 2025 – Jul 2026"],
-      ["AI Delivery Engineer, Infrastructure Team", "Aug 2026 – Present"],
+      // Ended on 27 November 2026 (DEC-072).
+      ["AI Delivery Engineer, Infrastructure Team", "Aug 2026 – Nov 2026"],
     ];
 
     for (const [position, dates] of roles) {
