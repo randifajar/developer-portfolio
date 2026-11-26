@@ -124,7 +124,7 @@ ledger, as DEC-071 to DEC-080 alongside the decisions above.
 
 | # | Item | Decision | Needs from Randi |
 |---|---|---|---|
-| 1 | Employment records when the current role ends | 2, A | Content approval, before the promotion |
+| 1 | Employment records when the current role ends | 2, A | **Done** on `staging`; content approval before the promotion |
 | 14 | Résumé label and description from the published records | F | Nothing more: approved |
 | 2 | Publish five project overviews | 1 | **Done** in #135 |
 | 3 | Staging Preview review checklist | 9 | A review of the checklist |
@@ -448,3 +448,6 @@ ledger, as DEC-071 to DEC-080 alongside the decisions above.
   stays Draft. They reach production with the next promotion.
 - **Item 6.** The card word spacing is deferred: no routine update fixes it, and the release
   audit's "Outstanding after v3" row records why and when to look again.
+- **Item 1.** The infrastructure role ends on 27 November 2026, with no role current. It is shown
+  as the most recent role, and its wording is in the past tense (DEC-072). It is on `staging`, and
+  needs Randi's content approval before the promotion that takes it live.
