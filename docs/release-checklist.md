@@ -157,6 +157,11 @@ npm run audit:prod
 
 Deployment success is **not** acceptance (NFAC-CICD-004). Check the live site:
 
+- [ ] `SITE_URL=https://<production-domain> npm run smoke:live` passes: every
+      Published page answers at the canonical address and declares it, the
+      sitemap and `robots.txt` agree, the résumé is a PDF, and nothing Draft
+      shows (DEC-077). The Smoke Check workflow runs the same check after each
+      Production deployment; this is the manual form of it
 - [ ] `/` renders with correct identity and positioning
 - [ ] `/projects` lists every Published case study
 - [ ] Each Published Project Detail route opens directly, not only by clicking
