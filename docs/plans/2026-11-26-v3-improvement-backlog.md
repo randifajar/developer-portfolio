@@ -125,7 +125,7 @@ ledger, as DEC-071 to DEC-080 alongside the decisions above.
 | # | Item | Decision | Needs from Randi |
 |---|---|---|---|
 | 1 | Employment records when the current role ends | 2, A | **Done** on `staging`; content approval before the promotion |
-| 14 | Résumé label and description from the published records | F | Nothing more: approved |
+| 14 | Résumé label and description from the published records | F | **Done** on `staging` |
 | 2 | Publish five project overviews | 1 | **Done** in #135 |
 | 3 | Staging Preview review checklist | 9 | A review of the checklist |
 | 4 | Post-deployment smoke check | 5 | A review of the new workflow, which needs to write issues |
@@ -451,3 +451,4 @@ ledger, as DEC-071 to DEC-080 alongside the decisions above.
 - **Item 1.** The infrastructure role ends on 27 November 2026, with no role current. It is shown
   as the most recent role, and its wording is in the past tense (DEC-072). It is on `staging`, and
   needs Randi's content approval before the promotion that takes it live.
+- **Item 14.** The Overall page's Résumé row takes its wording from the published résumés: "Résumé — Backend engineering résumé." today, and both variants by itself once both are published (DEC-074).
