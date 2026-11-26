@@ -5,7 +5,7 @@
 | Field | Value |
 |---|---|
 | Date | 2026-11-26 |
-| Status | **Proposed.** Awaiting Randi's review |
+| Status | **In progress.** Randi's answers of 2026-11-27 are in section 1.1, and items move to section 4 as they land |
 | Source | Randi's decisions of 2026-11-26 on what was left open after V3, numbered here as he numbered them (decisions 1 to 12) |
 | Scope | Improve V3, not redesign it. The architecture, the Cinematic Blue Editorial design system, the content-governance and confidentiality rules, the accessibility requirements, the security controls, and the release discipline all stay as they are |
 | Delivery | One focused pull request per item into `staging`, each gated in full and merged only with Randi's approval. Nothing reaches `production` except through a promotion he approves |
@@ -81,29 +81,69 @@
     - The repository, the Vercel project, the production domain, and the package name are not
       renamed yet. A migration proposal comes first.
 
+### 1.1 The answers of 2026-11-27
+
+Randi answered the questions this backlog raised. Each answer is also recorded in the decision
+ledger, as DEC-071 to DEC-080 alongside the decisions above.
+
+- **A. After 27 November 2026 (DEC-072).**
+  - The headline stays "Software Engineer · Backend & Infrastructure".
+  - The AI Delivery Engineer role ends on 27 November 2026. Zettabyte is presented as Randi's most
+    recent employer, not his current one.
+  - Present-tense descriptions of the role become completed experience, and "Current role" becomes
+    "Most recent role" where it appears.
+  - The full history and career progression stay. Nothing says he is unemployed or available, and
+    no new employment is claimed.
+- **B. The Geist font files.** Approved. They come from an official source, are checked for
+  authenticity, weights, licence, and compatibility with the card renderer, and are committed with
+  their licence.
+- **C. The README (DEC-071).**
+  - It opens with "Randi W01" and the tagline "An evolving engineering identity."
+  - It may name Regulus AL01 as another project in Randi's personal engineering collection, without
+    implying any dependency or integration between the two.
+  - The tagline may also appear in project documentation and in the portfolio's own case study, but
+    not in the website's hero.
+- **D. The default résumé (DEC-073).**
+  - `/resume.pdf` keeps serving the backend résumé.
+  - Each variant has one canonical file at a stable path: `/resume/backend.pdf` and
+    `/resume/infrastructure.pdf`.
+  - The selector recommends the variant for the current mode, and keeps both reachable.
+- **E. Merge authorization (DEC-080).** Claude may merge a pull request that Randi has explicitly
+  authorized, under the conditions now in `docs/governance/git-workflow.md` section 11. Approval to
+  implement a change is not approval to merge it, and a promotion always needs its own approval.
+- **F. The Résumé description (DEC-074).** The Overall page describes the Résumé link as "Résumés —
+  Backend and infrastructure versions.", which is untrue while only the backend résumé exists.
+  - The label and description come from the published résumé records.
+  - Today they read "Résumé — Backend engineering résumé."
+  - Once both variants are published, the page reflects that by itself.
+  - This becomes item 14.
+
 ---
 
 ## 2. The backlog, in priority order
 
 | # | Item | Decision | Needs from Randi |
 |---|---|---|---|
-| 1 | Employment records when the current role ends | 2 | What the site says about the present afterwards; content approval |
-| 2 | Publish five project overviews | 1 | Nothing more: approved |
+| 1 | Employment records when the current role ends | 2, A | Content approval, before the promotion |
+| 14 | Résumé label and description from the published records | F | Nothing more: approved |
+| 2 | Publish five project overviews | 1 | **Done** in #135 |
 | 3 | Staging Preview review checklist | 9 | A review of the checklist |
 | 4 | Post-deployment smoke check | 5 | A review of the new workflow, which needs to write issues |
-| 5 | Card headline weight | 6 | Permission to download the bold font file |
-| 6 | Card word spacing check | 7 | Approval only if the fix needs more than a routine update |
-| 7 | Randi W01 in the README and documentation | 12 | Two wording questions |
+| 5 | Card headline weight | 6, B | Nothing more: approved |
+| 6 | Card word spacing check | 7 | **Done:** deferred (section 4) |
+| 7 | Randi W01 in the README and documentation | 12, C | Nothing more: approved |
 | 8 | Naming migration proposal | 12 | Approval before any rename |
 | 9 | Home page mobile performance investigation | 10 | Approval of any significant change |
 | 10 | Jenkins CI/CD case study | 3 | Answers to the proposal's questions; content approval |
 | 11 | Case-study diagrams | 4 | Approval of each proposal |
-| 12 | Two résumé variants and a contextual Résumé menu | 2 | The two approved PDFs |
+| 12 | Two résumé variants and a contextual Résumé menu | 2, D | The two approved PDFs |
 | 13 | The next promotion | 8, 9 | The Staging Preview review, and explicit approval |
 
 **Why this order:**
 
 - **Item 1 comes first.** Once the current role ends, the live site states something untrue.
+- **Item 14 ranks with it.** It was added on 2026-11-27, and it also corrects something untrue on
+  the live site.
 - **Items 2 to 6 come next.** They are decided and need little or nothing more from Randi.
 - **Items 7 to 9 follow.** Each is small, but it waits on a question or produces a proposal.
 - **Items 10 to 12 come last.** They depend on facts, images, or files that only Randi can
@@ -115,18 +155,23 @@
 
 ### Item 1 — Employment records when the current role ends
 
-- **Scope.** The AI Delivery Engineer record in `src/content/experience.ts` gets its end month and
-  `isCurrent: false`. Every present-tense statement about that role moves to the past tense. That
-  includes the profile (`src/content/profile.ts`), the Infrastructure page
-  (`src/content/discipline-pages.ts`, which keeps the present tense for ongoing work under
-  DEC-069), the career chapters (`src/content/career.ts`), and anything else a search for
-  present-tense claims finds.
-- **Timing.** Not before the role ends. Until then, the present tense is true.
-- **Depends on.** Randi's answer on what the site says about the present once no role is current.
-  Nothing is inferred to fill the gap.
+- **Scope (DEC-072).**
+  - The AI Delivery Engineer record in `src/content/experience.ts` ends on 27 November 2026, with
+    `isCurrent: false`.
+  - Every present-tense statement about that role moves to completed experience. That includes the
+    profile (`src/content/profile.ts`), the Infrastructure page (`src/content/discipline-pages.ts`,
+    where DEC-069 now puts all of that role's work in the past tense), the career chapters
+    (`src/content/career.ts`), and anything else a search for present-tense claims finds.
+  - "Current role" becomes "Most recent role" where it appears.
+  - The headline stays "Software Engineer · Backend & Infrastructure".
+- **Never added.** An unemployment status, an availability statement, or a new employment claim.
+- **Timing.** The change goes to `staging` first. It reaches the live site only through a promotion
+  Randi approves.
+- **Depends on.** Nothing more: Randi answered on 2026-11-27.
 - **Done when.**
   - No page, card, or metadata states a current role that has ended.
   - The record shows its end month.
+  - The full history and career progression are unchanged.
   - Release validation passes.
 - **Verification.**
   - The full gate.
@@ -134,7 +179,7 @@
   - A search of the built pages for present-tense role claims.
   - Randi's content approval, release checklist step 3, before the promotion.
 - **Note.** The résumé PDF stays as it is until item 12 replaces it, by Randi's decision.
-- **Needs from Randi.** The answer above, and content approval.
+- **Needs from Randi.** Content approval, before the promotion.
 
 ### Item 2 — Publish five project overviews
 
@@ -234,8 +279,10 @@
   - Every card is rendered before and after the change, and the two are compared.
   - The full gate.
   - A release-audit entry recording the finding, its cause, the fix, and its verification.
-- **Needs from Randi.** Permission to download the font file. The request will name the file, its
-  source, and its size.
+- **Needs from Randi.** Nothing more. On 2026-11-27 he approved downloading Geist Regular, Geist
+  Bold, and the licence from the official Geist release, with their authenticity, weights, licence,
+  and compatibility checked. Both weights are needed, because giving the renderer any font
+  replaces its built-in one.
 
 ### Item 6 — Card word spacing check
 
@@ -248,7 +295,14 @@
   - If a routine compatible update fixes it, the fix goes in with that update.
   - Otherwise, the release audit records the limitation as deferred.
 - **Verification.** The same before-and-after card renders as item 5.
-- **Needs from Randi.** Approval, but only if the fix needs more than a routine update.
+- **Outcome, 2026-11-27: deferred.** No routine update fixes it.
+  - Next.js 16.4.6, the newest 16.x release, bundles Satori 0.29.0.
+  - Satori 0.46.0 added a `fontKerning` property that might even out the gaps; that is untested.
+  - The fix would need a new dependency and moving the cards off `next/og`, which DEC-078 rules
+    out.
+
+  The release audit records the limitation and when to look again.
+- **Needs from Randi.** Nothing.
 
 ### Item 7 — Randi W01 in the README and documentation
 
@@ -263,8 +317,11 @@
   deals with those.
 - **Done when.** The README states the identity, and the README status-accuracy test still passes.
 - **Verification.** The full gate.
-- **Needs from Randi.** Answers to two wording questions: whether the README names the other
-  project in the collection, and where the tagline appears.
+- **Answered 2026-11-27 (DEC-071).** The README opens with the heading "Randi W01" and the tagline
+  "An evolving engineering identity." It may name Regulus AL01 as another project in Randi's
+  collection, independent of this one. The tagline may also appear in project documentation and in
+  the portfolio's own case study, but not in the website's hero.
+- **Needs from Randi.** Nothing more.
 
 ### Item 8 — Naming migration proposal
 
@@ -331,11 +388,12 @@
 
 ### Item 12 — Two résumé variants and a contextual Résumé menu
 
-- **Scope.** This starts once both approved PDFs have arrived:
+- **Scope (DEC-073).** This starts once both approved PDFs have arrived:
   - `/resume/backend.pdf` and `/resume/infrastructure.pdf` (V3 plan, section 3.1), with one record
-    per variant;
-  - a Résumé menu that offers the variant matching the active mode;
-  - `/resume.pdf`, which keeps answering.
+    and one canonical file per variant;
+  - a Résumé selector that recommends the variant for the current mode, and keeps both reachable;
+  - `/resume.pdf`, which keeps serving the backend résumé for backward compatibility, without a
+    second copy of the file.
 - **Until then.** The current résumé stays, and no placeholder is published.
 - **Depends on.**
   - The PDFs.
@@ -348,7 +406,8 @@
   - The menu follows the mode.
   - `/resume.pdf` resolves.
   - Release validation enforces one active résumé per variant.
-- **Needs from Randi.** The PDFs, and which file `/resume.pdf` serves afterwards.
+- **Needs from Randi.** The two approved PDFs. `/resume.pdf` serves the backend one (answered
+  2026-11-27).
 
 ### Item 13 — The next promotion
 
@@ -362,6 +421,23 @@
   - Randi gives explicit approval.
   - Production is verified afterwards, including the smoke check from item 4.
 
+### Item 14 — Résumé label and description from the published records
+
+- **Finding (2026-11-26).** The Overall page's "Explore further" section labels the Résumé link
+  "Résumés" and describes it as "Backend and infrastructure versions." The text has been hardcoded
+  since #107, the day before D6 settled on one résumé. So the live site describes an infrastructure
+  résumé that does not exist.
+- **Scope (DEC-074).** The label and the description come from the published résumé records, not
+  from the copy.
+  - With only the backend résumé, they read "Résumé" and "Backend engineering résumé."
+  - Once both variants are published, they say so by themselves, with no copy change.
+- **Depends on.** Nothing.
+- **Done when.**
+  - The page states only what is published.
+  - A test covers both the one-résumé state and the two-résumé state.
+- **Verification.** The full gate.
+- **Needs from Randi.** Nothing more. Approved on 2026-11-27.
+
 ---
 
 ## 4. Done already
@@ -370,3 +446,5 @@
   for the next promotion.
 - **Item 2, #135.** The five project overviews are Published on `staging`, and the AI-assisted one
   stays Draft. They reach production with the next promotion.
+- **Item 6.** The card word spacing is deferred: no routine update fixes it, and the release
+  audit's "Outstanding after v3" row records why and when to look again.
