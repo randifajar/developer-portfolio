@@ -91,15 +91,20 @@ describe("Backend (UX3 7.2)", () => {
     expect(roles[0]).toHaveTextContent("Node.js");
   });
 
-  it("says where the present role is, and links to it", () => {
+  it("says where the latest role was, as completed work, and links to it", () => {
     renderMode("/backend", BackendPage);
     const experience = within(
       screen.getByRole("region", { name: "Backend roles at Zettabyte Pte Ltd." }),
     );
 
+    // The infrastructure role ended on 27 November 2026, so the line gives its
+    // span rather than "Since …" (DEC-072).
     expect(
-      experience.getByText(/Since August 2026 my role has been on the infrastructure team\./),
+      experience.getByText(
+        /From August 2026 to November 2026 my role was on the infrastructure team\./,
+      ),
     ).toBeVisible();
+    expect(experience.queryByText(/Since August 2026/)).toBeNull();
     expect(experience.getByRole("link", { name: "Infrastructure" })).toHaveAttribute(
       "href",
       "/infrastructure",
@@ -172,14 +177,17 @@ describe("Infrastructure (UX3 7.3)", () => {
     );
   });
 
-  it("states the transition from the records: now, before, and the scope", () => {
+  it("states the transition from the records: the most recent role, before, and the scope", () => {
     renderMode("/infrastructure", InfrastructurePage);
     const transition = within(
       screen.getByRole("region", { name: "From backend developer to the infrastructure team." }),
     );
 
+    // Ended on 27 November 2026: "Most recent role", never "Now" (DEC-072).
+    expect(transition.getByText("Most recent role")).toBeVisible();
+    expect(transition.queryByText("Now")).toBeNull();
     expect(
-      transition.getByText("AI Delivery Engineer, Infrastructure Team · Aug 2026 – Present"),
+      transition.getByText("AI Delivery Engineer, Infrastructure Team · Aug 2026 – Nov 2026"),
     ).toBeVisible();
     expect(transition.getByText("Backend Developer · Apr 2025 – Jul 2026")).toBeVisible();
     expect(

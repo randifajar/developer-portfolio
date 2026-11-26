@@ -131,6 +131,31 @@ export function getPublishedExperience(): readonly WorkExperience[] {
     });
 }
 
+/**
+ * The role to present as the latest, optionally within one discipline: the
+ * current role if there is one, otherwise the one that ended last (DEC-072).
+ * Callers label it by its own `isCurrent`, "Current role" or "Most recent
+ * role", so the wording follows the record and never claims a role that has
+ * ended.
+ */
+export function getMostRecentExperience(discipline?: Discipline): WorkExperience | null {
+  const roles = discipline ? getPublishedExperienceFor(discipline) : getPublishedExperience();
+  const current = roles.find((role) => role.isCurrent);
+
+  if (current) {
+    return current;
+  }
+
+  const [latest] = roles
+    .slice()
+    .sort(
+      (a, b) =>
+        (b.endDate ?? "").localeCompare(a.endDate ?? "") || b.startDate.localeCompare(a.startDate),
+    );
+
+  return latest ?? null;
+}
+
 /** Every publicly eligible project, in approved order. */
 export function getPublishedProjects(): readonly ProjectCaseStudy[] {
   return projects.filter(isPubliclyEligible).slice().sort(compareProjects);

@@ -1,6 +1,7 @@
 import { Section } from "@/components/layout/section";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import {
+  getMostRecentExperience,
   getPublishedEducation,
   getPublishedExperience,
   getPublishedProfile,
@@ -78,17 +79,22 @@ export function ProfileSection() {
 
 function profileFacts(location: string): Fact[] {
   const roles = getPublishedExperience();
-  const current = roles.find((role) => role.isCurrent);
+  // The current role, or else the one that ended last, labelled by which it
+  // is (DEC-072): the profile never presents an ended role as current.
+  const latest = getMostRecentExperience();
   const firstStart = roles.map((role) => role.startDate).sort()[0];
   const years = firstStart ? completedYearsSince(firstStart) : 0;
   const [degree] = getPublishedEducation();
 
   return [
     { term: "Based in", value: location },
-    ...(current
+    ...(latest
       ? [
-          { term: "Current role", value: current.position },
-          { term: "Company", value: current.companyName },
+          {
+            term: latest.isCurrent ? "Current role" : "Most recent role",
+            value: latest.position,
+          },
+          { term: "Company", value: latest.companyName },
         ]
       : []),
     ...(years >= 1

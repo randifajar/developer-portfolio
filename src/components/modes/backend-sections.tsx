@@ -4,8 +4,8 @@ import { ArrowLink } from "@/components/ui/arrow-link";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { SectionTitle } from "@/components/ui/section-title";
 import {
+  getMostRecentExperience,
   getPublishedDisciplineIntro,
-  getPublishedExperience,
   getPublishedExperienceFor,
   getPublishedWorkAreas,
   getTechnologyNames,
@@ -60,9 +60,10 @@ export function BackendWorkSection() {
  * contributions as two separate lists, and the technologies. The company is
  * named once, in the heading, when every role shares it.
  *
- * When the current role is not a backend one, a closing line says so and
- * links to its page, so the list does not read as if backend work were the
- * present.
+ * When the latest role is not a backend one, a closing line says so and links
+ * to its page, so the list does not read as if backend work were the latest.
+ * While that role is current the line says "Since …"; once it has ended, the
+ * line gives its span instead (DEC-072).
  */
 export function BackendExperienceSection() {
   const roles = getPublishedExperienceFor("backend");
@@ -72,10 +73,10 @@ export function BackendExperienceSection() {
   }
 
   const companies = [...new Set(roles.map((role) => role.companyName))];
-  const current = getPublishedExperience().find((role) => role.isCurrent);
+  const latest = getMostRecentExperience();
   const movedOn =
-    current?.disciplines.includes("infrastructure") && !current.disciplines.includes("backend")
-      ? current
+    latest?.disciplines.includes("infrastructure") && !latest.disciplines.includes("backend")
+      ? latest
       : undefined;
 
   return (
@@ -147,8 +148,9 @@ export function BackendExperienceSection() {
 
         {movedOn ? (
           <p className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-border pt-8 text-body text-text-secondary">
-            Since {formatMonthYearLong(movedOn.startDate)} my role has been on the infrastructure
-            team.
+            {movedOn.isCurrent || !movedOn.endDate
+              ? `Since ${formatMonthYearLong(movedOn.startDate)} my role has been on the infrastructure team.`
+              : `From ${formatMonthYearLong(movedOn.startDate)} to ${formatMonthYearLong(movedOn.endDate)} my role was on the infrastructure team.`}
             <ArrowLink href={ROUTES.infrastructure}>{DISCIPLINE_LABELS.infrastructure}</ArrowLink>
           </p>
         ) : null}

@@ -49,7 +49,8 @@ export const profile = defineProfile({
 
   // Availability clause removed 2026-11-18 at Randi's request (SUP-011). The
   // rest is the noun phrase from the approved mockup's two mode descriptions,
-  // so it claims no present-tense activity beyond the confirmed current role.
+  // so it claims no present-tense activity. It describes the work, not a
+  // current job, and stays as it is now that the role has ended (DEC-072).
   headline:
     "Backend services in Node.js, GraphQL, and MongoDB, and the Jenkins pipelines and " +
     "AWS environments that deliver them.",
@@ -91,14 +92,16 @@ export const profile = defineProfile({
   // The V3 Overall profile statement (UX3 7.1). The first paragraph is the
   // wording proposed in the V3.1 mockup and approved by Randi on 2026-11-19
   // (OPEN-009). The second restates facts the experience records hold: one
-  // employer, the sector, and the dates of the first and latest roles.
+  // employer, the sector, and the dates of the first and latest roles. Since
+  // 2026-11-27 the latest role has an end, so its dates read "from August to
+  // November 2026" (DEC-072). "Has been" stays true of the career so far.
   statement:
     "I began my engineering career building backend services and data workflows. Over time, " +
     "the problems expanded beyond application code into deployment pipelines, infrastructure " +
     "configuration, and the operational systems behind reliable releases.\n\n" +
     "All of it has been at Zettabyte Pte Ltd, on software for higher-education platforms: " +
     "from an internship in July 2024, through contract and full-time backend roles, to the " +
-    "infrastructure team in August 2026.",
+    "infrastructure team from August to November 2026.",
 
   // SUP-015, 2026-11-19: as in the experience records and on both résumés.
   // DEC-013 had "Yogyakarta, Indonesia".
