@@ -47,8 +47,8 @@ function focusInvoker(event: MouseEvent<HTMLButtonElement>) {
 }
 
 /**
- * Another way to open the header's Résumé menu, from elsewhere on a page —
- * "Résumés" in the Overall page's Explore further (UX3 7.1). The menu stays
+ * Another way to open the header's Résumé menu, from elsewhere on a page — the
+ * Résumé row in the Overall page's Explore further (UX3 7.1). The menu stays
  * the one in the header; this button only points at it.
  */
 export function ResumeMenuTrigger(
