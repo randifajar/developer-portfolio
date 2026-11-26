@@ -1436,6 +1436,10 @@ pages on mobile. Its cause was not investigated.
 | Safe project visuals (OPEN-006), custom domain (OPEN-007) | Open, unchanged since v2 |
 | The v2 résumé lists Backend Developer as current | By Randi's decision (D6). Only a new PDF from him changes it |
 
+Randi decided these items on 2026-11-26, together with a few new ones. The decisions, and the work
+they lead to in priority order, are in `docs/plans/2026-11-26-v3-improvement-backlog.md`. Each
+row above changes when its item lands.
+
 ## 2026-11-26 — promotion: the social cards and Tailwind 4.3.5
 
 | | |
