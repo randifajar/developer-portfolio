@@ -1,4 +1,9 @@
 version: 2
+# No `labels` option, on purpose. Without one, Dependabot applies its default
+# labels, `dependencies` and the ecosystem's own (`npm`, `github_actions`), and
+# creates them when they are missing. Custom labels must already exist in the
+# repository. The ones this file listed did not, so Dependabot left a warning
+# on each pull request instead of labelling it.
 updates:
   - package-ecosystem: npm
     directory: /
@@ -8,9 +13,6 @@ updates:
       time: "03:00"
       timezone: Asia/Jakarta
     open-pull-requests-limit: 5
-    labels:
-      - dependencies
-      - security
     commit-message:
       prefix: chore
       include: scope
@@ -63,9 +65,6 @@ updates:
       time: "03:30"
       timezone: Asia/Jakarta
     open-pull-requests-limit: 5
-    labels:
-      - dependencies
-      - github-actions
     commit-message:
       prefix: chore
       include: scope
