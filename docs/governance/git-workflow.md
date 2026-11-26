@@ -410,19 +410,31 @@ Repository settings:
 - Automatic deletion of merged branches enabled
 
 Claude must not merge without Randi's explicit approval for the specific pull
-request in the current conversation.
+request in the current conversation. Approval to implement a change is not
+approval to merge it (DEC-080).
 
 Passing CI is necessary, not sufficient, authorization.
 
 Before merge confirm:
 
 - Required checks pass
-- Review conversations are resolved
+- Required reviews and approval gates are satisfied, including a review that a
+  plan or backlog item names
+- Review conversations are resolved, and no blocking comment is open
 - Preview is verified when relevant
 - Confidentiality review passes
-- Pull-request scope matches the approved task
+- The pull request is mergeable
+- The tested changes have not changed since they were verified
+- Pull-request scope matches the approved task, and the merge stays within the
+  scope of Randi's approval
 - Squash commit message is valid
 - Randi approved merge
+
+After the merge, verify the merged result: the tree the merge produced is the one
+that was tested, or the merged tree is gated again.
+
+A promotion always needs its own explicit approval from Randi, given after his
+Staging Preview review. Approval of task pull requests never extends to it.
 
 ### Promotion
 

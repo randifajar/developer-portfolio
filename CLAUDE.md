@@ -50,6 +50,12 @@ Wicaksono's explicit approval in the current conversation. Passing CI is
 necessary, never sufficient. Approval of one pull request is not approval of the
 next.
 
+The same holds for every pull request, `staging` included: Claude merges only
+with Randi's explicit authorization for that pull request, and approval to
+implement a change is not approval to merge it. The conditions are in
+`docs/governance/git-workflow.md` section 11 (DEC-080). A promotion always
+needs its own explicit approval.
+
 ## Verification Before Pushing
 
 Never report that a check passed without having observed its output.
