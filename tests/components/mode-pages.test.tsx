@@ -114,20 +114,48 @@ describe("Backend (UX3 7.2)", () => {
       work.getByRole("link", { name: "Read the case study: Jury Process Management Integration" }),
     ).toHaveAttribute("href", "/projects/jury-process-management-integration");
   });
+
+  it("lists the backend overviews after the case study, unlinked, and not the Draft one", () => {
+    renderMode("/backend", BackendPage);
+    const work = within(screen.getByRole("region", { name: "Backend work." }));
+
+    expect(work.getAllByRole("heading", { level: 3 }).map((h) => h.textContent)).toEqual([
+      "Jury Process Management Integration",
+      "Notification Hub and AWS Email Events",
+      "Configurable Data Tables and Export Workflows",
+      "Notification and Document Service Integrations",
+      "Evaluation and Certification Platform",
+    ]);
+    // An overview has no page of its own, so only the case study links (DEC-060).
+    expect(work.getAllByRole("link", { name: /^Read the case study/ })).toHaveLength(1);
+  });
 });
 
 describe("Infrastructure (UX3 7.3)", () => {
   it("renders its sections in the approved order, each on its approved surface", () => {
     const { container } = renderMode("/infrastructure", InfrastructurePage);
 
-    // Selected work is absent: no infrastructure case study exists, and the
-    // overviews are Draft until their titles are confirmed (OPEN-011).
+    // No infrastructure case study exists yet, so the projects section holds
+    // the infrastructure overviews, Published on 2026-11-26 (OPEN-011).
     expect(sectionsOf(container)).toEqual([
       ["Beyond Deployment.", "dark"],
       ["From backend developer to the infrastructure team.", "light"],
       ["Pipelines, environments, and what breaks.", "white"],
+      ["Infrastructure projects.", "light"],
       ["Grouped by how I use them.", "navy"],
     ]);
+  });
+
+  it("lists the infrastructure overviews under its projects, unlinked, and not the Draft one", () => {
+    renderMode("/infrastructure", InfrastructurePage);
+    const work = within(screen.getByRole("region", { name: "Infrastructure projects." }));
+
+    expect(work.getAllByRole("heading", { level: 3 }).map((h) => h.textContent)).toEqual([
+      "Jenkins CI/CD Migration and Agent Modernization",
+      "Notification Hub and AWS Email Events",
+      "Evaluation and Certification Platform",
+    ]);
+    expect(work.queryAllByRole("link", { name: /^Read the case study/ })).toEqual([]);
   });
 
   it("has exactly one h1, and the hero action leads to the first section", () => {

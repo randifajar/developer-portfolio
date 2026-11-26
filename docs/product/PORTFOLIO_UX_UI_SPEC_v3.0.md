@@ -280,8 +280,9 @@ Each hero names the engineer, the focus and the next action (V3-CONT-003). Wordi
   infrastructure role"; that line is not shown, and the Infrastructure page's Scope fact
   says the same (§7.3). Nothing on the site calls the role SRE. Decided 2026-11-22: it stays
   that way (DEC-066).
-- **Selected work.** Overviews are Draft until their titles are confirmed (OPEN-011), so for
-  now the section lists the one case study with a discipline. Nothing is added to fill it.
+- **Selected work.** The section lists the case study with a discipline, then the first three
+  Published overviews: the mockup's four rows. Five overviews have been Published since 2026-11-26
+  (OPEN-011). With fewer, the section shows fewer rows; nothing is added to fill it.
 - **Explore further.** "Seven pieces of work, by discipline" was a count typed into the copy.
   The count is now taken from what is published. "By discipline" returned in P7 with the
   projects filter.
@@ -327,8 +328,9 @@ differences:
 - **Backend experience.** The mockup listed each role on one line. Each role now shows
   its summary, its responsibilities and contributions as two lists, and its technologies,
   which is what FAC-EXP-001 asks of an entry.
-- **Infrastructure selected work** is omitted until the overviews are published
-  (OPEN-011), because no infrastructure case study exists.
+- **Infrastructure selected work** holds the infrastructure overviews, Published since 2026-11-26
+  (OPEN-011), because no infrastructure case study exists yet. It would be omitted if nothing in
+  it were published.
 - **Content source.** The pages' opening paragraphs and work areas are content, in
   `src/content/discipline-pages.ts`, and each work area cites the roles it restates.
   Section headings stay in the components, as elsewhere.

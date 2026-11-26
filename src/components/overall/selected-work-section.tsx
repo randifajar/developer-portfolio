@@ -18,9 +18,9 @@ import { ROUTES, SECTION_IDS } from "@/lib/constants";
  * - Only a case study links. An overview has no page of its own, so it is
  *   never a link (DEC-060).
  *
- * The overviews are Draft until Randi confirms their titles (OPEN-011), so for
- * now the section shows the one case study. That is the truthful state, not a
- * gap to pad: nothing is invented to fill the rows (FAC-HOME-004).
+ * With five overviews Published since 2026-11-26 (OPEN-011), the rows are the
+ * case study and the first three overviews. Fewer published items would mean
+ * fewer rows, never invented ones (FAC-HOME-004).
  *
  * The rows are the same component the Backend and Infrastructure pages use.
  */

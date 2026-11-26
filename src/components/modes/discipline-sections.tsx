@@ -27,8 +27,8 @@ interface DisciplineWorkSectionProps {
 /**
  * Selected work for one discipline: its case studies, then its published
  * overviews. Omitted entirely while there is none, rather than a heading over
- * nothing: on Infrastructure that is the state until the overviews are
- * published (OPEN-011), since no infrastructure case study exists.
+ * nothing. Infrastructure has no case study yet, so its section holds the
+ * overviews, Published since 2026-11-26 (OPEN-011).
  */
 export function DisciplineWorkSection({
   discipline,
