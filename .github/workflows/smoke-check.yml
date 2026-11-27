@@ -1,0 +1,110 @@
+name: Smoke Check
+
+# Does the live site answer at its canonical address, and does it declare that
+# address as its own everywhere a search engine or a link preview reads one?
+# (DEC-077, backlog item 4.)
+#
+# On 2026-11-17 the site was found to have declared a released Vercel alias as
+# its canonical address for months: renaming the Vercel project had freed the
+# alias, a stranger's portfolio later took it, and nothing in the gate tested
+# the site's own address. See the 2026-11-17 entry in docs/release-audit.md.
+#
+# The checks live in src/domain/deployment/smoke-check.ts and read what to
+# expect from the content, so publishing more work needs no edit here. Like
+# security-audit.yml, a failure opens an issue assigned to the repository
+# owner, because a failed workflow on its own only sends an email.
+#
+# Kept out of ci.yml deliberately: `quality` and `e2e` are the required status
+# checks, and their names are contractual with the branch ruleset
+# (github-configuration.md section 4).
+on:
+  # Vercel reports each deployment to GitHub. Only a successful Production
+  # deployment is checked; the job's `if` skips Preview deployments, which are
+  # not the canonical site.
+  deployment_status:
+  schedule:
+    # Daily at 21:30 UTC, which is 04:30 Asia/Jakarta, half an hour after the
+    # security audit. Daily because the address can break without a deployment:
+    # the 2026-11-17 failure came from a project rename, not from a release.
+    - cron: "30 21 * * *"
+  workflow_dispatch:
+    inputs:
+      drill:
+        # An alert that has never fired is indistinguishable from one that
+        # cannot. Run once with this set, then once without: the drill issue
+        # should open, then close.
+        description: "Drill: skip the check and force the failure path"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+# Two overlapping runs could each see no open issue and open one apiece.
+concurrency:
+  group: smoke-check
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    name: smoke
+    if: >-
+      github.event_name != 'deployment_status' ||
+      (github.event.deployment_status.state == 'success' &&
+      github.event.deployment.environment == 'Production')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    # Write access to issues only, as in security-audit.yml. Job-level
+    # permissions replace the workflow-level block, so `contents: read` is
+    # restated for checkout.
+    permissions:
+      contents: read
+      issues: write
+
+    env:
+      # The canonical production address. OPEN-007 keeps the Vercel subdomain
+      # (DEC-077); a custom domain would change this line.
+      SITE_URL: https://randi-fajar-wicaksono.vercel.app
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # continue-on-error lets the next step report the result; the last step
+      # still fails the run, so a red run remains a red run.
+      - name: Smoke check the live site
+        id: smoke
+        continue-on-error: true
+        env:
+          DRILL: ${{ inputs.drill }}
+        run: |
+          set -o pipefail
+          if [ "$DRILL" = "true" ]; then
+            echo "DRILL: the smoke check was not run; the failure path is being exercised deliberately." | tee smoke.txt
+            exit 1
+          fi
+          npm run smoke:live 2>&1 | tee smoke.txt
+
+      - name: Report to an issue
+        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OUTCOME: ${{ steps.smoke.outcome }}
+          DRILL: ${{ inputs.drill }}
+          OWNER: ${{ github.repository_owner }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: bash .github/scripts/report-smoke-check.sh
+
+      - name: Fail the run if the smoke check failed
+        if: ${{ steps.smoke.outcome == 'failure' }}
+        run: |
+          echo "The smoke check failed. See the issue opened or updated above."
+          exit 1
