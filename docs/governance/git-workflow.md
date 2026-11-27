@@ -442,7 +442,11 @@ The promotion pull request, `staging` → `production`, is a release. Before Ran
 merges it:
 
 - `staging` is in sync with `production` (section 10)
-- The staging Preview has been reviewed
+- Randi has reviewed the staging Preview himself, with the checklist under
+  "Promotions" in `docs/release-checklist.md`. The promotion pull request lists
+  the pages its release touches, so the review can start with them. The
+  production check after the merge (section 13) is separate and does not
+  replace it
 - `SITE_URL=https://<production-domain> npm run release:check` passes on the
   `staging` tree
 
