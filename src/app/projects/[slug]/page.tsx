@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Section } from "@/components/layout/section";
 import { ProjectsBackLink } from "@/components/project/project-filter";
+import { ProjectDiagram } from "@/components/project/project-diagram";
 import { ProjectNavigation } from "@/components/project/project-navigation";
 import { ProjectResponsibility } from "@/components/project/project-responsibility";
 import { ProjectSection } from "@/components/project/project-section";
@@ -186,6 +187,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           <ProjectSection
             heading="Architecture and Workflow"
             body={project.workflowOrArchitecture}
+            figure={project.diagram ? <ProjectDiagram diagram={project.diagram} /> : undefined}
           />
 
           <ProjectSection heading="Challenges">

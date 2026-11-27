@@ -379,6 +379,12 @@ differences:
   names stay (DEC-065). The
   mockup's Team fact is left out for the same reason: team work is a list, not a summary
   line.
+- **A case study's diagram**, where it has one, follows the Architecture and Workflow text
+  across the section's full width (DEC-076, added 2026-11-28). From 1024 px it is drawn in
+  its approved shape: two lanes for work handed between systems, or a row of stages for a
+  pipeline. Below that it runs down one column at the page's own text sizes. It is one
+  image to a screen reader, named by its caption and described in words, and the section's
+  text stays the full explanation.
 - **v2's project card** and the shared section header, no longer used, were removed.
 
 ### 7.6 Photograph

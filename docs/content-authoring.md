@@ -137,8 +137,8 @@ Validation rejects a Published project missing any of these:
 `testingAndVerification`, `outcome`, `lessonsLearned`, and at least one
 `personalResponsibilities` entry.
 
-Optional: `period`, `workflowOrArchitecture`, `aiUsage`, `repositoryUrl`,
-`mediaAssetIds`, `confidentialityNote`, `teamResponsibilities`.
+Optional: `period`, `workflowOrArchitecture`, `diagram`, `aiUsage`,
+`repositoryUrl`, `mediaAssetIds`, `confidentialityNote`, `teamResponsibilities`.
 
 Long-form fields accept Markdown. Raw HTML is disabled and will render as
 escaped text.
@@ -156,6 +156,29 @@ case the image fails to load or the reader uses a screen reader.
 Before adding any project visual, check it for internal identifiers, internal
 URLs, real customer or student data, and anything else on the never-publish
 list above.
+
+### Diagrams
+
+A case study's diagram is not an image file. It is the `diagram` field of the
+project record: the diagram's words, which the case-study page draws in the
+design system under Architecture and Workflow (DEC-076, backlog item 11). Two
+shapes exist:
+
+- **`handoff`:** work moving between two systems. Name the two `lanes`, list
+  the `steps` in order with the lane each happens in, and give one `handoffs`
+  entry for what crosses between each pair of steps. Consecutive steps must be
+  in different lanes. A `note` is optional.
+- **`pipeline`:** `stages` in order, the last being the output. Mark the stages
+  that `modes` apply to with `emphasis`; they must be consecutive.
+
+Every diagram has a `title`, which becomes its caption, and a `description`,
+which is its text alternative. Validation requires `workflowOrArchitecture`
+beside it, because a diagram illustrates that text and never replaces it.
+
+Write every label from what the case study's text already says. A diagram adds
+the shape of the work, never a new claim, and it never shows topology,
+hostnames, internal names, or anything else on the never-publish list. Randi
+approves each diagram before it is published (DEC-076).
 
 ---
 

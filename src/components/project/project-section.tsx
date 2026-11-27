@@ -6,6 +6,11 @@ interface ProjectSectionProps {
   /** Markdown body. When omitted, the whole section is skipped. */
   readonly body?: string | undefined;
   readonly children?: ReactNode;
+  /**
+   * A figure under the text that spans the whole section, both columns from
+   * 900 px, because a diagram needs more width than the text column has.
+   */
+  readonly figure?: ReactNode;
 }
 
 /**
@@ -23,7 +28,7 @@ interface ProjectSectionProps {
  * stacks. Only the presentation changed: the sections, their order, and their
  * words are as they were (DEC-054).
  */
-export function ProjectSection({ heading, body, children }: ProjectSectionProps) {
+export function ProjectSection({ heading, body, children, figure }: ProjectSectionProps) {
   if (!body && !children) {
     return null;
   }
@@ -37,6 +42,7 @@ export function ProjectSection({ heading, body, children }: ProjectSectionProps)
         {body ? <MarkdownContent>{body}</MarkdownContent> : null}
         {children}
       </div>
+      {figure ? <div className="min-w-0 min-[900px]:col-span-2">{figure}</div> : null}
     </section>
   );
 }
