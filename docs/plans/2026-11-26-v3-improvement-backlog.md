@@ -124,20 +124,20 @@ ledger, as DEC-071 to DEC-080 alongside the decisions above.
 
 | # | Item | Decision | Needs from Randi |
 |---|---|---|---|
-| 1 | Employment records when the current role ends | 2, A | **Done** on `staging`; content approval before the promotion |
-| 14 | Résumé label and description from the published records | F | **Done** on `staging` |
-| 2 | Publish five project overviews | 1 | **Done** in #135 |
-| 3 | Staging Preview review checklist | 9 | A review of the checklist |
-| 4 | Post-deployment smoke check | 5 | A review of the new workflow, which needs to write issues |
-| 5 | Card headline weight | 6, B | **Done** on `staging` |
+| 1 | Employment records when the current role ends | 2, A | **Done**, live since #144 |
+| 14 | Résumé label and description from the published records | F | **Done**, live since #144 |
+| 2 | Publish five project overviews | 1 | **Done** in #135, live since #144 |
+| 3 | Staging Preview review checklist | 9 | **Done** in #141 |
+| 4 | Post-deployment smoke check | 5 | **Done** in #142, live since #144, drill passed |
+| 5 | Card headline weight | 6, B | **Done**, live since #144 |
 | 6 | Card word spacing check | 7 | **Done:** deferred (section 4) |
-| 7 | Randi W01 in the README and documentation | 12, C | **Done** on `staging` |
-| 8 | Naming migration proposal | 12 | Approval before any rename |
+| 7 | Randi W01 in the README and documentation | 12, C | **Done** in #140 |
+| 8 | Naming migration proposal | 12 | **Proposal done** in #143. The new names, and approval before any rename |
 | 9 | Home page mobile performance investigation | 10 | Approval of any significant change |
 | 10 | Jenkins CI/CD case study | 3 | Answers to the proposal's questions; content approval |
 | 11 | Case-study diagrams | 4 | Approval of each proposal |
 | 12 | Two résumé variants and a contextual Résumé menu | 2, D | The two approved PDFs |
-| 13 | The next promotion | 8, 9 | The Staging Preview review, and explicit approval |
+| 13 | The next promotion | 8, 9 | **Done:** #144, 2026-11-28 |
 
 **Why this order:**
 
@@ -442,15 +442,26 @@ ledger, as DEC-071 to DEC-080 alongside the decisions above.
 
 ## 4. Done already
 
-- **#133.** Dependabot uses its default labels. It is on `staging`, and under decision 8 it waits
-  for the next promotion.
-- **Item 2, #135.** The five project overviews are Published on `staging`, and the AI-assisted one
-  stays Draft. They reach production with the next promotion.
-- **Item 5.** The social-card headlines are drawn in a real Geist Bold, from the official release with its licence. The release audit records the finding, its cause, the fix, and its verification.
+- **#133.** Dependabot uses its default labels. It went live with #144, and the next Dependabot
+  pull requests carried those labels without a warning.
+- **Item 2, #135.** The five project overviews are Published, and the AI-assisted one stays Draft.
+  Live since #144.
+- **Item 5.** The social-card headlines are drawn in a real Geist Bold, from the official release with its licence. The release audit records the finding, its cause, the fix, and its verification. Live since #144.
 - **Item 6.** The card word spacing is deferred: no routine update fixes it, and the release
   audit's "Outstanding after v3" row records why and when to look again.
 - **Item 1.** The infrastructure role ends on 27 November 2026, with no role current. It is shown
-  as the most recent role, and its wording is in the past tense (DEC-072). It is on `staging`, and
-  needs Randi's content approval before the promotion that takes it live.
-- **Item 14.** The Overall page's Résumé row takes its wording from the published résumés: "Résumé — Backend engineering résumé." today, and both variants by itself once both are published (DEC-074).
+  as the most recent role, and its wording is in the past tense (DEC-072). Randi approved it with
+  the promotion, and it is live since #144.
+- **Item 14.** The Overall page's Résumé row takes its wording from the published résumés: "Résumé — Backend engineering résumé." today, and both variants by itself once both are published (DEC-074). Live since #144.
 - **Item 7.** The README opens with "Randi W01" and its tagline, and names Regulus AL01 as an independent project in Randi's collection. The decision ledger carries the name in its title, and the package description has it too. The package name is unchanged, and the website still leads with Randi's name (DEC-071).
+- **Item 3, #141.** The Staging Preview checklist is in `docs/release-checklist.md`, under
+  "Promotions", and `git-workflow.md` section 11 points to it. Randi accepted it when he chose to
+  merge #141 on 2026-11-27. #144 was the first promotion to list the pages it touched for it.
+- **Item 4, #142.** The smoke check runs as `npm run smoke:live`, and from a workflow after each
+  Production deployment and daily. Its first runs followed #144: 29 of 29 checks passed, and the
+  drill opened its issue (#147) and the next run closed it.
+- **Item 8, #143.** The naming migration proposal is in `docs/plans/`. Nothing is renamed: that
+  waits for Randi to choose the new names and approve a rename, and for the two Vercel checks the
+  proposal lists, which only his account can make.
+- **Item 13, #144.** The promotion of 2026-11-28 took items 1, 2, 3, 4, 5, 7, 8, and 14 live,
+  with #133. The release audit records how it was gated and verified.

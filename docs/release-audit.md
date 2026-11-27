@@ -1430,9 +1430,9 @@ pages on mobile. Its cause was not investigated.
 | Content approval, checklist step 3 | **Done** 2026-11-22. Randi confirmed every claim is true |
 | LinkedIn, GitHub, and the email action, step 5 | **Done** 2026-11-22, by Randi, by hand |
 | Lighthouse, step 8 | **Done** 2026-11-22, against production; see "Production verification". INP waits for real-user data |
-| Overview titles (OPEN-011) | **Decided** 2026-11-26. Five are Published on `staging` and reach production with the next promotion. The AI-assisted one stays Draft by Randi's decision |
+| Overview titles (OPEN-011) | **Live** since the promotion of 2026-11-28 (#144); see that entry. Decided 2026-11-26: five are Published, and the AI-assisted one stays Draft by Randi's decision |
 | Social cards for `/projects` and each case study (plan 3.9) | **Closed** in production by #129 (`aebefd3`) on 2026-11-26; see that entry. Built in #123 (`e98aa3b`). Claude merged it at Randi's request, given in the conversation, on 2026-11-23 at 00:45 (UTC+7), and `staging`'s tree after the merge is the one tested. `/projects` and each Published case study now have their own 1200×630 card, served as `og:image` and `twitter:image`. The projects index also has Twitter fields of its own. CI passed on `e98aa3b`: `quality`, `audit`, and `e2e` (353 passed, 4 skipped). #123 left three privacy checks unbroken, because the session that built it was refused the edits that break them. After the merge, at Randi's choice, a second Claude session broke each check on the merged tree (`a99371a`) and restored every edit. All four breaks failed as they should; #124 lists them. They also showed that `dynamicParams = false` is what makes a card's 404 the site's 404 page. With it set to true, the handler's own `notFound()` answers instead, with an empty body. The cards were not viewed on the staging Preview, which needs a Vercel login |
-| Card headlines not bold | **Fixed** on `staging` 2026-11-27 (DEC-078, backlog item 5). Finding, in #123: no card headline rendered bold. Cause: `next/og` (`@vercel/og` 1.0.1 in Next.js 16.4.6) bundles only Geist Regular and registers it for weight 700 as well, so `fontWeight: 700` drew the regular face. Fix: the cards pass the renderer Geist Regular and Bold from the official release (`vercel/geist-font` v1.9.2, unmodified, SIL Open Font License, in `src/assets/fonts/geist`), read at build time. Both weights are needed, because giving the renderer any font replaces its built-in one. Verification: the files match the release tag's git blobs; their own tables say Geist Regular 400 and Geist Bold 700 with embedding permitted; a test reads those tables and failed when the Bold entry was pointed at the Regular file. All six cards were rendered and compared with production's. Each changed only in its headline band (0.9 to 4.1 % of pixels), the regular text did not change, and every card stayed 1200×630 |
+| Card headlines not bold | **Fixed** 2026-11-27 (DEC-078, backlog item 5), and live since the promotion of 2026-11-28 (#144). Finding, in #123: no card headline rendered bold. Cause: `next/og` (`@vercel/og` 1.0.1 in Next.js 16.4.6) bundles only Geist Regular and registers it for weight 700 as well, so `fontWeight: 700` drew the regular face. Fix: the cards pass the renderer Geist Regular and Bold from the official release (`vercel/geist-font` v1.9.2, unmodified, SIL Open Font License, in `src/assets/fonts/geist`), read at build time. Both weights are needed, because giving the renderer any font replaces its built-in one. Verification: the files match the release tag's git blobs; their own tables say Geist Regular 400 and Geist Bold 700 with embedding permitted; a test reads those tables and failed when the Bold entry was pointed at the Regular file. All six cards were rendered and compared with production's. Each changed only in its headline band (0.9 to 4.1 % of pixels), the regular text did not change, and every card stayed 1200×630 |
 | Uneven word spacing on the cards | **Deferred** 2026-11-27 (DEC-078, backlog item 6). The cause was found in #123: Satori, which `next/og` bundles, positions each word by its unkerned width but draws it with kerning, so the gap after a word grows by that word's own kerning, about 5–6 px after "Software" and after "Yogyakarta,". Checked on 2026-11-27: Next.js 16.4.6, the newest 16.x release, bundles `@vercel/og` 1.0.1 with Satori 0.29.0. Satori 0.46.0 (2026-10-09) added a `fontKerning` property, which might even out the gaps by turning kerning off; that is untested. No compatible Next.js release bundles it, and the standalone `@vercel/og` (1.0.3) uses Satori 0.33.5. Using a newer Satori would mean a new dependency and moving the cards off `next/og`, which DEC-078 rules out. Revisit when a Next.js release bundles Satori 0.46 or later |
 | Safe project visuals (OPEN-006), custom domain (OPEN-007) | **Decided** 2026-11-26. Original technical diagrams where they support a case study, each reviewed before publication (DEC-076, backlog item 11). The custom domain stays deferred (DEC-077) |
 | The v2 résumé lists Backend Developer as current | By Randi's decision (D6), revised on 2026-11-26 and 2026-11-27 (DEC-073): two variants, from PDFs he will supply, with the current PDF staying until then (backlog item 12) |
@@ -1507,3 +1507,90 @@ Not checked by Claude:
 
 Everything under "Outstanding after v3" other than the social cards row is
 unchanged.
+
+## 2026-11-28 — promotion: the completed role, five project overviews, and the smoke check
+
+| | |
+|---|---|
+| Promoted | `staging` (`3f3cc90`) to `production` as `686ad07`, through #144 |
+| Merged | By Claude on 2026-11-28 at 00:29 (UTC+7), with Randi's approval given in the conversation shortly before. He wrote "all approved" in reply to a list of what was waiting on him, whose first item was this promotion: "It needs your Staging Preview review, your approval of the "Most recent role" wording, and your go-ahead." |
+| Tree | `7bab819`, the same as `staging`'s and as the tree the release gate passed on |
+| Content state | Changed: the employment records and their wording (DEC-072), five project overviews (OPEN-011), and the Résumé row's wording (DEC-074). The résumé PDF is unchanged |
+| Purpose | Stop the live site calling an ended role current, after Randi's last working day on 27 November 2026, and take the first V3 improvements live |
+
+### What went out
+
+| PR | What it does | Commit on `staging` |
+|---|---|---|
+| #137 | The AI Delivery Engineer role ends in November 2026. "Most recent role" replaces "Current role", and the role's work is in the past tense (DEC-072) | `4dc1264` |
+| #135 | Five project overviews are Published. The AI-assisted one stays Draft | `b6d1ded` |
+| #138 | The Résumé row's wording comes from the published résumés: "Résumé — Backend engineering résumé." (DEC-074) | `c60392b` |
+| #139 | The social-card headlines are drawn in Geist Bold (DEC-078) | `0908d52` |
+| #142 | The post-deployment smoke check, `npm run smoke:live`, and its workflow (DEC-077) | `2f0f6b3` |
+| #133 | Dependabot uses its default labels | `981dace` |
+| #132, #134, #136, #140, #141, #143 | Records: the previous promotion, the improvement backlog, the decisions, the README as Randi W01, the Staging Preview checklist, and the naming proposal | `c54508d`, `3a1979d`, `5c089a9`, `813024a`, `4850a3b`, `3f3cc90` |
+
+#130 and #131, two Dependabot updates, were already in production: they were merged there
+on 2026-11-26.
+
+### How it was gated
+
+- **The release gate.** `SITE_URL=https://randi-fajar-wicaksono.vercel.app npm run
+  release:check`, its steps run one at a time on the tree being promoted, passed:
+  - `check`: 37 test files with 533 tests passed, and the build succeeded;
+  - release validation passed;
+  - no public link was broken (LinkedIn and the email link need a human);
+  - the end-to-end suite, one engine per call: 353 passed, 4 skipped;
+  - `audit:prod`: 0 vulnerabilities.
+- **CI.** On #144 (run 46040942515, `3f3cc90`) and on `686ad07` (run 46042232628),
+  `quality`, `audit` and `e2e` passed, with 353 passed and 4 skipped, and CodeQL passed.
+- **A confidentiality scan.** It covered the 2,121 lines the promotion added, and the commit
+  messages since the previous promotion. It looked for the design reference's names, the
+  service names DEC-064 keeps out of public text, the internal application names,
+  phone-like numbers, and email addresses other than the public one. It found none. The same
+  scan, run on the lines #115 removed, found 38.
+
+### Production verification
+
+`release-checklist.md` step 9 ran at 00:30 and again at 00:40 (UTC+7). Both runs gave the
+same result:
+
+| Check | Result |
+|---|---|
+| `npm run smoke:live`: each Published page answers at the canonical address and declares it, and so do the sitemap and `robots.txt`; the résumé is a PDF; an unknown route is a 404; no Draft title shows | 29 of 29 |
+| This release's changes: no "Current role" on any mode page; "Most recent role" on Overall and Infrastructure; the role's dates in the past tense on Backend; the headline unchanged; no availability statement; the five overviews on `/projects`, none of them a link; the Draft overview absent from every page's HTML and DOM; the Résumé row; every card 1200×630; no overflow at 320 px | 51 of 51 |
+| The supplementary checks: contact links, Draft content in the HTML, the DOM text, and every client JavaScript file, Not Found, the sitemap, social-card metadata, served files against the commit, and confidentiality | 58 of 58 |
+| The six cards served | Byte-identical across the two runs, with bold headlines |
+
+The second row's checks were also run against production before the merge, as a break test.
+12 of the 51 failed there, each on something this release changes.
+
+### The smoke-check workflow's first runs
+
+The workflow runs from `production`, so it ran for the first time after this merge:
+
+- **After the Production deployment** (run 46042290882): 29 of 29 checks passed.
+- **The drill** (run 46043810148), dispatched with `drill` checked: it skipped the check,
+  failed on purpose, and opened #147, labelled `smoke-check-drill` and assigned to the owner.
+- **A normal run** (run 46043879418): it passed, and closed #147 with a comment.
+
+The alert has fired once and reached a person, so it is known to work.
+
+### Sync
+
+`staging` was then synced with `production` (`git-workflow.md` §10): `ca49544`, a merge
+commit with no file changes, pushed after `npm run check` and the end-to-end suite passed on
+it (533 tests; 353 passed, 4 skipped).
+
+### Since the merge
+
+Dependabot reads its configuration from `production`. Within two minutes of the merge it
+opened #145 and #146, each with its default labels and without the warning #133 removed.
+Neither is part of this release, and both wait for Randi.
+
+### Not checked by Claude
+
+- The staging Preview, which sits behind the Vercel login. Randi's approval answered a list
+  whose first item named his review of it.
+- How each platform renders a shared link.
+- LinkedIn and the email action, which need a human. Nothing about them changed.
