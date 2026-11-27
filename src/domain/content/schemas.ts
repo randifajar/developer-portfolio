@@ -134,6 +134,101 @@ export const workExperienceSchema = z
 /* Project Case Study                                                         */
 /* ------------------------------------------------------------------------- */
 
+/*
+ * A case study's diagram (DEC-076, backlog item 11; the field Q9 deferred).
+ *
+ * The record holds the diagram's words, and the case-study page draws them in
+ * the design system. There is no image file, so a diagram can show nothing a
+ * reader could not also read in its record, and it changes when its words do.
+ * Every label restates what the case study's own text already says, which is
+ * the PRD §51 condition for a field: it adds the shape of the work, not a new
+ * claim.
+ *
+ * Two shapes cover the approved diagrams. A handoff diagram follows work
+ * between two systems; a pipeline diagram shows stages in order, with the modes
+ * that apply to some of them. Each has a title, which is its caption, and a
+ * description, which is its text alternative (NFAC-A11Y-004).
+ */
+const diagramTextSchema = {
+  title: nonEmptyText,
+  description: nonEmptyText,
+};
+
+const handoffDiagramSchema = z
+  .object({
+    kind: z.literal("handoff"),
+    ...diagramTextSchema,
+    /** The two systems the work moves between. */
+    lanes: z.tuple([nonEmptyText, nonEmptyText]),
+    /** The steps, in order. Each happens in one of the two lanes. */
+    steps: z
+      .array(z.object({ lane: z.union([z.literal(0), z.literal(1)]), label: nonEmptyText }))
+      .min(2)
+      .max(4),
+    /** What crosses from each step to the next: one fewer than the steps. */
+    handoffs: z.array(nonEmptyText),
+    note: z.object({ title: nonEmptyText, body: nonEmptyText }).optional(),
+  })
+  .refine((diagram) => diagram.handoffs.length === diagram.steps.length - 1, {
+    message: "A handoff diagram has exactly one handoff between each pair of consecutive steps.",
+    path: ["handoffs"],
+  })
+  .refine(
+    (diagram) =>
+      diagram.steps.every(
+        (step, index) => index === 0 || step.lane !== diagram.steps[index - 1]?.lane,
+      ),
+    {
+      message:
+        "Each handoff crosses between the lanes, so consecutive steps are in different lanes.",
+      path: ["steps"],
+    },
+  );
+
+const pipelineDiagramSchema = z
+  .object({
+    kind: z.literal("pipeline"),
+    ...diagramTextSchema,
+    /**
+     * The stages, in order. The last is the pipeline's output. Emphasised
+     * stages are the ones the modes apply to, so they must be consecutive.
+     */
+    stages: z
+      .array(z.object({ label: nonEmptyText, emphasis: z.boolean().optional() }))
+      .min(2)
+      .max(8),
+    modes: z
+      .object({
+        label: nonEmptyText,
+        items: z
+          .array(
+            z.object({
+              name: nonEmptyText,
+              heading: nonEmptyText,
+              body: nonEmptyText,
+              emphasis: z.boolean().optional(),
+            }),
+          )
+          .min(2)
+          .max(3),
+      })
+      .optional(),
+  })
+  .refine(
+    (diagram) => {
+      const emphasised = diagram.stages.flatMap((stage, index) => (stage.emphasis ? [index] : []));
+      return emphasised.every(
+        (index, position) => position === 0 || index === emphasised[position - 1]! + 1,
+      );
+    },
+    { message: "Emphasised pipeline stages must be consecutive.", path: ["stages"] },
+  );
+
+export const caseStudyDiagramSchema = z.discriminatedUnion("kind", [
+  handoffDiagramSchema,
+  pipelineDiagramSchema,
+]);
+
 const challengeSchema = z.object({
   title: nonEmptyText,
   description: nonEmptyText,
@@ -175,6 +270,7 @@ export const projectCaseStudySchema = z
     teamResponsibilities: z.array(nonEmptyText).optional(),
     technicalApproach: nonEmptyText,
     workflowOrArchitecture: nonEmptyText.optional(),
+    diagram: caseStudyDiagramSchema.optional(),
     challenges: z.array(challengeSchema).min(1),
     decisionsAndTradeoffs: z.array(decisionSchema).min(1),
     implementationSummary: nonEmptyText,
@@ -215,7 +311,14 @@ export const projectCaseStudySchema = z
       message: "productionConfirmation is only valid when deliveryStatus is 'production'.",
       path: ["productionConfirmation"],
     },
-  );
+  )
+  // A diagram is drawn under Architecture and Workflow, beside the text it
+  // restates. Without that text it would be the only explanation, and a
+  // diagram never is (backlog item 11).
+  .refine((value) => value.diagram === undefined || value.workflowOrArchitecture !== undefined, {
+    message: "A diagram needs workflowOrArchitecture: it illustrates that text, never replaces it.",
+    path: ["diagram"],
+  });
 
 /* ------------------------------------------------------------------------- */
 /* Technical Skill                                                            */
@@ -496,6 +599,7 @@ export const siteConfigSchema = z.object({
 export type ProfessionalProfile = z.infer<typeof professionalProfileSchema>;
 export type WorkExperience = z.infer<typeof workExperienceSchema>;
 export type ProjectCaseStudy = z.infer<typeof projectCaseStudySchema>;
+export type CaseStudyDiagram = z.infer<typeof caseStudyDiagramSchema>;
 export type TechnicalSkill = z.infer<typeof technicalSkillSchema>;
 export type Resume = z.infer<typeof resumeSchema>;
 export type ContactChannel = z.infer<typeof contactChannelSchema>;

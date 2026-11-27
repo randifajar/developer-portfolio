@@ -19,9 +19,10 @@ import { defineMediaAsset } from "@/domain/content/define";
  * and FAC-PROJECT-006 require it, and that behaviour is tested rather than
  * merely no longer exercised by this file.
  *
- * OPEN-006, safe project visuals, is genuinely still open. No diagram has been
- * sanitised for publication, which is also why the diagram schema field (Q9)
- * was never added: there is nothing yet to render.
+ * OPEN-006, safe project visuals, was resolved on 2026-11-26 (DEC-076), and
+ * the first two diagrams were approved on 2026-11-28. They are not media: a
+ * case study's diagram is the `diagram` field of its record, the field Q9
+ * deferred, drawn by the page from its words. Nothing here changes for them.
  *
  * NFAC-SEC-002 and TD 16.4: no project screenshot or diagram may expose
  * internal identifiers, internal URLs, customer or student data, or private

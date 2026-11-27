@@ -122,6 +122,8 @@ const NON_RENDERED_KEYS = new Set([
   "platform",
   "type",
   "fileFormat",
+  // A case-study diagram's shape, "handoff" or "pipeline". Its words are scanned.
+  "kind",
 ]);
 
 /**

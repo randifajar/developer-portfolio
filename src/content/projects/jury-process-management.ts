@@ -110,6 +110,34 @@ export const juryProcessManagement = defineProject({
     "Some synchronization occurs through background processing, so end-to-end completion must " +
     "account for both the initiating worker and the related background synchronization.",
 
+  // The five steps above, drawn across the two applications (DEC-076, backlog
+  // item 11). Approved by Randi as a proposal on 2026-11-28. Every label
+  // restates workflowOrArchitecture, and nothing names a system or its wiring.
+  diagram: {
+    kind: "handoff",
+    title: "The jury workflow across two applications",
+    description:
+      "Five steps across two applications. The primary academic platform creates and publishes an " +
+      "evaluation session. Session data is synchronized to the jury-management application, where " +
+      "jury assignment and scheduling are managed. The scheduling state is synchronized back, and " +
+      "the primary platform continues with downstream marking tasks. Some synchronization runs in " +
+      "background processing, so a step is complete only when the initiating worker and the related " +
+      "background synchronization have both finished.",
+    lanes: ["Primary academic platform", "Jury-management application"],
+    steps: [
+      { lane: 0, label: "Session created and published" },
+      { lane: 1, label: "Jury assignment and scheduling" },
+      { lane: 0, label: "Downstream marking tasks continue" },
+    ],
+    handoffs: ["Session data synchronized", "Scheduling state synchronized back"],
+    note: {
+      title: "Some synchronization runs in background processing.",
+      body:
+        "A step is complete only when the initiating worker and the related background " +
+        "synchronization have both finished.",
+    },
+  },
+
   challenges: [
     {
       title: "Asynchronous synchronization",

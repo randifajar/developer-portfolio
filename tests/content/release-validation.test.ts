@@ -337,6 +337,35 @@ describe("rule: no published placeholders (NFAC-CONTENT-004)", () => {
     expect(rulesFor(content)).not.toContain("no-published-placeholders");
   });
 
+  /**
+   * Backlog item 11. A diagram's words are rendered, so they are scanned like
+   * any other text. Its `kind` is not, which is why it is a non-rendered key.
+   */
+  it("finds placeholders in a case study's diagram", () => {
+    const content = releaseReadyContent();
+    const [first, second] = content.projects;
+    const diagram = {
+      kind: "handoff" as const,
+      title: "Work across two systems",
+      description: "Three steps across two systems.",
+      lanes: ["First system", "Second system"] as [string, string],
+      steps: [
+        { lane: 0 as const, label: "Started" },
+        { lane: 1 as const, label: "TBD" },
+        { lane: 0 as const, label: "Finished" },
+      ],
+      handoffs: ["Sent across", "Sent back"],
+    };
+    const clean = { ...diagram, steps: diagram.steps.map((step) => ({ ...step, label: "Done" })) };
+
+    expect(rulesFor({ ...content, projects: [{ ...first!, diagram }, second!] })).toContain(
+      "no-published-placeholders",
+    );
+    expect(
+      rulesFor({ ...content, projects: [{ ...first!, diagram: clean }, second!] }),
+    ).not.toContain("no-published-placeholders");
+  });
+
   it("ignores placeholders inside Draft records, which never reach the public site", () => {
     const content = releaseReadyContent();
     const [first, second] = content.projects;

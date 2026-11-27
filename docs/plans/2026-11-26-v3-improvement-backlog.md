@@ -135,7 +135,7 @@ ledger, as DEC-071 to DEC-080 alongside the decisions above.
 | 8 | Naming migration proposal | 12 | **Proposal done** in #143. The new names, and approval before any rename |
 | 9 | Home page mobile performance investigation | 10 | **Done:** the photograph rises without fading (DEC-081). PageSpeed is measured again after the next promotion |
 | 10 | Jenkins CI/CD case study | 3 | Answers to the proposal's questions; content approval |
-| 11 | Case-study diagrams | 4 | Approval of each proposal |
+| 11 | Case-study diagrams | 4 | **Done** for both case studies; the Jenkins one waits for item 10 |
 | 12 | Two résumé variants and a contextual Résumé menu | 2, D | The two approved PDFs |
 | 13 | The next promotion | 8, 9 | **Done:** #144, 2026-11-28 |
 
@@ -398,6 +398,16 @@ ledger, as DEC-071 to DEC-080 alongside the decisions above.
   where a diagram genuinely helps.
 - **Done when.** Randi has approved each diagram before it is published.
 - **Needs from Randi.** Approval of each proposal.
+- **Outcome, 2026-11-28.**
+  - **The approvals.** Randi approved two proposals: the jury workflow across two applications,
+    and how content becomes a page on the portfolio itself.
+  - **Where they live.** Each case study's record has a `diagram` field: the field Q9 deferred,
+    answered here under PRD §51. It holds the diagram's words, and the page draws them in the
+    design system, from 1024 px in the approved shape and below that in one column. There is no
+    image file, so the media types above stay unused.
+  - **What they say.** Every label restates the case study's own Architecture and Workflow text,
+    and validation requires that text beside a diagram.
+  - **Still to do.** The Jenkins diagrams wait for item 10.
 
 ### Item 12 — Two résumé variants and a contextual Résumé menu
 
@@ -481,3 +491,6 @@ ledger, as DEC-071 to DEC-080 alongside the decisions above.
 - **Item 9.** The hero photograph rises without fading, the findings' recommendation (DEC-081).
   A new end-to-end test fails if any part of the hero's entrance fades. It reaches production
   with the next promotion.
+- **Item 11.** Both case studies have their approved diagram, drawn from words in their records
+  under Architecture and Workflow. They reach production with the next promotion, after Randi's
+  Staging Preview review.

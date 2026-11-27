@@ -93,6 +93,111 @@ describe("project case study schema", () => {
   });
 });
 
+/**
+ * A case study's diagram (DEC-076, backlog item 11; the field Q9 deferred).
+ * Each test breaks one rule of a valid diagram, so a failure names that rule.
+ */
+describe("case-study diagram schema", () => {
+  function handoffDiagram() {
+    return {
+      kind: "handoff" as const,
+      title: "Work across two systems",
+      description: "Three steps across two systems, with two handoffs between them.",
+      lanes: ["First system", "Second system"] as [string, string],
+      steps: [
+        { lane: 0 as const, label: "Started" },
+        { lane: 1 as const, label: "Processed" },
+        { lane: 0 as const, label: "Finished" },
+      ],
+      handoffs: ["Sent across", "Sent back"],
+    };
+  }
+
+  function pipelineDiagram() {
+    return {
+      kind: "pipeline" as const,
+      title: "A pipeline",
+      description: "Four stages in order, two of them checked in two modes.",
+      stages: [
+        { label: "Input" },
+        { label: "Check one", emphasis: true },
+        { label: "Check two", emphasis: true },
+        { label: "Output" },
+      ],
+      modes: {
+        label: "Two modes",
+        items: [
+          { name: "Fast", heading: "Always", body: "The quick checks." },
+          { name: "Full", heading: "Before a release", body: "Everything.", emphasis: true },
+        ],
+      },
+    };
+  }
+
+  const withDiagram = (diagram: unknown) => ({
+    ...validProject(),
+    workflowOrArchitecture: "The text the diagram illustrates.",
+    diagram,
+  });
+
+  it("accepts a handoff diagram and a pipeline diagram beside their text", () => {
+    expect(() => projectCaseStudySchema.parse(withDiagram(handoffDiagram()))).not.toThrow();
+    expect(() => projectCaseStudySchema.parse(withDiagram(pipelineDiagram()))).not.toThrow();
+  });
+
+  it("rejects a diagram without the Architecture and Workflow text it illustrates", () => {
+    expect(() =>
+      projectCaseStudySchema.parse({ ...validProject(), diagram: handoffDiagram() }),
+    ).toThrow(/workflowOrArchitecture/);
+  });
+
+  it("rejects a handoff diagram without one handoff between each pair of steps", () => {
+    expect(() =>
+      projectCaseStudySchema.parse(withDiagram({ ...handoffDiagram(), handoffs: ["Sent across"] })),
+    ).toThrow(/one handoff between each pair/);
+  });
+
+  it("rejects consecutive steps in the same lane, since a handoff crosses lanes", () => {
+    const steps = [
+      { lane: 0 as const, label: "Started" },
+      { lane: 0 as const, label: "Processed" },
+      { lane: 1 as const, label: "Finished" },
+    ];
+
+    expect(() => projectCaseStudySchema.parse(withDiagram({ ...handoffDiagram(), steps }))).toThrow(
+      /different lanes/,
+    );
+  });
+
+  it("rejects emphasised pipeline stages that are not consecutive", () => {
+    const stages = [
+      { label: "Input", emphasis: true },
+      { label: "Middle" },
+      { label: "Check", emphasis: true },
+      { label: "Output" },
+    ];
+
+    expect(() =>
+      projectCaseStudySchema.parse(withDiagram({ ...pipelineDiagram(), stages })),
+    ).toThrow(/consecutive/);
+  });
+
+  it("rejects an empty label and an unknown kind", () => {
+    const steps = [
+      { lane: 0 as const, label: " " },
+      { lane: 1 as const, label: "Processed" },
+      { lane: 0 as const, label: "Finished" },
+    ];
+
+    expect(() =>
+      projectCaseStudySchema.parse(withDiagram({ ...handoffDiagram(), steps })),
+    ).toThrow();
+    expect(() =>
+      projectCaseStudySchema.parse(withDiagram({ ...handoffDiagram(), kind: "image" })),
+    ).toThrow();
+  });
+});
+
 describe("work experience schema", () => {
   function validExperience() {
     return {

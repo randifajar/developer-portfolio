@@ -83,6 +83,44 @@ export const personalDeveloperPortfolio = defineProject({
     "on every pull request, and a stricter release one that additionally rejects placeholder " +
     "text and requires the launch content to be complete.",
 
+  // The chain above, drawn as a pipeline (DEC-076, backlog item 11). Approved
+  // by Randi as a proposal on 2026-11-28. The structural mode runs the Zod and
+  // the cross-record checks (`npm run validate:content`); the release mode adds
+  // `npm run validate:release`.
+  diagram: {
+    kind: "pipeline",
+    title: "How content becomes a page",
+    description:
+      "Typed content modules pass through Zod structure validation and cross-record validation, " +
+      "then the selector layer and Server Components, and become static HTML. Validation runs in " +
+      "two modes: a structural one on every pull request, and a stricter release one that also " +
+      "rejects placeholder text and requires the launch content to be complete.",
+    stages: [
+      { label: "Typed content modules" },
+      { label: "Zod structure validation", emphasis: true },
+      { label: "Cross-record validation", emphasis: true },
+      { label: "Selector layer" },
+      { label: "Server Components" },
+      { label: "Static HTML" },
+    ],
+    modes: {
+      label: "Two validation modes",
+      items: [
+        {
+          name: "Structural",
+          heading: "On every pull request",
+          body: "Each record has the right shape, and the records agree with each other.",
+        },
+        {
+          name: "Release",
+          heading: "Stricter, before a release",
+          body: "Also rejects placeholder text, and requires the launch content to be complete.",
+          emphasis: true,
+        },
+      ],
+    },
+  },
+
   challenges: [
     {
       title: "Preventing accidental disclosure structurally rather than by discipline",
