@@ -32,6 +32,34 @@ const heroAnimations = (page: Page) =>
 const halo = (page: Page) => page.locator("section[data-surface] > div[aria-hidden]").first();
 
 test.describe("with motion allowed", () => {
+  test("the hero's entrance moves its contents without fading them (V3 P8, DEC-081)", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    // The entrance's CSS animations fill both ways, so they can still be read
+    // once they have finished. Each frame that sets an opacity below 1 would
+    // leave part of the hero half-drawn after it first paints.
+    const entrance = await page.evaluate(() =>
+      document.getAnimations().flatMap((animation) => {
+        const effect = animation.effect as KeyframeEffect | null;
+        const target = effect?.target;
+        if (!effect || !(target instanceof Element) || !target.closest("[data-hero-entrance]")) {
+          return [];
+        }
+        const name = (animation as CSSAnimation).animationName;
+        const faded = effect
+          .getKeyframes()
+          .some((frame) => frame.opacity !== undefined && Number(frame.opacity) < 1);
+        return [{ name, photograph: target.matches("[data-photograph]"), faded }];
+      }),
+    );
+
+    expect(entrance.filter((animation) => animation.photograph)).toEqual([
+      { name: "hero-photo-rise", photograph: true, faded: false },
+    ]);
+    expect(entrance.filter((animation) => animation.faded)).toEqual([]);
+  });
+
   test("a mode change animates the hero copy and settles on the new heading", async ({ page }) => {
     await countHeroAnimations(page);
     await page.goto("/");

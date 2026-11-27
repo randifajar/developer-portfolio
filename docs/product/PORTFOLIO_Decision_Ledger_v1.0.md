@@ -123,7 +123,7 @@ implements a row cites it.
 
 ### V3 improvement decisions
 
-Decided by Randi on 2026-11-26 and 2026-11-27, after the V3 release. The work they lead to is
+Decided by Randi on 2026-11-26, 2026-11-27, and 2026-11-28, after the V3 release. The work they lead to is
 in `docs/plans/2026-11-26-v3-improvement-backlog.md`, and the pull request that implements a
 row cites it. The overview titles are recorded under OPEN-011 below.
 
@@ -139,6 +139,7 @@ row cites it. The overview titles are recorded under OPEN-011 below.
 | DEC-078 | Social cards | **The headlines get a real Geist Bold.** The uneven word spacing is fixed only if a compatible renderer update fixes it. It never justifies a new dependency, a risky upgrade, or a workaround, and is otherwise recorded and deferred | Confirmed | Randi, 2026-11-26 |
 | DEC-079 | Promotions and the Preview review | **A maintenance-only change waits for the next approved improvements** unless it is urgent or security-critical. **The Staging Preview review stays mandatory**: Randi does it through his Vercel account, with a checklist, before he approves a promotion. Production verification is a separate step after the merge and does not replace it | Confirmed | Randi, 2026-11-26 |
 | DEC-080 | Merge authorization | **Claude merges a pull request only with Randi's explicit authorization for it, and only when all of the following hold:**<br>• required checks have passed<br>• required reviews and approval gates are satisfied<br>• no blocking review comment is open<br>• the pull request is mergeable<br>• the tested changes are unchanged since verification<br>• the merge stays within the authorization's scope<br>• the merged result is verified afterwards.<br>Approval to implement is not approval to merge. **A promotion always needs its own explicit approval**, after his Staging Preview review. Recorded in `git-workflow.md` section 11 | Confirmed | Randi, 2026-11-27 |
+| DEC-081 | Hero photograph entrance | **The photograph rises 30 px over 1.6 s without fading**, as the hero's text already does (V3 P8). The fade kept the largest element on a phone's first screen incomplete for 1.6 s after the page painted, and that made the home page's mobile Speed Index swing between 1.4 s and 4.7 s. The photograph, its quality, and its rise stay. It was option 1 of backlog item 9's findings, and the one they recommended. Revises UX3 8.1 | Confirmed | Randi, 2026-11-28 |
 
 ---
 
