@@ -3,7 +3,7 @@ import { contentSet } from "@/content/content-set";
 import { projectOverviews } from "@/content/project-overviews";
 import { projects } from "@/content/projects";
 import { projectOverviewSchema } from "@/domain/content/schemas";
-import { getPublishedResumeFor } from "@/domain/content/selectors";
+import { getPublishedResumeFor, getPublishedResumeVariants } from "@/domain/content/selectors";
 import { validateContentSet } from "@/domain/content/validation";
 
 /**
@@ -40,17 +40,31 @@ describe("the project overview schema", () => {
 
 describe("the real overviews", () => {
   /**
-   * OPEN-011. Randi, 2026-11-19: "all in here is draft, we can revise it
-   * later". Publishing them is a decision for him, so this fails the moment
-   * one is Published without the list below being updated on purpose.
+   * OPEN-011, decided by Randi on 2026-11-26: the first five are Published as
+   * titled, and the AI-assisted one stays Draft. Publication is his decision,
+   * so this fails the moment any record's status changes without the list
+   * below being updated on purpose.
    */
-  it("stay Draft while their titles are working titles", () => {
+  it("publish exactly the five Randi approved, and keep the sixth Draft", () => {
+    const approved = new Set([
+      "overview-jenkins-ci-cd-migration",
+      "overview-notification-hub-aws-email-events",
+      "overview-configurable-data-tables",
+      "overview-notification-and-document-integrations",
+      "overview-evaluation-and-certification-platform",
+    ]);
+
     for (const overview of projectOverviews) {
-      expect(overview.publicationStatus, overview.id).toBe("draft");
+      expect(overview.publicationStatus, overview.id).toBe(
+        approved.has(overview.id) ? "published" : "draft",
+      );
     }
+    expect(projectOverviews.filter((overview) => approved.has(overview.id))).toHaveLength(
+      approved.size,
+    );
   });
 
-  it("use only the six approved working titles (DEC-060)", () => {
+  it("use only the six approved titles (DEC-060)", () => {
     const approved = new Set([
       "Jenkins CI/CD Migration and Agent Modernization",
       "Notification Hub and AWS Email Events",
@@ -86,10 +100,12 @@ describe("the real overviews", () => {
 });
 
 describe("overview selection", () => {
-  it("returns nothing while every overview is Draft", async () => {
+  it("returns the five Published overviews in order, and never the Draft one", async () => {
     const { getPublishedProjectOverviews } = await import("@/domain/content/selectors");
 
-    expect(getPublishedProjectOverviews()).toEqual([]);
+    expect(getPublishedProjectOverviews().map((overview) => overview.sortOrder)).toEqual([
+      1, 2, 3, 4, 5,
+    ]);
   });
 
   it("filters Published overviews by discipline, in order", async () => {
@@ -138,5 +154,9 @@ describe("résumé variants (DEC-059)", () => {
   it("offers the backend résumé and no infrastructure résumé (D6)", () => {
     expect(getPublishedResumeFor("backend")?.variant).toBe("backend");
     expect(getPublishedResumeFor("infrastructure")).toBeNull();
+  });
+
+  it("lists only the variants with a Published résumé, which the copy is derived from (DEC-074)", () => {
+    expect(getPublishedResumeVariants()).toEqual(["backend"]);
   });
 });

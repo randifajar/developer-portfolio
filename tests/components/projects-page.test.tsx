@@ -1,6 +1,6 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import ProjectsPage from "@/app/projects/page";
 import { ProjectsBackLink } from "@/components/project/project-filter";
 
@@ -13,7 +13,18 @@ import { ProjectsBackLink } from "@/components/project/project-filter";
 
 afterEach(() => {
   window.history.replaceState(null, "", "/projects");
+  vi.doUnmock("@/content/project-overviews");
+  vi.resetModules();
 });
+
+/** The Backend filter's rows: the backend case study, then its overviews in order. */
+const BACKEND_ROWS = [
+  "Jury Process Management Integration",
+  "Notification Hub and AWS Email Events",
+  "Configurable Data Tables and Export Workflows",
+  "Notification and Document Service Integrations",
+  "Evaluation and Certification Platform",
+];
 
 const filterButtons = () =>
   within(screen.getByRole("group", { name: "Filter projects" })).getAllByRole("button");
@@ -32,18 +43,25 @@ describe("the projects page (UX3 7.4)", () => {
     expect(screen.getByRole("link", { name: /overall/i })).toHaveAttribute("href", "/#work");
   });
 
-  it("lists every published case study, linked, and nothing Draft", () => {
+  it("lists the published case studies, linked, then the published overviews, and nothing Draft", () => {
     render(<ProjectsPage />);
 
     expect(rowTitles()).toEqual([
       "Personal Developer Portfolio",
       "Jury Process Management Integration",
+      "Jenkins CI/CD Migration and Agent Modernization",
+      "Notification Hub and AWS Email Events",
+      "Configurable Data Tables and Export Workflows",
+      "Notification and Document Service Integrations",
+      "Evaluation and Certification Platform",
     ]);
     expect(
       screen.getByRole("link", { name: "Read the case study: Personal Developer Portfolio" }),
     ).toHaveAttribute("href", "/projects/personal-developer-portfolio");
-    // The overviews are Draft until their titles are confirmed (OPEN-011).
-    expect(screen.queryByText("Jenkins CI/CD Migration and Agent Modernization")).toBeNull();
+    // Only a case study has a page of its own (DEC-060).
+    expect(screen.getAllByRole("link", { name: /^Read the case study/ })).toHaveLength(2);
+    // The AI-assisted overview stays Draft by Randi's decision (OPEN-011).
+    expect(screen.queryByText("AI-Assisted Development Across Three Applications")).toBeNull();
   });
 
   it("labels a case study with no discipline by its type", () => {
@@ -57,10 +75,11 @@ describe("the projects filter (UX3 7.4)", () => {
   it("offers All, Backend, and Infrastructure, each with its count, All first", () => {
     render(<ProjectsPage />);
 
+    // An overview tagged with both disciplines counts under each.
     expect(filterButtons().map((button) => button.textContent)).toEqual([
-      "All2",
-      "Backend1",
-      "Infrastructure0",
+      "All7",
+      "Backend5",
+      "Infrastructure3",
     ]);
     expect(filterButtons()[0]).toHaveAttribute("aria-pressed", "true");
   });
@@ -77,18 +96,23 @@ describe("the projects filter (UX3 7.4)", () => {
     );
     expect(window.location.search).toBe("?discipline=backend");
     // The portfolio has no discipline, so it appears under All only.
-    expect(rowTitles()).toEqual(["Jury Process Management Integration"]);
-    expect(screen.getByText("1 project shown")).toBeInTheDocument();
+    expect(rowTitles()).toEqual(BACKEND_ROWS);
+    expect(screen.getByText("5 projects shown")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: /^All/ }));
 
     expect(window.location.search).toBe("");
-    expect(rowTitles()).toHaveLength(2);
+    expect(rowTitles()).toHaveLength(7);
   });
 
   it("says so when a filter has nothing published, rather than showing an empty list", async () => {
+    // The real content has published work under every filter now, so the
+    // empty state is shown with the overviews taken away.
+    vi.resetModules();
+    vi.doMock("@/content/project-overviews", () => ({ projectOverviews: [] }));
+    const { default: Page } = await import("@/app/projects/page");
     const user = userEvent.setup();
-    render(<ProjectsPage />);
+    render(<Page />);
 
     await user.click(screen.getByRole("button", { name: /^Infrastructure/ }));
 
@@ -100,7 +124,7 @@ describe("the projects filter (UX3 7.4)", () => {
     window.history.replaceState(null, "", "/projects?discipline=backend");
     render(<ProjectsPage />);
 
-    expect(rowTitles()).toEqual(["Jury Process Management Integration"]);
+    expect(rowTitles()).toEqual(BACKEND_ROWS);
   });
 
   it("treats an unknown value as All", () => {
@@ -108,7 +132,7 @@ describe("the projects filter (UX3 7.4)", () => {
     render(<ProjectsPage />);
 
     expect(filterButtons()[0]).toHaveAttribute("aria-pressed", "true");
-    expect(rowTitles()).toHaveLength(2);
+    expect(rowTitles()).toHaveLength(7);
   });
 });
 

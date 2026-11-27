@@ -421,7 +421,7 @@ export const toolkitGroupSchema = z.object({
  * A separate type rather than a flag on the case study. An overview has no
  * slug, so "an overview never gets a route" holds by construction instead of
  * by a rule someone has to remember, and nothing the v2 case-study pages read
- * changes. Titles are working titles until Randi confirms them (OPEN-011).
+ * changes. Randi confirmed the titles on 2026-11-26 (OPEN-011).
  *
  * Technologies are optional on purpose: a technology is listed only where the
  * résumé line for that project names it. Attaching the stack of the role to

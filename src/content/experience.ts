@@ -35,6 +35,11 @@ import { defineExperience } from "@/domain/content/define";
  * systems are wired is not. The new role's summary is the infrastructure
  * description from the V3.1 mockup he approved.
  *
+ * 2026-11-27 (DEC-072). The AI Delivery Engineer role ended on 27 November
+ * 2026. No role is current any more: Zettabyte is the most recent employer, the
+ * role's summary moved to the past tense, and its responsibilities stay résumé
+ * bullets like the earlier roles'. Nothing was added about what comes next.
+ *
  * 2026-11-19 (V3 plan, P2). The company is spelled "Zettabyte Pte Ltd", Randi's
  * choice and the spelling of his infrastructure résumé (DEC-063); the site said
  * "ZettaByte", and his backend résumé mixes the two. The backend role gained the
@@ -48,13 +53,18 @@ export const experience = [
     companyName: "Zettabyte Pte Ltd",
     position: "AI Delivery Engineer, Infrastructure Team",
 
+    // Ended 2026-11-27, Randi's last working day (DEC-072). Stored at month
+    // precision with the day set to the first, like every date here: the site
+    // shows "Nov 2026" and never a day.
     startDate: "2026-08-01",
-    isCurrent: true,
+    endDate: "2026-11-01",
+    isCurrent: false,
 
     locationOrArrangement: "Sleman, Yogyakarta, Indonesia",
 
+    // Past tense since the role ended; otherwise the approved wording.
     summary:
-      "I work on Jenkins delivery pipelines, Linux and Docker environments on AWS, and the " +
+      "I worked on Jenkins delivery pipelines, Linux and Docker environments on AWS, and the " +
       "troubleshooting behind reliable releases.",
 
     responsibilities: [

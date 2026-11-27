@@ -53,9 +53,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
-    # The only workflow file in this repository that requests write access, and
-    # only to issues. Job-level permissions replace the workflow-level block, so
-    # `contents: read` is restated for checkout.
+    # One of two workflow files in this repository that request write access,
+    # both only to issues; the other is smoke-check.yml. Job-level permissions
+    # replace the workflow-level block, so `contents: read` is restated for
+    # checkout.
     permissions:
       contents: read
       issues: write

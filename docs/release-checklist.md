@@ -157,6 +157,11 @@ npm run audit:prod
 
 Deployment success is **not** acceptance (NFAC-CICD-004). Check the live site:
 
+- [ ] `SITE_URL=https://<production-domain> npm run smoke:live` passes: every
+      Published page answers at the canonical address and declares it, the
+      sitemap and `robots.txt` agree, the résumé is a PDF, and nothing Draft
+      shows (DEC-077). The Smoke Check workflow runs the same check after each
+      Production deployment; this is the manual form of it
 - [ ] `/` renders with correct identity and positioning
 - [ ] `/projects` lists every Published case study
 - [ ] Each Published Project Detail route opens directly, not only by clicking
@@ -222,6 +227,80 @@ discovering it mid-incident.
 rewriting a pushed commit permanently publishes the pre-rewrite SHA to event
 archives outside this repository's control. Always revert forward with a new
 commit.
+
+---
+
+## Promotions
+
+Every release after the first goes live through one promotion pull request,
+`staging` to `production` (`docs/governance/git-workflow.md` section 11). These
+steps happen in order:
+
+1. `staging` is in sync with `production`.
+2. Randi reviews the staging Preview with the checklist below.
+3. `SITE_URL=https://<production-domain> npm run release:check` passes on the
+   exact tree being promoted.
+4. Randi approves the merge in the conversation.
+5. After the merge, production is checked (step 9 above) and `staging` is synced
+   again.
+
+The Preview review and the production check answer different questions. The
+review asks whether this release is what Randi wants. The production check asks
+whether production serves it. Neither replaces the other.
+
+### Staging Preview review (Randi)
+
+The Preview sits behind Randi's Vercel login, so nobody else can do this review.
+The promotion pull request lists the pages its release touches. Start with those
+pages, then give every page the quick pass below.
+
+**Before you start.** Open the `staging` Preview from the Vercel dashboard, or
+from the deployment link on the promotion pull request. Check that the commit it
+was built from is the head the pull request names.
+
+#### Pages
+
+- [ ] Overall (`/`), Backend (`/backend`), and Infrastructure (`/infrastructure`)
+- [ ] Projects (`/projects`) and each Published case study
+- [ ] Every page the promotion pull request lists as changed
+
+#### Interactions
+
+- [ ] The mode switch: each mode opens, the change animates, and the current mode
+      is marked
+- [ ] The Résumé menu opens, lists only the résumés that are published, and each
+      one downloads
+- [ ] The projects filter: All, Backend, and Infrastructure work, and the choice
+      survives a reload and Back
+- [ ] On a wide screen, the pinned career sequence scrolls through its chapters
+- [ ] Each "Read the case study" link opens its page, and no overview is a link
+
+#### Responsive
+
+At 320, 390, and 768 px wide, and in a desktop window:
+
+- [ ] Nothing runs off the side of the page, and nothing scrolls sideways
+- [ ] The header fits, and the hero's photograph and text do not overlap
+- [ ] Rows, lists, and the footer read in order
+
+#### Visual regressions
+
+Compare each page with the live site:
+
+- [ ] Nothing changed that the pull request does not list
+- [ ] Type, spacing, colour, and images look as they did, apart from what changed
+      on purpose
+- [ ] With the operating system's reduced-motion setting on, the content is still
+      readable and nothing moves that should stay still
+
+#### Link previews, when the cards change
+
+- [ ] Each changed page's social card, its `og:image`, shows the right title and
+      reads correctly
+
+**Then.** Either approve the promotion in the conversation, or list what to
+fix. A fix goes to `staging` through its own pull request, and the Preview is
+reviewed again.
 
 ---
 

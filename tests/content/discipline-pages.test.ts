@@ -110,7 +110,7 @@ describe("the infrastructure work areas stay at the approved detail level (DEC-0
         label: "CI/CD",
         title: "Quality, security and access",
         body:
-          "Maintain and standardize Jenkins CI/CD pipelines across multiple repositories, with " +
+          "Maintained and standardized Jenkins CI/CD pipelines across multiple repositories, with " +
           "security and quality checks, branch-based deployment workflows, and role-based " +
           "access controls for staging, pre-production and production.",
         context: undefined,
@@ -119,7 +119,7 @@ describe("the infrastructure work areas stay at the approved detail level (DEC-0
         label: "Linux & containers",
         title: "Services behind the proxy",
         body:
-          "Support Linux-hosted Docker Compose services behind reverse proxies, investigating " +
+          "Supported Linux-hosted Docker Compose services behind reverse proxies, investigating " +
           "TLS routing, environment variables, duplicate containers, failed deployments and " +
           "service connectivity.",
         context: undefined,
@@ -128,7 +128,7 @@ describe("the infrastructure work areas stay at the approved detail level (DEC-0
         label: "AWS",
         title: "Email-event delivery",
         body:
-          "Troubleshoot AWS email-event delivery, dead-letter routing, cloud-region mismatches " +
+          "Troubleshot AWS email-event delivery, dead-letter routing, cloud-region mismatches " +
           "and application configuration across environments.",
         context: undefined,
       },
@@ -138,10 +138,12 @@ describe("the infrastructure work areas stay at the approved detail level (DEC-0
   it("keep the infrastructure lead and scope as approved (OPEN-009, UX3 7.3)", () => {
     const infrastructure = disciplineIntros.find((intro) => intro.discipline === "infrastructure");
 
+    // The approved wording, in the past tense since the role ended on
+    // 27 November 2026 (DEC-072).
     expect(infrastructure?.lead).toBe(
       "After two years of building backend services, I moved to the infrastructure team in " +
-        "August 2026. The backend foundation stayed: most delivery problems I now trace start " +
-        "or end in application code.",
+        "August 2026. The backend foundation stayed: most delivery problems I traced there " +
+        "started or ended in application code.",
     );
     expect(infrastructure?.scope).toBe("A delivery and infrastructure role, not an SRE title");
   });

@@ -2,6 +2,7 @@ import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import ModesLayout from "@/app/(modes)/layout";
 import OverallPage from "@/app/(modes)/page";
+import { describeResumes } from "@/components/overall/explore-section";
 
 /**
  * The Overall page against the real, unmocked content (UX3 7.1).
@@ -85,6 +86,10 @@ describe("Overall content (UX3 7.1)", () => {
     const facts = within(screen.getByRole("region", { name: "Profile" }));
 
     expect(facts.getByText("Sleman, Yogyakarta, Indonesia")).toBeVisible();
+    // The role ended on 27 November 2026, so it is the most recent, never the
+    // current one (DEC-072).
+    expect(facts.getByText("Most recent role")).toBeVisible();
+    expect(facts.queryByText("Current role")).toBeNull();
     expect(facts.getByText("AI Delivery Engineer, Infrastructure Team")).toBeVisible();
     expect(facts.getByText("Zettabyte Pte Ltd")).toBeVisible();
     expect(facts.getByText(/^\d+\+ years? in software delivery$/)).toBeVisible();
@@ -105,7 +110,8 @@ describe("Overall content (UX3 7.1)", () => {
       ["Backend Developer Intern", "Jul 2024 – Oct 2024"],
       ["Backend Developer, Contract", "Nov 2024 – Mar 2025"],
       ["Backend Developer", "Apr 2025 – Jul 2026"],
-      ["AI Delivery Engineer, Infrastructure Team", "Aug 2026 – Present"],
+      // Ended on 27 November 2026 (DEC-072).
+      ["AI Delivery Engineer, Infrastructure Team", "Aug 2026 – Nov 2026"],
     ];
 
     for (const [position, dates] of roles) {
@@ -128,7 +134,7 @@ describe("Overall content (UX3 7.1)", () => {
     expect(chapters.map(linksIn)).toEqual([[], ["/backend"], ["/infrastructure"]]);
   });
 
-  it("shows the case study with a discipline, linked, and no draft overview", () => {
+  it("shows the case study with a discipline, linked, then the first three overviews", () => {
     renderOverall();
     const work = within(
       screen.getByRole("region", { name: "Backend and infrastructure, side by side." }),
@@ -140,10 +146,17 @@ describe("Overall content (UX3 7.1)", () => {
       }),
     ).toHaveAttribute("href", "/projects/jury-process-management-integration");
 
-    // The personal portfolio has no discipline (UX3 7.4); the overviews are
-    // Draft until their titles are confirmed (OPEN-011).
+    // The approved mockup's four rows: the case study, then the first three
+    // Published overviews, which have no page of their own and never link
+    // (DEC-060). The personal portfolio has no discipline (UX3 7.4).
+    expect(work.getAllByRole("heading", { level: 3 }).map((h) => h.textContent)).toEqual([
+      "Jury Process Management Integration",
+      "Jenkins CI/CD Migration and Agent Modernization",
+      "Notification Hub and AWS Email Events",
+      "Configurable Data Tables and Export Workflows",
+    ]);
+    expect(work.getAllByRole("link", { name: /^Read the case study/ })).toHaveLength(1);
     expect(work.queryByText("Personal Developer Portfolio")).toBeNull();
-    expect(work.queryByText("Jenkins CI/CD Migration and Agent Modernization")).toBeNull();
     expect(work.getByRole("link", { name: "All projects" })).toHaveAttribute("href", "/projects");
   });
 
@@ -177,7 +190,7 @@ describe("Overall content (UX3 7.1)", () => {
     expect(education.getByText("Professional working proficiency")).toBeVisible();
   });
 
-  it("offers the onward paths, with Résumés opening the header's menu", () => {
+  it("offers the onward paths, with the Résumé row opening the header's menu", () => {
     renderOverall();
     const explore = within(screen.getByRole("region", { name: "Explore further" }));
 
@@ -190,9 +203,34 @@ describe("Overall content (UX3 7.1)", () => {
       /^\w+ pieces? of work, by discipline\.$/,
     );
 
-    const resumes = explore.getByRole("button", { name: "Résumés" });
+    // Only the backend résumé is published, so the row names that one (DEC-074).
+    const resumes = explore.getByRole("button", { name: "Résumé" });
     expect(resumes).toHaveAttribute("popovertarget", "resume-menu");
-    expect(resumes).toHaveAccessibleDescription("Backend and infrastructure versions.");
+    expect(resumes).toHaveAccessibleDescription("Backend engineering résumé.");
+  });
+});
+
+describe("the Résumé row's wording comes from the published résumés (DEC-074)", () => {
+  it("names the one published résumé", () => {
+    expect(describeResumes(["backend"])).toEqual({
+      label: "Résumé",
+      description: "Backend engineering résumé.",
+    });
+    expect(describeResumes(["infrastructure"])).toEqual({
+      label: "Résumé",
+      description: "Infrastructure engineering résumé.",
+    });
+  });
+
+  it("names both once both are published, with no copy change", () => {
+    expect(describeResumes(["backend", "infrastructure"])).toEqual({
+      label: "Résumés",
+      description: "Backend and infrastructure versions.",
+    });
+  });
+
+  it("offers no row when no résumé is published, since nothing would open", () => {
+    expect(describeResumes([])).toBeNull();
   });
 });
 

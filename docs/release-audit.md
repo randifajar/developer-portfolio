@@ -1430,8 +1430,80 @@ pages on mobile. Its cause was not investigated.
 | Content approval, checklist step 3 | **Done** 2026-11-22. Randi confirmed every claim is true |
 | LinkedIn, GitHub, and the email action, step 5 | **Done** 2026-11-22, by Randi, by hand |
 | Lighthouse, step 8 | **Done** 2026-11-22, against production; see "Production verification". INP waits for real-user data |
-| Overview titles (OPEN-011) | Open. The six overviews stay Draft |
-| Social cards for `/projects` and each case study (plan 3.9) | **Closed on `staging`** by #123 (`e98aa3b`). Claude merged it at Randi's request, given in the conversation, on 2026-11-23 at 00:45 (UTC+7), and `staging`'s tree after the merge is the one tested. `/projects` and each Published case study now have their own 1200×630 card, served as `og:image` and `twitter:image`. The projects index also has Twitter fields of its own. CI passed on `e98aa3b`: `quality`, `audit`, and `e2e` (353 passed, 4 skipped). #123 left three privacy checks unbroken, because the session that built it was refused the edits that break them. After the merge, at Randi's choice, a second Claude session broke each check on the merged tree (`a99371a`) and restored every edit. All four breaks failed as they should; #124 lists them. They also showed that `dynamicParams = false` is what makes a card's 404 the site's 404 page. With it set to true, the handler's own `notFound()` answers instead, with an empty body. The cards were not viewed on the staging Preview, which needs a Vercel login. Production gets them with the next promotion or a hotfix, as Randi decides |
-| Uneven word spacing on the cards | Open; the cause was found in #123. Satori, which `next/og` bundles, places each word by its unkerned width but draws it kerned, so the gap after a word grows by that word's own kerning: about 5–6 px after "Software" and after "Yogyakarta,". Nothing small fixes it in the site's code. Whether a later Satori changes it was not checked |
-| Safe project visuals (OPEN-006), custom domain (OPEN-007) | Open, unchanged since v2 |
-| The v2 résumé lists Backend Developer as current | By Randi's decision (D6). Only a new PDF from him changes it |
+| Overview titles (OPEN-011) | **Decided** 2026-11-26. Five are Published on `staging` and reach production with the next promotion. The AI-assisted one stays Draft by Randi's decision |
+| Social cards for `/projects` and each case study (plan 3.9) | **Closed** in production by #129 (`aebefd3`) on 2026-11-26; see that entry. Built in #123 (`e98aa3b`). Claude merged it at Randi's request, given in the conversation, on 2026-11-23 at 00:45 (UTC+7), and `staging`'s tree after the merge is the one tested. `/projects` and each Published case study now have their own 1200×630 card, served as `og:image` and `twitter:image`. The projects index also has Twitter fields of its own. CI passed on `e98aa3b`: `quality`, `audit`, and `e2e` (353 passed, 4 skipped). #123 left three privacy checks unbroken, because the session that built it was refused the edits that break them. After the merge, at Randi's choice, a second Claude session broke each check on the merged tree (`a99371a`) and restored every edit. All four breaks failed as they should; #124 lists them. They also showed that `dynamicParams = false` is what makes a card's 404 the site's 404 page. With it set to true, the handler's own `notFound()` answers instead, with an empty body. The cards were not viewed on the staging Preview, which needs a Vercel login |
+| Card headlines not bold | **Fixed** on `staging` 2026-11-27 (DEC-078, backlog item 5). Finding, in #123: no card headline rendered bold. Cause: `next/og` (`@vercel/og` 1.0.1 in Next.js 16.4.6) bundles only Geist Regular and registers it for weight 700 as well, so `fontWeight: 700` drew the regular face. Fix: the cards pass the renderer Geist Regular and Bold from the official release (`vercel/geist-font` v1.9.2, unmodified, SIL Open Font License, in `src/assets/fonts/geist`), read at build time. Both weights are needed, because giving the renderer any font replaces its built-in one. Verification: the files match the release tag's git blobs; their own tables say Geist Regular 400 and Geist Bold 700 with embedding permitted; a test reads those tables and failed when the Bold entry was pointed at the Regular file. All six cards were rendered and compared with production's. Each changed only in its headline band (0.9 to 4.1 % of pixels), the regular text did not change, and every card stayed 1200×630 |
+| Uneven word spacing on the cards | **Deferred** 2026-11-27 (DEC-078, backlog item 6). The cause was found in #123: Satori, which `next/og` bundles, positions each word by its unkerned width but draws it with kerning, so the gap after a word grows by that word's own kerning, about 5–6 px after "Software" and after "Yogyakarta,". Checked on 2026-11-27: Next.js 16.4.6, the newest 16.x release, bundles `@vercel/og` 1.0.1 with Satori 0.29.0. Satori 0.46.0 (2026-10-09) added a `fontKerning` property, which might even out the gaps by turning kerning off; that is untested. No compatible Next.js release bundles it, and the standalone `@vercel/og` (1.0.3) uses Satori 0.33.5. Using a newer Satori would mean a new dependency and moving the cards off `next/og`, which DEC-078 rules out. Revisit when a Next.js release bundles Satori 0.46 or later |
+| Safe project visuals (OPEN-006), custom domain (OPEN-007) | **Decided** 2026-11-26. Original technical diagrams where they support a case study, each reviewed before publication (DEC-076, backlog item 11). The custom domain stays deferred (DEC-077) |
+| The v2 résumé lists Backend Developer as current | By Randi's decision (D6), revised on 2026-11-26 and 2026-11-27 (DEC-073): two variants, from PDFs he will supply, with the current PDF staying until then (backlog item 12) |
+
+Randi decided these items on 2026-11-26, together with a few new ones. The decisions, and the work
+they lead to in priority order, are in `docs/plans/2026-11-26-v3-improvement-backlog.md`. Each
+row above changes when its item lands.
+
+## 2026-11-26 — promotion: the social cards and Tailwind 4.3.5
+
+| | |
+|---|---|
+| Promoted | `staging` (`18d4668`) to `production` as `aebefd3`, through #129 |
+| Merged | By Claude at Randi's instruction, given in the conversation, on 2026-11-26 at 00:46 (UTC+7) |
+| Tree | `7b7ad7f`, the same as `staging`'s and as the tree the release gate passed on |
+| Content state | Unchanged. Nothing under `src/content` or `public` differs from the previous production release |
+| Purpose | Take the social cards and the Tailwind update live, with the release records and a test fix that were already on `staging` |
+
+### What went out
+
+| PR | What it does | Commit on `staging` |
+|---|---|---|
+| #123 | `/projects` and each Published case study get their own social card | `e98aa3b` |
+| #128 | Tailwind and its compiler from 4.3.3 to 4.3.5, and a Dependabot group for its packages | `18d4668` |
+| #127 | The mode-change end-to-end test waits out the section's rise before clicking | `a294599` |
+| #121, #122, #124 | Release records | `4a8d729`, `6828b01`, `306774e` |
+
+#126 (tsx 4.23.15) was already in production: a Dependabot pull request merged there on
+2026-11-25.
+
+Visitors see two changes: link previews for `/projects` and the case studies, and
+CSS compiled by Tailwind 4.3.5. A build-to-build comparison in #128 found two
+differences in that CSS, both internal to Tailwind, and 49 of 49 full-page
+screenshots identical across Chromium, Firefox and WebKit. The one new wording is
+"Case study", in the kicker of the case-study cards.
+
+### How it was gated
+
+- `SITE_URL=https://randi-fajar-wicaksono.vercel.app npm run release:check` on the
+  tree being promoted: exit 0. 36 test files with 508 tests passed, the build
+  succeeded, release validation passed, no public link was broken (LinkedIn and the
+  email link need a human), the end-to-end suite passed with 353 passed and 4
+  skipped, and `audit:prod` found 0 vulnerabilities.
+- CI on #129 (run 45657789253, `18d4668`) and on `aebefd3` (run 45668242005):
+  `quality`, `audit` and `e2e` passed on both, with 353 passed and 4 skipped.
+
+### Production verification
+
+`release-checklist.md` step 9 ran at 00:47 and again at 01:00 (UTC+7), since builds
+can differ before propagation settles. The site gave the same result in both runs:
+
+| Check | Result |
+|---|---|
+| The smoke checks: pages, case studies, metadata, 320 px, Not Found | 37 of 37 |
+| The supplementary checks: links, Draft content, served files against the commit, social cards, confidentiality | 71 of 71 |
+| Social cards on `/projects` and both case studies | Present, 1200×630, with complete Open Graph and Twitter metadata |
+| The three card images served | Byte-identical in both runs, and to a local render of the promoted build |
+
+The V3 release's supplementary run had 68 of 71, and the three failures were these
+cards. They pass now.
+
+`staging` was then synced with `production` (`git-workflow.md` §10): `15521f3`, a
+merge commit with no file changes, pushed after `npm run check` and
+`npm run test:e2e` passed on it (508 tests; 353 passed, 4 skipped).
+
+Not checked by Claude:
+
+- The staging Preview, which sits behind the Vercel login. No review of it was
+  recorded before the merge; Randi asked for the merge with that box unticked.
+- How each platform renders a shared link.
+- LinkedIn and the email action, which need a human. Nothing about them changed.
+
+Everything under "Outstanding after v3" other than the social cards row is
+unchanged.

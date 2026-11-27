@@ -194,9 +194,18 @@ It was still correct to keep it non-blocking. What it lacked was a way to reach 
 person. A failure now opens a GitHub issue, labelled `security-audit` and assigned
 to the repository owner; later failures update the same issue in place and only
 comment when the set of advisories changes, and the first passing run closes it.
-It is the only workflow file in this repository that requests write access, and
-only to issues. (CodeQL default setup is configured by GitHub, not by a file here,
-and carries its own scopes.)
+It is one of two workflow files in this repository that request write access, and
+only to issues; the other is `smoke-check.yml` below. (CodeQL default setup is
+configured by GitHub, not by a file here, and carries its own scopes.)
+
+**The site's own address is checked the same way (DEC-077).** `smoke-check.yml`
+runs `npm run smoke:live` after each successful Production deployment and once a
+day. It checks that the live site answers at its canonical address and declares
+that address everywhere: canonical URLs, `og:url`, the sitemap, `robots.txt`, the
+résumé, a 404 for an unknown route, and no Draft title. A failure opens an issue
+labelled `smoke-check`, in the same way and with the same drill. It exists
+because of the 2026-11-17 entry in `docs/release-audit.md`: a renamed Vercel
+project released the site's old alias, and the site kept declaring it canonical.
 
 **Prove it still works rather than assuming it.** Dispatch the workflow manually
 with `drill` checked: it skips the audit, forces the failure path, and opens an

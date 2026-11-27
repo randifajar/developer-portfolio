@@ -1,4 +1,4 @@
-# Developer Portfolio — Decision Ledger
+# Randi W01 — Decision Ledger
 
 ## Document Information
 
@@ -121,6 +121,25 @@ implements a row cites it.
 | DEC-069 | Infrastructure tense (V3) | **Ongoing work in the present tense, completed work in the past**, as the experience record has it. The mockup used the past tense throughout. | Confirmed | Randi, 2026-11-22 (V3 content and design calls) |
 | DEC-070 | Not Found page (V3) | **Keeps its v2 layout for the V3 release.** UX3 specifies no V3 design for it; it works, and passes the link check. | Confirmed | Randi, 2026-11-22 (V3 content and design calls) |
 
+### V3 improvement decisions
+
+Decided by Randi on 2026-11-26 and 2026-11-27, after the V3 release. The work they lead to is
+in `docs/plans/2026-11-26-v3-improvement-backlog.md`, and the pull request that implements a
+row cites it. The overview titles are recorded under OPEN-011 below.
+
+| ID | Topic | Decision | Status | Source |
+|---|---|---|---|---|
+| DEC-071 | Project identity | **Randi W01**: designation W01, a Personal Engineering Portfolio, design identity Cinematic Blue Editorial, tagline "An evolving engineering identity." It opens the README and is used in project documentation, in future release records, and if wanted in the portfolio's own case study. The README may name Regulus AL01 as another project in Randi's personal engineering collection, without implying any dependency or integration between the two. **The website keeps his full name as its primary identity**, with no designation or tagline in the hero. The repository, Vercel project, domain, and package keep their names until a migration proposal is approved. V1 to V3 keep their names, and versioning continues | Confirmed | Randi, 2026-11-26 and 2026-11-27 |
+| DEC-072 | Employment after 27 November 2026 | **The headline stays "Software Engineer · Backend & Infrastructure".** The AI Delivery Engineer role ends on 27 November 2026, and Zettabyte is presented as his most recent employer, not his current one. Present-tense descriptions of the role become completed experience, "Current role" becomes "Most recent role" where it appears, and the full history and career progression stay. **No unemployment status, no availability statement, and no new employment claim.** This applies DEC-069 rather than changing it: once the role ends, all its work is completed work, and takes the past tense | Confirmed | Randi, 2026-11-27 |
+| DEC-073 | Résumé variants and paths | **Two résumés, Backend Engineering and Infrastructure Engineering**, with the same employment chronology and different emphasis. Each is published only once Randi supplies the approved PDF, and nothing is published as a placeholder. Their stable paths are `/resume/backend.pdf` and `/resume/infrastructure.pdf`, with one canonical file per variant. `/resume.pdf` keeps serving the backend résumé, without a duplicate copy. The Résumé selector recommends the variant for the current mode and keeps both reachable. Revises D6 and extends DEC-059 | Confirmed | Randi, 2026-11-26 and 2026-11-27 |
+| DEC-074 | Résumé labels | **Derived from the published résumé records, never hardcoded.** While only the backend résumé is published, it reads "Résumé — Backend engineering résumé." When both are, the interface reflects both automatically | Confirmed | Randi, 2026-11-27 |
+| DEC-075 | Third case study | **Jenkins CI/CD Migration and Agent Modernization**, the first Infrastructure case study. It covers the context and the original problem, Randi's responsibilities, the build-agent migration, decisions and tradeoffs, connectivity and configuration challenges, security and quality, testing and verification, verified outcomes, and lessons. A content proposal comes first, with every fact that needs his confirmation marked, and nothing is invented. Resolves OPEN-003 | Confirmed | Randi, 2026-11-26 |
+| DEC-076 | Project visuals | **Original, minimalist technical diagrams, and only where they genuinely support a case study**: conceptual architecture, workflow, data flow, CI/CD lifecycle, or before-and-after.<br>They never show proprietary topology, internal screenshots, source code, credentials, hostnames, or confidential company information.<br>They are styled in the Cinematic Blue Editorial system, nothing is decorative, and Randi reviews each proposal before publication. Resolves OPEN-006 | Confirmed | Randi, 2026-11-26 |
+| DEC-077 | Domain and smoke check | **`randi-fajar-wicaksono.vercel.app` stays**, and OPEN-007 stays deferred. A post-deployment smoke check verifies the canonical domain, the site's identity, the published routes, the résumé, the sitemap, and the canonical metadata, so that the 2026-11-17 alias incident cannot recur unnoticed | Confirmed | Randi, 2026-11-26 |
+| DEC-078 | Social cards | **The headlines get a real Geist Bold.** The uneven word spacing is fixed only if a compatible renderer update fixes it. It never justifies a new dependency, a risky upgrade, or a workaround, and is otherwise recorded and deferred | Confirmed | Randi, 2026-11-26 |
+| DEC-079 | Promotions and the Preview review | **A maintenance-only change waits for the next approved improvements** unless it is urgent or security-critical. **The Staging Preview review stays mandatory**: Randi does it through his Vercel account, with a checklist, before he approves a promotion. Production verification is a separate step after the merge and does not replace it | Confirmed | Randi, 2026-11-26 |
+| DEC-080 | Merge authorization | **Claude merges a pull request only with Randi's explicit authorization for it, and only when all of the following hold:**<br>• required checks have passed<br>• required reviews and approval gates are satisfied<br>• no blocking review comment is open<br>• the pull request is mergeable<br>• the tested changes are unchanged since verification<br>• the merge stays within the authorization's scope<br>• the merged result is verified afterwards.<br>Approval to implement is not approval to merge. **A promotion always needs its own explicit approval**, after his Staging Preview review. Recorded in `git-workflow.md` section 11 | Confirmed | Randi, 2026-11-27 |
+
 ---
 
 ## Remaining Content Decisions
@@ -134,14 +153,14 @@ the two easiest to overlook in a column of seven identical values.
 |---|---|---|
 | OPEN-001 | Final professional headline | **Resolved** 2026-08-08 — supplied by Randi (`src/content/profile.ts`). **Reworded 2026-11-18** for the move to the infrastructure team (#99); the new wording awaits his confirmation |
 | OPEN-002 | Final professional summary | **Resolved** 2026-08-08 — supplied by Randi (`src/content/profile.ts`). **Reworded 2026-11-18** in the same pull request; awaits his confirmation |
-| OPEN-003 | Final third project | Open Decision — two published case studies; never a launch blocker (DEC-031) |
+| OPEN-003 | Final third project | **Resolved** 2026-11-26 — Jenkins CI/CD Migration and Agent Modernization becomes the third case study, the first in Infrastructure (DEC-075). A content proposal with every unconfirmed fact marked comes first. Until then there are two published case studies; it was never a launch blocker (DEC-031) |
 | OPEN-004 | Final skill classification | **Resolved** 2026-08-08 — every classification confirmed as assigned (`src/content/skills.ts`) |
 | OPEN-005 | Final professional photograph | **Resolved** 2026-08-08 — supplied, converted to WebP at 400×400, live |
-| OPEN-006 | Safe project visuals | Open Decision — no diagram sanitised yet, which is also why Q9's schema field was not added |
-| OPEN-007 | Custom domain at launch | Open Decision — still the Vercel subdomain |
+| OPEN-006 | Safe project visuals | **Resolved** 2026-11-26 — original, minimalist technical diagrams where they genuinely support a case study, each reviewed by Randi before publication (DEC-076). None exists yet, which is still why Q9's schema field was not added |
+| OPEN-007 | Custom domain at launch | Open Decision — **deferred again** on 2026-11-26: the Vercel subdomain stays, and a custom domain is not a priority (DEC-077) |
 | OPEN-008 | Docker, Linux and Jenkins classification (V3 plan D9) | **Resolved** 2026-11-19 — all four, with AWS, are professional experience (SUP-018) |
 | OPEN-009 | Proposed V3 wording: profile statement, engineering headline, transition sentence (V3 plan I4) | **Resolved** 2026-11-19 — Randi approved all three as proposed in the V3.1 mockup |
-| OPEN-011 | Titles of the six project overviews (DEC-060) | Open Decision — working titles. Randi, 2026-11-19: "all in here is draft, we can revise it later". The overviews stay Draft until he confirms or renames them. They stay Draft for the V3 release (Randi, 2026-11-22) |
+| OPEN-011 | Titles of the six project overviews (DEC-060) | **Resolved** 2026-11-26 — Randi kept the first five titles and summaries as they were and approved them for publication: Jenkins CI/CD Migration and Agent Modernization; Notification Hub and AWS Email Events; Configurable Data Tables and Export Workflows; Notification and Document Service Integrations; Evaluation and Certification Platform. "AI-Assisted Development Across Three Applications" stays Draft. He would rather show AI-assisted development through his engineering practice and technical contributions than present it as a project of its own. Until then they were working titles (2026-11-19: "all in here is draft, we can revise it later"), and Draft for the V3 release (2026-11-22) |
 | OPEN-010 | V3 hero photograph (V3 plan I1) | **Resolved** 2026-11-21 — Randi supplied a larger version of the v2 portrait, 1254×1254, published as `media-hero-photograph`; release validation passes again. The 400×400 portrait from OPEN-005 was too small for the hero. The rule stays (`published-hero-photograph-required`), so the hero cannot ship with its placeholder |
 
 ---

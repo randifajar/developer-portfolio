@@ -35,7 +35,7 @@ import type {
   WorkExperience,
 } from "@/domain/content/schemas";
 import type { Discipline, Mode, PublicationStatus, SkillGroup } from "@/domain/content/types";
-import { SKILL_GROUPS, isPubliclyEligible } from "@/domain/content/types";
+import { DISCIPLINES, SKILL_GROUPS, isPubliclyEligible } from "@/domain/content/types";
 import { getAdjacentProjects } from "@/domain/projects/project-navigation";
 
 /**
@@ -129,6 +129,31 @@ export function getPublishedExperience(): readonly WorkExperience[] {
       }
       return a.sortOrder - b.sortOrder;
     });
+}
+
+/**
+ * The role to present as the latest, optionally within one discipline: the
+ * current role if there is one, otherwise the one that ended last (DEC-072).
+ * Callers label it by its own `isCurrent`, "Current role" or "Most recent
+ * role", so the wording follows the record and never claims a role that has
+ * ended.
+ */
+export function getMostRecentExperience(discipline?: Discipline): WorkExperience | null {
+  const roles = discipline ? getPublishedExperienceFor(discipline) : getPublishedExperience();
+  const current = roles.find((role) => role.isCurrent);
+
+  if (current) {
+    return current;
+  }
+
+  const [latest] = roles
+    .slice()
+    .sort(
+      (a, b) =>
+        (b.endDate ?? "").localeCompare(a.endDate ?? "") || b.startDate.localeCompare(a.startDate),
+    );
+
+  return latest ?? null;
 }
 
 /** Every publicly eligible project, in approved order. */
@@ -316,8 +341,8 @@ export function getPublishedToolkit(discipline: Discipline): readonly ToolkitGro
  * Published project overviews, optionally for one discipline (DEC-060).
  *
  * Overviews have no slug, so nothing here can produce a route; the case-study
- * selectors above never see them. While their titles are working titles
- * (OPEN-011) they are Draft, and this returns an empty list.
+ * selectors above never see them. Five are Published since 2026-11-26; the
+ * sixth stays Draft by Randi's decision, and this never returns it (OPEN-011).
  */
 export function getPublishedProjectOverviews(discipline?: Discipline): readonly ProjectOverview[] {
   const published = publishedInOrder(projectOverviews);
@@ -336,6 +361,16 @@ export function getPublishedProjectOverviews(discipline?: Discipline): readonly 
  */
 export function getPublishedResumeFor(variant: Discipline): Resume | null {
   return resume.variant === variant ? getActiveResume() : null;
+}
+
+/**
+ * The disciplines that have a Published résumé, in discipline order. Wording
+ * that names the available résumés is derived from this rather than written
+ * into the copy (DEC-074), so publishing the second variant (DEC-073) changes
+ * that wording by itself.
+ */
+export function getPublishedResumeVariants(): readonly Discipline[] {
+  return DISCIPLINES.filter((variant) => getPublishedResumeFor(variant) !== null);
 }
 
 /** The Published opening of a discipline's page (UX3 7.2, 7.3), or null. */

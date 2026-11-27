@@ -91,15 +91,20 @@ describe("Backend (UX3 7.2)", () => {
     expect(roles[0]).toHaveTextContent("Node.js");
   });
 
-  it("says where the present role is, and links to it", () => {
+  it("says where the latest role was, as completed work, and links to it", () => {
     renderMode("/backend", BackendPage);
     const experience = within(
       screen.getByRole("region", { name: "Backend roles at Zettabyte Pte Ltd." }),
     );
 
+    // The infrastructure role ended on 27 November 2026, so the line gives its
+    // span rather than "Since …" (DEC-072).
     expect(
-      experience.getByText(/Since August 2026 my role has been on the infrastructure team\./),
+      experience.getByText(
+        /From August 2026 to November 2026 my role was on the infrastructure team\./,
+      ),
     ).toBeVisible();
+    expect(experience.queryByText(/Since August 2026/)).toBeNull();
     expect(experience.getByRole("link", { name: "Infrastructure" })).toHaveAttribute(
       "href",
       "/infrastructure",
@@ -114,20 +119,48 @@ describe("Backend (UX3 7.2)", () => {
       work.getByRole("link", { name: "Read the case study: Jury Process Management Integration" }),
     ).toHaveAttribute("href", "/projects/jury-process-management-integration");
   });
+
+  it("lists the backend overviews after the case study, unlinked, and not the Draft one", () => {
+    renderMode("/backend", BackendPage);
+    const work = within(screen.getByRole("region", { name: "Backend work." }));
+
+    expect(work.getAllByRole("heading", { level: 3 }).map((h) => h.textContent)).toEqual([
+      "Jury Process Management Integration",
+      "Notification Hub and AWS Email Events",
+      "Configurable Data Tables and Export Workflows",
+      "Notification and Document Service Integrations",
+      "Evaluation and Certification Platform",
+    ]);
+    // An overview has no page of its own, so only the case study links (DEC-060).
+    expect(work.getAllByRole("link", { name: /^Read the case study/ })).toHaveLength(1);
+  });
 });
 
 describe("Infrastructure (UX3 7.3)", () => {
   it("renders its sections in the approved order, each on its approved surface", () => {
     const { container } = renderMode("/infrastructure", InfrastructurePage);
 
-    // Selected work is absent: no infrastructure case study exists, and the
-    // overviews are Draft until their titles are confirmed (OPEN-011).
+    // No infrastructure case study exists yet, so the projects section holds
+    // the infrastructure overviews, Published on 2026-11-26 (OPEN-011).
     expect(sectionsOf(container)).toEqual([
       ["Beyond Deployment.", "dark"],
       ["From backend developer to the infrastructure team.", "light"],
       ["Pipelines, environments, and what breaks.", "white"],
+      ["Infrastructure projects.", "light"],
       ["Grouped by how I use them.", "navy"],
     ]);
+  });
+
+  it("lists the infrastructure overviews under its projects, unlinked, and not the Draft one", () => {
+    renderMode("/infrastructure", InfrastructurePage);
+    const work = within(screen.getByRole("region", { name: "Infrastructure projects." }));
+
+    expect(work.getAllByRole("heading", { level: 3 }).map((h) => h.textContent)).toEqual([
+      "Jenkins CI/CD Migration and Agent Modernization",
+      "Notification Hub and AWS Email Events",
+      "Evaluation and Certification Platform",
+    ]);
+    expect(work.queryAllByRole("link", { name: /^Read the case study/ })).toEqual([]);
   });
 
   it("has exactly one h1, and the hero action leads to the first section", () => {
@@ -144,14 +177,17 @@ describe("Infrastructure (UX3 7.3)", () => {
     );
   });
 
-  it("states the transition from the records: now, before, and the scope", () => {
+  it("states the transition from the records: the most recent role, before, and the scope", () => {
     renderMode("/infrastructure", InfrastructurePage);
     const transition = within(
       screen.getByRole("region", { name: "From backend developer to the infrastructure team." }),
     );
 
+    // Ended on 27 November 2026: "Most recent role", never "Now" (DEC-072).
+    expect(transition.getByText("Most recent role")).toBeVisible();
+    expect(transition.queryByText("Now")).toBeNull();
     expect(
-      transition.getByText("AI Delivery Engineer, Infrastructure Team · Aug 2026 – Present"),
+      transition.getByText("AI Delivery Engineer, Infrastructure Team · Aug 2026 – Nov 2026"),
     ).toBeVisible();
     expect(transition.getByText("Backend Developer · Apr 2025 – Jul 2026")).toBeVisible();
     expect(

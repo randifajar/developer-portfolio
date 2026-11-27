@@ -188,7 +188,7 @@ release.
 | `practices.ts` | "How I approach engineering" | Each item restates a résumé line; the module says which |
 | `toolkits.ts` | The grouped tool lists on the two mode pages | Names only, no levels. Nothing that shows how an employer's systems are wired (DEC-064) |
 | `discipline-pages.ts` | The Backend and Infrastructure pages below their heroes: each page's opening paragraph (and Infrastructure's scope line), and each page's four work areas | At most one Published intro per discipline. Each work area cites experience ids, which must exist and carry its discipline. The infrastructure text is held to an approved list in its test (DEC-064) |
-| `project-overviews.ts` | Six résumé projects shown briefly, with no case study and no route | General titles only, never an internal application name (DEC-060). A technology only where the project's résumé line names it. Draft until you confirm the titles (OPEN-011) |
+| `project-overviews.ts` | Six résumé projects shown briefly, with no case study and no route | General titles only, never an internal application name (DEC-060). A technology only where the project's résumé line names it. Five Published since you confirmed their titles on 2026-11-26; the AI-assisted one stays Draft by your decision (OPEN-011) |
 
 Five V3 fields sit on older records:
 
