@@ -412,6 +412,7 @@
    * Movement only, no fade (V3 P8): text is at full contrast from its first
    * frame, so a contrast check can never catch it half-drawn. v2's
    * `.motion-rise`, which faded from 0, had no users left and went with it.
+   * The photograph follows the same rule since DEC-081 (below).
    */
   [data-hero-entrance] [data-hero-line] > span {
     animation: hero-line-rise 950ms cubic-bezier(0.2, 0.75, 0.2, 1) both;
@@ -425,20 +426,18 @@
     animation: hero-rest-rise 800ms 350ms cubic-bezier(0.2, 0.75, 0.2, 1) both;
   }
 
-  [data-hero-entrance] [data-photograph-placeholder] {
-    animation: hero-photo-rise 1.6s cubic-bezier(0.2, 0.75, 0.2, 1) both;
-  }
-
-  /* The photograph itself also fades in (UX3 8.1); it carries no text. */
+  /*
+   * The photograph and its placeholder rise the same way, whole from their
+   * first frame (DEC-081). The photograph used to fade in as well. It is the
+   * largest element on a phone's first screen, so the fade kept the page
+   * visibly incomplete for 1.6 s after it painted, and that is what made the
+   * home page's mobile Speed Index swing between 1.4 s and 4.7 s (backlog
+   * item 9). Without the fade the page is complete when it paints, as
+   * Backend and Infrastructure are.
+   */
+  [data-hero-entrance] [data-photograph-placeholder],
   [data-hero-entrance] [data-photograph] {
-    animation: hero-photo-in 1.6s cubic-bezier(0.2, 0.75, 0.2, 1) both;
-  }
-
-  @keyframes hero-photo-in {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
+    animation: hero-photo-rise 1.6s cubic-bezier(0.2, 0.75, 0.2, 1) both;
   }
 
   @keyframes hero-line-rise {

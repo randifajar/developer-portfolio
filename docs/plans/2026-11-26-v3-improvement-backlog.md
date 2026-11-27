@@ -133,7 +133,7 @@ ledger, as DEC-071 to DEC-080 alongside the decisions above.
 | 6 | Card word spacing check | 7 | **Done:** deferred (section 4) |
 | 7 | Randi W01 in the README and documentation | 12, C | **Done** in #140 |
 | 8 | Naming migration proposal | 12 | **Proposal done** in #143. The new names, and approval before any rename |
-| 9 | Home page mobile performance investigation | 10 | Approval of any significant change |
+| 9 | Home page mobile performance investigation | 10 | **Done:** the photograph rises without fading (DEC-081). PageSpeed is measured again after the next promotion |
 | 10 | Jenkins CI/CD case study | 3 | Answers to the proposal's questions; content approval |
 | 11 | Case-study diagrams | 4 | Approval of each proposal |
 | 12 | Two résumé variants and a contextual Résumé menu | 2, D | The two approved PDFs |
@@ -348,6 +348,19 @@ ledger, as DEC-071 to DEC-080 alongside the decisions above.
 - **Done when.** The findings are presented, with their measurements and the proposed
   optimizations.
 - **Needs from Randi.** Approval of any significant change.
+- **Outcome, 2026-11-28.**
+  - **The measurements.** PageSpeed measured the home page's mobile Speed Index at 4.7, 1.4, and
+    1.4 s in three runs, and Backend and Infrastructure at 0.9 s in every run.
+  - **The cause.** The variance came from the photograph's 1.6 s fade. The photograph is the
+    largest element on a phone's first screen, and the fade left it incomplete after the page
+    painted.
+  - **The change.** Randi approved the findings' recommendation: the photograph rises without
+    fading, as the hero's text already does (DEC-081). It keeps its 30-pixel rise.
+  - **The local result.** On a throttled phone profile, the home page's Speed Index fell by about
+    300 ms against the same build with the fade restored. The medians of six runs each were
+    about 2,270 and 2,580 ms.
+  - **Still to do.** After the next promotion, three PageSpeed runs per page go into the release
+    audit.
 
 ### Item 10 — Jenkins CI/CD case study
 
@@ -465,3 +478,6 @@ ledger, as DEC-071 to DEC-080 alongside the decisions above.
   proposal lists, which only his account can make.
 - **Item 13, #144.** The promotion of 2026-11-28 took items 1, 2, 3, 4, 5, 7, 8, and 14 live,
   with #133. The release audit records how it was gated and verified.
+- **Item 9.** The hero photograph rises without fading, the findings' recommendation (DEC-081).
+  A new end-to-end test fails if any part of the hero's entrance fades. It reaches production
+  with the next promotion.

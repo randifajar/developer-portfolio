@@ -415,8 +415,12 @@ DEC-062 records the V3 additions below.
 
 CSS keyframes:
 
-- the photograph rises 30 px and fades in over about 1.6 s;
+- the photograph rises 30 px over about 1.6 s;
 - the heading lines rise in sequence.
+
+Nothing in the entrance fades: each element is whole from its first frame. The photograph
+also faded in until 2026-11-28. That fade kept the home page visibly incomplete after it
+painted, which made its mobile Speed Index unstable, and DEC-081 removed it.
 
 There is no opening cover or loading screen; the hero's own entrance is the opening
 (§12). Content is visible without JavaScript.
